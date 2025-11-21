@@ -1,39 +1,44 @@
-from . import json as json
-from .app import Flask as Flask
-from .blueprints import Blueprint as Blueprint
-from .config import Config as Config
-from .ctx import after_this_request as after_this_request
-from .ctx import copy_current_request_context as copy_current_request_context
-from .ctx import has_app_context as has_app_context
-from .ctx import has_request_context as has_request_context
-from .globals import current_app as current_app
-from .globals import g as g
-from .globals import request as request
-from .globals import session as session
-from .helpers import abort as abort
-from .helpers import flash as flash
-from .helpers import get_flashed_messages as get_flashed_messages
-from .helpers import get_template_attribute as get_template_attribute
-from .helpers import make_response as make_response
-from .helpers import redirect as redirect
-from .helpers import send_file as send_file
-from .helpers import send_from_directory as send_from_directory
-from .helpers import stream_with_context as stream_with_context
-from .helpers import url_for as url_for
-from .json import jsonify as jsonify
-from .signals import appcontext_popped as appcontext_popped
-from .signals import appcontext_pushed as appcontext_pushed
-from .signals import appcontext_tearing_down as appcontext_tearing_down
-from .signals import before_render_template as before_render_template
-from .signals import got_request_exception as got_request_exception
-from .signals import message_flashed as message_flashed
-from .signals import request_finished as request_finished
-from .signals import request_started as request_started
-from .signals import request_tearing_down as request_tearing_down
-from .signals import template_rendered as template_rendered
-from .templating import render_template as render_template
-from .templating import render_template_string as render_template_string
-from .templating import stream_template as stream_template
-from .templating import stream_template_string as stream_template_string
-from .wrappers import Request as Request
-from .wrappers import Response as Response
+from . import json as json  # Import module json để xử lý dữ liệu JSON (Path: src/flask/json/)
+from .app import Flask as Flask  # Import lớp Flask, đối tượng ứng dụng chính (Path: src/flask/app.py)
+from .blueprints import Blueprint as Blueprint  # Import lớp Blueprint để tổ chức ứng dụng thành các module (Path: src/flask/blueprints.py)
+from .config import Config as Config  # Import lớp Config để quản lý cấu hình ứng dụng (Path: src/flask/config.py)
+from .ctx import after_this_request as after_this_request  # Đăng ký một hàm sẽ chạy sau request hiện tại (Path: src/flask/ctx.py)
+from .ctx import copy_current_request_context as copy_current_request_context  # Sao chép ngữ cảnh request hiện tại cho một hàm khác (Path: src/flask/ctx.py)
+from .ctx import has_app_context as has_app_context  # Kiểm tra xem có ngữ cảnh ứng dụng hay không (Path: src/flask/ctx.py)
+from .ctx import has_request_context as has_request_context  # Kiểm tra xem có ngữ cảnh request hay không (Path: src/flask/ctx.py)
+from .globals import current_app as current_app  # Proxy trỏ tới ứng dụng đang xử lý request (Path: src/flask/globals.py)
+from .globals import g as g  # Đối tượng toàn cục để lưu trữ dữ liệu trong một request (Path: src/flask/globals.py)
+from .globals import request as request  # Đối tượng request chứa dữ liệu của request hiện tại (Path: src/flask/globals.py)
+from .globals import session as session  # Đối tượng session để lưu trữ thông tin phiên làm việc (Path: src/flask/globals.py)
+from .helpers import abort as abort  # Hủy request với một mã lỗi HTTP (Path: src/flask/helpers.py)
+from .helpers import flash as flash  # Hiển thị thông báo cho người dùng (thường dùng trong template) (Path: src/flask/helpers.py)
+from .helpers import get_flashed_messages as get_flashed_messages  # Lấy các thông báo đã flash (Path: src/flask/helpers.py)
+from .helpers import get_template_attribute as get_template_attribute  # Lấy một thuộc tính từ một template (Path: src/flask/helpers.py)
+from .helpers import make_response as make_response  # Tạo một đối tượng response (Path: src/flask/helpers.py)
+from .helpers import redirect as redirect  # Chuyển hướng client sang một URL khác (Path: src/flask/helpers.py)
+from .helpers import send_file as send_file  # Gửi một file tới client (Path: src/flask/helpers.py)
+from .helpers import send_from_directory as send_from_directory  # Gửi một file từ một thư mục cụ thể (Path: src/flask/helpers.py)
+from .helpers import stream_with_context as stream_with_context  # Stream dữ liệu với ngữ cảnh request được giữ lại (Path: src/flask/helpers.py)
+from .helpers import url_for as url_for  # Tạo URL cho một hàm view (Path: src/flask/helpers.py)
+from .json import jsonify as jsonify  # Tạo response JSON từ dữ liệu Python (Path: src/flask/json/)
+from .signals import appcontext_popped as appcontext_popped  # Signal được gửi khi ngữ cảnh ứng dụng bị pop (Path: src/flask/signals.py)
+from .signals import appcontext_pushed as appcontext_pushed  # Signal được gửi khi ngữ cảnh ứng dụng được push (Path: src/flask/signals.py)
+from .signals import appcontext_tearing_down as appcontext_tearing_down  # Signal được gửi khi ngữ cảnh ứng dụng đang bị hủy (Path: src/flask/signals.py)
+from .signals import before_render_template as before_render_template  # Signal được gửi trước khi render template (Path: src/flask/signals.py)
+from .signals import got_request_exception as got_request_exception  # Signal được gửi khi có ngoại lệ trong request (Path: src/flask/signals.py)
+from .signals import message_flashed as message_flashed  # Signal được gửi khi một tin nhắn được flash (Path: src/flask/signals.py)
+from .signals import request_finished as request_finished  # Signal được gửi khi request kết thúc (Path: src/flask/signals.py)
+from .signals import request_started as request_started  # Signal được gửi khi request bắt đầu (Path: src/flask/signals.py)
+from .signals import request_tearing_down as request_tearing_down  # Signal được gửi khi request đang bị hủy (Path: src/flask/signals.py)
+from .signals import template_rendered as template_rendered  # Signal được gửi khi template đã được render (Path: src/flask/signals.py)
+from .templating import render_template as render_template  # Render một template với context (Path: src/flask/templating.py)
+from .templating import render_template_string as render_template_string  # Render một chuỗi template (Path: src/flask/templating.py)
+from .templating import stream_template as stream_template  # Render template dưới dạng stream (Path: src/flask/templating.py)
+from .templating import stream_template_string as stream_template_string  # Render chuỗi template dưới dạng stream (Path: src/flask/templating.py)
+from .wrappers import Request as Request  # Lớp Request cơ bản (Path: src/flask/wrappers.py)
+from .wrappers import Response as Response  # Lớp Response cơ bản (Path: src/flask/wrappers.py)
+
+"""
+File này hiển thị API công khai của Flask bằng cách import các lớp và hàm từ các module con.
+Mục đích chính là để người dùng có thể import mọi thứ cần thiết trực tiếp từ gói `flask`.
+"""
