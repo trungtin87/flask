@@ -1,27 +1,27 @@
 Waitress
 ========
 
-`Waitress`_ is a pure Python WSGI server.
+`Waitress`_ là một máy chủ WSGI thuần Python.
 
-*   It is easy to configure.
-*   It supports Windows directly.
-*   It is easy to install as it does not require additional dependencies
-    or compilation.
-*   It does not support streaming requests, full request data is always
-    buffered.
-*   It uses a single process with multiple thread workers.
+*   Nó dễ cấu hình.
+*   Nó hỗ trợ Windows trực tiếp.
+*   Nó dễ cài đặt vì nó không yêu cầu các phụ thuộc bổ sung
+    hoặc biên dịch.
+*   Nó không hỗ trợ streaming requests, dữ liệu request đầy đủ luôn được
+    lưu vào bộ đệm.
+*   Nó sử dụng một process duy nhất với nhiều thread worker.
 
-This page outlines the basics of running Waitress. Be sure to read its
-documentation and ``waitress-serve --help`` to understand what features
-are available.
+Trang này phác thảo những điều cơ bản về việc chạy Waitress. Hãy chắc chắn đọc
+tài liệu của nó và ``waitress-serve --help`` để hiểu những tính năng nào
+có sẵn.
 
 .. _Waitress: https://docs.pylonsproject.org/projects/waitress/
 
 
-Installing
-----------
+Cài đặt
+-------
 
-Create a virtualenv, install your application, then install
+Tạo một virtualenv, cài đặt ứng dụng của bạn, sau đó cài đặt
 ``waitress``.
 
 .. code-block:: text
@@ -29,47 +29,47 @@ Create a virtualenv, install your application, then install
     $ cd hello-app
     $ python -m venv .venv
     $ . .venv/bin/activate
-    $ pip install .  # install your application
+    $ pip install .  # cài đặt ứng dụng của bạn
     $ pip install waitress
 
 
-Running
--------
+Chạy
+----
 
-The only required argument to ``waitress-serve`` tells it how to load
-your Flask application. The syntax is ``{module}:{app}``. ``module`` is
-the dotted import name to the module with your application. ``app`` is
-the variable with the application. If you're using the app factory
-pattern, use ``--call {module}:{factory}`` instead.
+Đối số bắt buộc duy nhất cho ``waitress-serve`` cho nó biết cách tải
+ứng dụng Flask của bạn. Cú pháp là ``{module}:{app}``. ``module`` là
+tên import có dấu chấm đến module chứa ứng dụng của bạn. ``app`` là
+biến chứa ứng dụng. Nếu bạn đang sử dụng mẫu app factory,
+hãy sử dụng ``--call {module}:{factory}`` thay thế.
 
 .. code-block:: text
 
-    # equivalent to 'from hello import app'
+    # tương đương với 'from hello import app'
     $ waitress-serve --host 127.0.0.1 hello:app
 
-    # equivalent to 'from hello import create_app; create_app()'
+    # tương đương với 'from hello import create_app; create_app()'
     $ waitress-serve --host 127.0.0.1 --call hello:create_app
 
     Serving on http://127.0.0.1:8080
 
-The ``--host`` option binds the server to local ``127.0.0.1`` only.
+Tùy chọn ``--host`` liên kết máy chủ với ``127.0.0.1`` cục bộ.
 
-Logs for each request aren't shown, only errors are shown. Logging can
-be configured through the Python interface instead of the command line.
+Logs cho mỗi request không được hiển thị, chỉ các lỗi được hiển thị. Logging có thể
+được cấu hình thông qua giao diện Python thay vì dòng lệnh.
 
 
-Binding Externally
-------------------
+Binding Bên ngoài
+-----------------
 
-Waitress should not be run as root because it would cause your
-application code to run as root, which is not secure. However, this
-means it will not be possible to bind to port 80 or 443. Instead, a
-reverse proxy such as :doc:`nginx` or :doc:`apache-httpd` should be used
-in front of Waitress.
+Waitress không nên được chạy dưới quyền root vì nó sẽ khiến
+mã ứng dụng của bạn chạy dưới quyền root, điều này không an toàn. Tuy nhiên, điều này
+có nghĩa là sẽ không thể bind vào cổng 80 hoặc 443. Thay vào đó, một
+reverse proxy như :doc:`nginx` hoặc :doc:`apache-httpd` nên được sử dụng
+phía trước Waitress.
 
-You can bind to all external IPs on a non-privileged port by not
-specifying the ``--host`` option. Don't do this when using a reverse
-proxy setup, otherwise it will be possible to bypass the proxy.
+Bạn có thể bind vào tất cả các IP bên ngoài trên một cổng không có đặc quyền bằng cách không
+chỉ định tùy chọn ``--host``. Đừng làm điều này khi sử dụng thiết lập reverse
+proxy, nếu không sẽ có thể bỏ qua proxy.
 
-``0.0.0.0`` is not a valid address to navigate to, you'd use a specific
-IP address in your browser.
+``0.0.0.0`` không phải là một địa chỉ hợp lệ để điều hướng đến, bạn sẽ sử dụng một
+địa chỉ IP cụ thể trong trình duyệt của mình.

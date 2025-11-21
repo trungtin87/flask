@@ -1,10 +1,10 @@
 Logging
 =======
 
-Flask uses standard Python :mod:`logging`. Messages about your Flask
-application are logged with :meth:`app.logger <flask.Flask.logger>`,
-which takes the same name as :attr:`app.name <flask.Flask.name>`. This
-logger can also be used to log your own messages.
+Flask sử dụng :mod:`logging` Python tiêu chuẩn. Các tin nhắn về
+ứng dụng Flask của bạn được ghi log với :meth:`app.logger <flask.Flask.logger>`,
+nhận cùng tên với :attr:`app.name <flask.Flask.name>`. Logger
+này cũng có thể được sử dụng để ghi log các tin nhắn của riêng bạn.
 
 .. code-block:: python
 
@@ -20,20 +20,20 @@ logger can also be used to log your own messages.
             app.logger.info('%s failed to log in', user.username)
             abort(401)
 
-If you don't configure logging, Python's default log level is usually
-'warning'. Nothing below the configured level will be visible.
+Nếu bạn không cấu hình logging, log level mặc định của Python thường là
+'warning'. Không có gì dưới level được cấu hình sẽ hiển thị.
 
 
-Basic Configuration
--------------------
+Cấu hình Cơ bản
+---------------
 
-When you want to configure logging for your project, you should do it as soon
-as possible when the program starts. If :meth:`app.logger <flask.Flask.logger>`
-is accessed before logging is configured, it will add a default handler. If
-possible, configure logging before creating the application object.
+Khi bạn muốn cấu hình logging cho dự án của mình, bạn nên làm điều đó càng sớm
+càng tốt khi chương trình khởi động. Nếu :meth:`app.logger <flask.Flask.logger>`
+được truy cập trước khi logging được cấu hình, nó sẽ thêm một handler mặc định. Nếu
+có thể, hãy cấu hình logging trước khi tạo đối tượng ứng dụng.
 
-This example uses :func:`~logging.config.dictConfig` to create a logging
-configuration similar to Flask's default, except for all logs::
+Ví dụ này sử dụng :func:`~logging.config.dictConfig` để tạo một cấu hình logging
+tương tự như cấu hình mặc định của Flask, ngoại trừ cho tất cả các log::
 
     from logging.config import dictConfig
 
@@ -56,39 +56,39 @@ configuration similar to Flask's default, except for all logs::
     app = Flask(__name__)
 
 
-Default Configuration
-`````````````````````
+Cấu hình Mặc định
+`````````````````
 
-If you do not configure logging yourself, Flask will add a
-:class:`~logging.StreamHandler` to :meth:`app.logger <flask.Flask.logger>`
-automatically. During requests, it will write to the stream specified by the
-WSGI server in ``environ['wsgi.errors']`` (which is usually
-:data:`sys.stderr`). Outside a request, it will log to :data:`sys.stderr`.
+Nếu bạn không tự cấu hình logging, Flask sẽ thêm một
+:class:`~logging.StreamHandler` vào :meth:`app.logger <flask.Flask.logger>`
+tự động. Trong các request, nó sẽ ghi vào stream được chỉ định bởi
+máy chủ WSGI trong ``environ['wsgi.errors']`` (thường là
+:data:`sys.stderr`). Bên ngoài một request, nó sẽ ghi log vào :data:`sys.stderr`.
 
 
-Removing the Default Handler
-````````````````````````````
+Xóa Handler Mặc định
+````````````````````
 
-If you configured logging after accessing
-:meth:`app.logger <flask.Flask.logger>`, and need to remove the default
-handler, you can import and remove it::
+Nếu bạn cấu hình logging sau khi truy cập
+:meth:`app.logger <flask.Flask.logger>`, và cần xóa handler
+mặc định, bạn có thể import và xóa nó::
 
     from flask.logging import default_handler
 
     app.logger.removeHandler(default_handler)
 
 
-Email Errors to Admins
-----------------------
+Gửi Email Lỗi cho Admin
+-----------------------
 
-When running the application on a remote server for production, you probably
-won't be looking at the log messages very often. The WSGI server will probably
-send log messages to a file, and you'll only check that file if a user tells
-you something went wrong.
+Khi chạy ứng dụng trên một máy chủ remote cho production, bạn có thể
+sẽ không xem các tin nhắn log thường xuyên. Máy chủ WSGI có thể sẽ
+gửi các tin nhắn log vào một file, và bạn sẽ chỉ kiểm tra file đó nếu một người dùng cho
+bạn biết có gì đó sai.
 
-To be proactive about discovering and fixing bugs, you can configure a
-:class:`logging.handlers.SMTPHandler` to send an email when errors and higher
-are logged. ::
+Để chủ động phát hiện và sửa lỗi, bạn có thể cấu hình một
+:class:`logging.handlers.SMTPHandler` để gửi email khi các lỗi và cao hơn
+được ghi log. ::
 
     import logging
     from logging.handlers import SMTPHandler
@@ -107,18 +107,18 @@ are logged. ::
     if not app.debug:
         app.logger.addHandler(mail_handler)
 
-This requires that you have an SMTP server set up on the same server. See the
-Python docs for more information about configuring the handler.
+Điều này yêu cầu bạn có một máy chủ SMTP được thiết lập trên cùng một máy chủ. Xem
+tài liệu Python để biết thêm thông tin về cấu hình handler.
 
 
-Injecting Request Information
------------------------------
+Chèn Thông tin Request
+-----------------------
 
-Seeing more information about the request, such as the IP address, may help
-debugging some errors. You can subclass :class:`logging.Formatter` to inject
-your own fields that can be used in messages. You can change the formatter for
-Flask's default handler, the mail handler defined above, or any other
-handler. ::
+Xem thêm thông tin về request, chẳng hạn như địa chỉ IP, có thể giúp
+gỡ lỗi một số lỗi. Bạn có thể subclass :class:`logging.Formatter` để chèn
+các trường của riêng bạn có thể được sử dụng trong các tin nhắn. Bạn có thể thay đổi formatter cho
+handler mặc định của Flask, mail handler được định nghĩa ở trên, hoặc bất kỳ
+handler nào khác. ::
 
     from flask import has_request_context, request
     from flask.logging import default_handler
@@ -142,12 +142,12 @@ handler. ::
     mail_handler.setFormatter(formatter)
 
 
-Other Libraries
----------------
+Thư viện Khác
+-------------
 
-Other libraries may use logging extensively, and you want to see relevant
-messages from those logs too. The simplest way to do this is to add handlers
-to the root logger instead of only the app logger. ::
+Các thư viện khác có thể sử dụng logging rộng rãi, và bạn muốn thấy các
+tin nhắn liên quan từ những log đó. Cách đơn giản nhất để làm điều này là thêm handler
+vào root logger thay vì chỉ app logger. ::
 
     from flask.logging import default_handler
 
@@ -155,8 +155,8 @@ to the root logger instead of only the app logger. ::
     root.addHandler(default_handler)
     root.addHandler(mail_handler)
 
-Depending on your project, it may be more useful to configure each logger you
-care about separately, instead of configuring only the root logger. ::
+Tùy thuộc vào dự án của bạn, có thể hữu ích hơn khi cấu hình từng logger bạn
+quan tâm riêng biệt, thay vì chỉ cấu hình root logger. ::
 
     for logger in (
         logging.getLogger(app.name),
@@ -170,14 +170,14 @@ care about separately, instead of configuring only the root logger. ::
 Werkzeug
 ````````
 
-Werkzeug logs basic request/response information to the ``'werkzeug'`` logger.
-If the root logger has no handlers configured, Werkzeug adds a
-:class:`~logging.StreamHandler` to its logger.
+Werkzeug ghi log thông tin request/response cơ bản vào logger ``'werkzeug'``.
+Nếu root logger không có handler nào được cấu hình, Werkzeug thêm một
+:class:`~logging.StreamHandler` vào logger của nó.
 
 
-Flask Extensions
-````````````````
+Flask Extension
+```````````````
 
-Depending on the situation, an extension may choose to log to
-:meth:`app.logger <flask.Flask.logger>` or its own named logger. Consult each
-extension's documentation for details.
+Tùy thuộc vào tình huống, một extension có thể chọn ghi log vào
+:meth:`app.logger <flask.Flask.logger>` hoặc logger có tên riêng của nó. Tham khảo
+tài liệu của từng extension để biết chi tiết.

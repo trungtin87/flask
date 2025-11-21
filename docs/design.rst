@@ -1,22 +1,22 @@
-Design Decisions in Flask
-=========================
+Quyết định Thiết kế trong Flask
+================================
 
-If you are curious why Flask does certain things the way it does and not
-differently, this section is for you.  This should give you an idea about
-some of the design decisions that may appear arbitrary and surprising at
-first, especially in direct comparison with other frameworks.
+Nếu bạn tò mò tại sao Flask làm một số điều theo cách nó làm và không
+khác đi, phần này dành cho bạn. Điều này sẽ cung cấp cho bạn một ý tưởng về
+một số quyết định thiết kế có thể xuất hiện tùy tiện và đáng ngạc nhiên lúc
+đầu, đặc biệt là khi so sánh trực tiếp với các framework khác.
 
 
-The Explicit Application Object
--------------------------------
+Đối tượng Ứng dụng Rõ ràng
+---------------------------
 
-A Python web application based on WSGI has to have one central callable
-object that implements the actual application.  In Flask this is an
-instance of the :class:`~flask.Flask` class.  Each Flask application has
-to create an instance of this class itself and pass it the name of the
-module, but why can't Flask do that itself?
+Một ứng dụng web Python dựa trên WSGI phải có một callable
+trung tâm triển khai ứng dụng thực tế. Trong Flask đây là một
+instance của class :class:`~flask.Flask`. Mỗi ứng dụng Flask phải
+tạo một instance của class này và truyền cho nó tên của
+module, nhưng tại sao Flask không thể tự làm điều đó?
 
-Without such an explicit application object the following code::
+Không có một đối tượng ứng dụng rõ ràng như vậy, mã sau::
 
     from flask import Flask
     app = Flask(__name__)
@@ -25,7 +25,7 @@ Without such an explicit application object the following code::
     def index():
         return 'Hello World!'
 
-Would look like this instead::
+Sẽ trông như thế này thay thế::
 
     from hypothetical_flask import route
 
@@ -33,197 +33,197 @@ Would look like this instead::
     def index():
         return 'Hello World!'
 
-There are three major reasons for this.  The most important one is that
-implicit application objects require that there may only be one instance at
-the time.  There are ways to fake multiple applications with a single
-application object, like maintaining a stack of applications, but this
-causes some problems I won't outline here in detail.  Now the question is:
-when does a microframework need more than one application at the same
-time?  A good example for this is unit testing.  When you want to test
-something it can be very helpful to create a minimal application to test
-specific behavior.  When the application object is deleted everything it
-allocated will be freed again.
+Có ba lý do chính cho điều này. Quan trọng nhất là
+các đối tượng ứng dụng ngầm định yêu cầu rằng chỉ có thể có một instance tại
+một thời điểm. Có những cách để giả mạo nhiều ứng dụng với một
+đối tượng ứng dụng duy nhất, như duy trì một stack các ứng dụng, nhưng điều này
+gây ra một số vấn đề mà tôi sẽ không nêu chi tiết ở đây. Bây giờ câu hỏi là:
+khi nào một microframework cần nhiều hơn một ứng dụng cùng một
+lúc? Một ví dụ tốt cho điều này là unit testing. Khi bạn muốn kiểm tra
+một cái gì đó, có thể rất hữu ích khi tạo một ứng dụng tối thiểu để kiểm tra
+hành vi cụ thể. Khi đối tượng ứng dụng bị xóa, mọi thứ nó
+đã cấp phát sẽ được giải phóng lại.
 
-Another thing that becomes possible when you have an explicit object lying
-around in your code is that you can subclass the base class
-(:class:`~flask.Flask`) to alter specific behavior.  This would not be
-possible without hacks if the object were created ahead of time for you
-based on a class that is not exposed to you.
+Một điều khác trở nên khả thi khi bạn có một đối tượng rõ ràng nằm
+xung quanh trong mã của bạn là bạn có thể subclass base class
+(:class:`~flask.Flask`) để thay đổi hành vi cụ thể. Điều này sẽ không
+khả thi nếu không có hack nếu đối tượng được tạo trước cho bạn
+dựa trên một class không được expose cho bạn.
 
-But there is another very important reason why Flask depends on an
-explicit instantiation of that class: the package name.  Whenever you
-create a Flask instance you usually pass it `__name__` as package name.
-Flask depends on that information to properly load resources relative
-to your module.  With Python's outstanding support for reflection it can
-then access the package to figure out where the templates and static files
-are stored (see :meth:`~flask.Flask.open_resource`).  Now obviously there
-are frameworks around that do not need any configuration and will still be
-able to load templates relative to your application module.  But they have
-to use the current working directory for that, which is a very unreliable
-way to determine where the application is.  The current working directory
-is process-wide and if you are running multiple applications in one
-process (which could happen in a webserver without you knowing) the paths
-will be off.  Worse: many webservers do not set the working directory to
-the directory of your application but to the document root which does not
-have to be the same folder.
+Nhưng có một lý do rất quan trọng khác tại sao Flask phụ thuộc vào
+việc khởi tạo rõ ràng class đó: tên package. Bất cứ khi nào bạn
+tạo một instance Flask, bạn thường truyền cho nó `__name__` làm tên package.
+Flask phụ thuộc vào thông tin đó để tải tài nguyên đúng cách tương đối
+với module của bạn. Với sự hỗ trợ xuất sắc của Python cho reflection, nó có thể
+sau đó truy cập package để tìm ra nơi các template và file tĩnh
+được lưu trữ (xem :meth:`~flask.Flask.open_resource`). Bây giờ rõ ràng có
+các framework xung quanh không cần bất kỳ cấu hình nào và vẫn có thể
+tải các template tương đối với module ứng dụng của bạn. Nhưng chúng phải
+sử dụng thư mục làm việc hiện tại cho điều đó, đó là một cách rất không đáng tin cậy
+để xác định nơi ứng dụng đang ở. Thư mục làm việc hiện tại
+là process-wide và nếu bạn đang chạy nhiều ứng dụng trong một
+process (có thể xảy ra trong một webserver mà bạn không biết) các đường dẫn
+sẽ bị lệch. Tệ hơn: nhiều webserver không đặt thư mục làm việc thành
+thư mục của ứng dụng của bạn mà là document root không
+phải là cùng một thư mục.
 
-The third reason is "explicit is better than implicit".  That object is
-your WSGI application, you don't have to remember anything else.  If you
-want to apply a WSGI middleware, just wrap it and you're done (though
-there are better ways to do that so that you do not lose the reference
-to the application object :meth:`~flask.Flask.wsgi_app`).
+Lý do thứ ba là "rõ ràng tốt hơn ngầm định". Đối tượng đó là
+ứng dụng WSGI của bạn, bạn không phải nhớ bất cứ điều gì khác. Nếu bạn
+muốn áp dụng một WSGI middleware, chỉ cần wrap nó và bạn đã xong (mặc dù
+có những cách tốt hơn để làm điều đó để bạn không mất tham chiếu
+đến đối tượng ứng dụng :meth:`~flask.Flask.wsgi_app`).
 
-Furthermore this design makes it possible to use a factory function to
-create the application which is very helpful for unit testing and similar
-things (:doc:`/patterns/appfactories`).
+Hơn nữa, thiết kế này làm cho việc sử dụng một factory function để
+tạo ứng dụng trở nên khả thi, điều này rất hữu ích cho unit testing và các
+điều tương tự (:doc:`/patterns/appfactories`).
 
-The Routing System
-------------------
+Hệ thống Routing
+----------------
 
-Flask uses the Werkzeug routing system which was designed to
-automatically order routes by complexity.  This means that you can declare
-routes in arbitrary order and they will still work as expected.  This is a
-requirement if you want to properly implement decorator based routing
-since decorators could be fired in undefined order when the application is
-split into multiple modules.
+Flask sử dụng hệ thống routing Werkzeug được thiết kế để
+tự động sắp xếp các route theo độ phức tạp. Điều này có nghĩa là bạn có thể khai báo
+các route theo thứ tự tùy ý và chúng vẫn sẽ hoạt động như mong đợi. Đây là một
+yêu cầu nếu bạn muốn triển khai đúng cách routing dựa trên decorator
+vì các decorator có thể được kích hoạt theo thứ tự không xác định khi ứng dụng được
+chia thành nhiều module.
 
-Another design decision with the Werkzeug routing system is that routes
-in Werkzeug try to ensure that URLs are unique.  Werkzeug will go quite far
-with that in that it will automatically redirect to a canonical URL if a route
-is ambiguous.
+Một quyết định thiết kế khác với hệ thống routing Werkzeug là các route
+trong Werkzeug cố gắng đảm bảo rằng các URL là duy nhất. Werkzeug sẽ đi khá xa
+với điều đó ở chỗ nó sẽ tự động chuyển hướng đến một URL canonical nếu một route
+là mơ hồ.
 
 
-One Template Engine
+Một Template Engine
 -------------------
 
-Flask decides on one template engine: Jinja.  Why doesn't Flask have a
-pluggable template engine interface?  You can obviously use a different
-template engine, but Flask will still configure Jinja for you.  While
-that limitation that Jinja is *always* configured will probably go away,
-the decision to bundle one template engine and use that will not.
+Flask quyết định một template engine: Jinja. Tại sao Flask không có một
+giao diện template engine pluggable? Bạn rõ ràng có thể sử dụng một
+template engine khác, nhưng Flask vẫn sẽ cấu hình Jinja cho bạn. Trong khi
+giới hạn đó rằng Jinja *luôn* được cấu hình có thể sẽ biến mất,
+quyết định gộp một template engine và sử dụng nó sẽ không.
 
-Template engines are like programming languages and each of those engines
-has a certain understanding about how things work.  On the surface they
-all work the same: you tell the engine to evaluate a template with a set
-of variables and take the return value as string.
+Các template engine giống như ngôn ngữ lập trình và mỗi engine đó
+có một sự hiểu biết nhất định về cách mọi thứ hoạt động. Trên bề mặt chúng
+đều hoạt động giống nhau: bạn cho engine biết đánh giá một template với một tập hợp
+các biến và lấy giá trị trả về dưới dạng chuỗi.
 
-But that's about where similarities end. Jinja for example has an
-extensive filter system, a certain way to do template inheritance,
-support for reusable blocks (macros) that can be used from inside
-templates and also from Python code, supports iterative template
-rendering, configurable syntax and more. On the other hand an engine
-like Genshi is based on XML stream evaluation, template inheritance by
-taking the availability of XPath into account and more. Mako on the
-other hand treats templates similar to Python modules.
+Nhưng đó là nơi sự giống nhau kết thúc. Ví dụ Jinja có một
+hệ thống filter mở rộng, một cách nhất định để thực hiện kế thừa template,
+hỗ trợ cho các khối có thể tái sử dụng (macro) có thể được sử dụng từ bên trong
+các template và cũng từ mã Python, hỗ trợ rendering template lặp,
+cú pháp có thể cấu hình và hơn thế nữa. Mặt khác một engine
+như Genshi dựa trên đánh giá XML stream, kế thừa template bằng cách
+tính đến tính khả dụng của XPath và hơn thế nữa. Mako mặt khác
+xử lý các template tương tự như các module Python.
 
-When it comes to connecting a template engine with an application or
-framework there is more than just rendering templates.  For instance,
-Flask uses Jinja's extensive autoescaping support.  Also it provides
-ways to access macros from Jinja templates.
+Khi nói đến việc kết nối một template engine với một ứng dụng hoặc
+framework, có nhiều hơn là chỉ rendering template. Ví dụ,
+Flask sử dụng hỗ trợ autoescaping mở rộng của Jinja. Nó cũng cung cấp
+các cách để truy cập macro từ các template Jinja.
 
-A template abstraction layer that would not take the unique features of
-the template engines away is a science on its own and a too large
-undertaking for a microframework like Flask.
+Một lớp trừu tượng template không lấy đi các tính năng độc đáo của
+các template engine là một khoa học riêng và một
+công việc quá lớn cho một microframework như Flask.
 
-Furthermore extensions can then easily depend on one template language
-being present.  You can easily use your own templating language, but an
-extension could still depend on Jinja itself.
+Hơn nữa, các extension sau đó có thể dễ dàng phụ thuộc vào một ngôn ngữ template
+đang có mặt. Bạn có thể dễ dàng sử dụng ngôn ngữ templating của riêng mình, nhưng một
+extension vẫn có thể phụ thuộc vào chính Jinja.
 
 
-What does "micro" mean?
+"Micro" có nghĩa là gì?
 -----------------------
 
-“Micro” does not mean that your whole web application has to fit into a single
-Python file (although it certainly can), nor does it mean that Flask is lacking
-in functionality. The "micro" in microframework means Flask aims to keep the
-core simple but extensible. Flask won't make many decisions for you, such as
-what database to use. Those decisions that it does make, such as what
-templating engine to use, are easy to change.  Everything else is up to you, so
-that Flask can be everything you need and nothing you don't.
+"Micro" không có nghĩa là toàn bộ ứng dụng web của bạn phải vừa với một file
+Python duy nhất (mặc dù nó chắc chắn có thể), cũng không có nghĩa là Flask thiếu
+chức năng. "Micro" trong microframework có nghĩa là Flask nhằm mục đích giữ
+core đơn giản nhưng có thể mở rộng. Flask sẽ không đưa ra nhiều quyết định cho bạn, chẳng hạn như
+cơ sở dữ liệu nào để sử dụng. Những quyết định mà nó đưa ra, chẳng hạn như
+templating engine nào để sử dụng, rất dễ thay đổi. Mọi thứ khác tùy thuộc vào bạn, để
+Flask có thể là mọi thứ bạn cần và không có gì bạn không cần.
 
-By default, Flask does not include a database abstraction layer, form
-validation or anything else where different libraries already exist that can
-handle that. Instead, Flask supports extensions to add such functionality to
-your application as if it was implemented in Flask itself. Numerous extensions
-provide database integration, form validation, upload handling, various open
-authentication technologies, and more. Flask may be "micro", but it's ready for
-production use on a variety of needs.
+Theo mặc định, Flask không bao gồm một lớp trừu tượng cơ sở dữ liệu, xác thực form
+hoặc bất cứ thứ gì khác nơi các thư viện khác nhau đã tồn tại có thể
+xử lý điều đó. Thay vào đó, Flask hỗ trợ các extension để thêm chức năng như vậy vào
+ứng dụng của bạn như thể nó được triển khai trong chính Flask. Nhiều extension
+cung cấp tích hợp cơ sở dữ liệu, xác thực form, xử lý upload, các
+công nghệ xác thực mở khác nhau, và hơn thế nữa. Flask có thể là "micro", nhưng nó sẵn sàng cho
+sử dụng production trên nhiều nhu cầu khác nhau.
 
-Why does Flask call itself a microframework and yet it depends on two
-libraries (namely Werkzeug and Jinja).  Why shouldn't it?  If we look
-over to the Ruby side of web development there we have a protocol very
-similar to WSGI.  Just that it's called Rack there, but besides that it
-looks very much like a WSGI rendition for Ruby.  But nearly all
-applications in Ruby land do not work with Rack directly, but on top of a
-library with the same name.  This Rack library has two equivalents in
-Python: WebOb (formerly Paste) and Werkzeug.  Paste is still around but
-from my understanding it's sort of deprecated in favour of WebOb.  The
-development of WebOb and Werkzeug started side by side with similar ideas
-in mind: be a good implementation of WSGI for other applications to take
-advantage.
+Tại sao Flask tự gọi mình là một microframework nhưng nó phụ thuộc vào hai
+thư viện (cụ thể là Werkzeug và Jinja). Tại sao không nên? Nếu chúng ta nhìn
+sang phía Ruby của phát triển web, chúng ta có một giao thức rất
+tương tự như WSGI. Chỉ là nó được gọi là Rack ở đó, nhưng ngoài điều đó nó
+trông rất giống một rendition WSGI cho Ruby. Nhưng gần như tất cả
+các ứng dụng trong Ruby land không hoạt động với Rack trực tiếp, mà trên một
+thư viện có cùng tên. Thư viện Rack này có hai tương đương trong
+Python: WebOb (trước đây là Paste) và Werkzeug. Paste vẫn còn nhưng
+theo hiểu biết của tôi, nó đã bị deprecated một phần ủng hộ WebOb. Sự
+phát triển của WebOb và Werkzeug bắt đầu song song với các ý tưởng tương tự
+trong tâm trí: là một triển khai tốt của WSGI cho các ứng dụng khác tận dụng
+.
 
-Flask is a framework that takes advantage of the work already done by
-Werkzeug to properly interface WSGI (which can be a complex task at
-times).  Thanks to recent developments in the Python package
-infrastructure, packages with dependencies are no longer an issue and
-there are very few reasons against having libraries that depend on others.
-
-
-Context Locals
---------------
-
-Flask uses special context locals and proxies to provide access to the
-current app and request data to any code running during a request, CLI command,
-etc. Context locals are specific to the worker handling the activity, such as a
-thread, process, coroutine, or greenlet.
-
-The context and proxies help solve two development issues: circular imports, and
-passing around global data. :data:`.current_app` can be used to access the
-application object without needing to import the app object directly, avoiding
-circular import issues. :data:`.request`, :data:`.session`, and :data:`.g` can
-be imported to access the current data for the request, rather than needing to
-pass them as arguments through every single function in your project.
+Flask là một framework tận dụng công việc đã được thực hiện bởi
+Werkzeug để giao tiếp WSGI đúng cách (có thể là một nhiệm vụ phức tạp vào
+những lúc). Nhờ vào sự phát triển gần đây trong cơ sở hạ tầng
+package Python, các package với dependency không còn là vấn đề nữa và
+có rất ít lý do chống lại việc có các thư viện phụ thuộc vào các thư viện khác.
 
 
-Async/await and ASGI support
-----------------------------
+Context Local
+-------------
 
-Flask supports ``async`` coroutines for view functions by executing the
-coroutine on a separate thread instead of using an event loop on the
-main thread as an async-first (ASGI) framework would. This is necessary
-for Flask to remain backwards compatible with extensions and code built
-before ``async`` was introduced into Python. This compromise introduces
-a performance cost compared with the ASGI frameworks, due to the
-overhead of the threads.
+Flask sử dụng các context local và proxy đặc biệt để cung cấp quyền truy cập vào
+ứng dụng hiện tại và dữ liệu request cho bất kỳ mã nào đang chạy trong một request, lệnh CLI,
+v.v. Context local là cụ thể cho worker xử lý hoạt động, chẳng hạn như một
+thread, process, coroutine, hoặc greenlet.
 
-Due to how tied to WSGI Flask's code is, it's not clear if it's possible
-to make the ``Flask`` class support ASGI and WSGI at the same time. Work
-is currently being done in Werkzeug to work with ASGI, which may
-eventually enable support in Flask as well.
-
-See :doc:`/async-await` for more discussion.
+Context và proxy giúp giải quyết hai vấn đề phát triển: circular import, và
+truyền xung quanh dữ liệu toàn cục. :data:`.current_app` có thể được sử dụng để truy cập
+đối tượng ứng dụng mà không cần import đối tượng app trực tiếp, tránh
+các vấn đề circular import. :data:`.request`, :data:`.session`, và :data:`.g` có thể
+được import để truy cập dữ liệu hiện tại cho request, thay vì cần
+truyền chúng làm đối số qua mọi hàm duy nhất trong dự án của bạn.
 
 
-What Flask is, What Flask is Not
---------------------------------
+Hỗ trợ Async/await và ASGI
+---------------------------
 
-Flask will never have a database layer.  It will not have a form library
-or anything else in that direction.  Flask itself just bridges to Werkzeug
-to implement a proper WSGI application and to Jinja to handle templating.
-It also binds to a few common standard library packages such as logging.
-Everything else is up for extensions.
+Flask hỗ trợ các coroutine ``async`` cho các view function bằng cách thực thi
+coroutine trên một thread riêng biệt thay vì sử dụng một event loop trên
+main thread như một framework async-first (ASGI) sẽ làm. Điều này là cần thiết
+để Flask duy trì khả năng tương thích ngược với các extension và mã được xây dựng
+trước khi ``async`` được giới thiệu vào Python. Sự타협 này giới thiệu
+một chi phí hiệu suất so với các framework ASGI, do
+overhead của các thread.
 
-Why is this the case?  Because people have different preferences and
-requirements and Flask could not meet those if it would force any of this
-into the core.  The majority of web applications will need a template
-engine in some sort.  However not every application needs a SQL database.
+Do cách mã của Flask gắn chặt với WSGI, không rõ liệu có thể
+làm cho class ``Flask`` hỗ trợ cả ASGI và WSGI cùng một lúc. Công việc
+hiện đang được thực hiện trong Werkzeug để làm việc với ASGI, có thể
+cuối cùng cho phép hỗ trợ trong Flask.
 
-As your codebase grows, you are free to make the design decisions appropriate
-for your project.  Flask will continue to provide a very simple glue layer to
-the best that Python has to offer.  You can implement advanced patterns in
-SQLAlchemy or another database tool, introduce non-relational data persistence
-as appropriate, and take advantage of framework-agnostic tools built for WSGI,
-the Python web interface.
+Xem :doc:`/async-await` để thảo luận thêm.
 
-The idea of Flask is to build a good foundation for all applications.
-Everything else is up to you or extensions.
+
+Flask là gì, Flask không phải là gì
+------------------------------------
+
+Flask sẽ không bao giờ có một lớp cơ sở dữ liệu. Nó sẽ không có một thư viện form
+hoặc bất cứ thứ gì khác theo hướng đó. Chính Flask chỉ cầu nối đến Werkzeug
+để triển khai một ứng dụng WSGI đúng cách và đến Jinja để xử lý templating.
+Nó cũng bind vào một vài package thư viện tiêu chuẩn phổ biến như logging.
+Mọi thứ khác là cho các extension.
+
+Tại sao lại như vậy? Bởi vì mọi người có sở thích và
+yêu cầu khác nhau và Flask không thể đáp ứng những điều đó nếu nó buộc bất kỳ điều này
+vào core. Phần lớn các ứng dụng web sẽ cần một template
+engine ở một dạng nào đó. Tuy nhiên không phải mọi ứng dụng đều cần một cơ sở dữ liệu SQL.
+
+Khi codebase của bạn phát triển, bạn tự do đưa ra các quyết định thiết kế phù hợp
+cho dự án của mình. Flask sẽ tiếp tục cung cấp một lớp glue rất đơn giản cho
+những gì tốt nhất mà Python cung cấp. Bạn có thể triển khai các mẫu nâng cao trong
+SQLAlchemy hoặc công cụ cơ sở dữ liệu khác, giới thiệu persistence dữ liệu phi quan hệ
+khi thích hợp, và tận dụng các công cụ framework-agnostic được xây dựng cho WSGI,
+giao diện web Python.
+
+Ý tưởng của Flask là xây dựng một nền tảng tốt cho tất cả các ứng dụng.
+Mọi thứ khác tùy thuộc vào bạn hoặc các extension.

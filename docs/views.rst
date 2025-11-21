@@ -3,27 +3,27 @@ Class-based Views
 
 .. currentmodule:: flask.views
 
-This page introduces using the :class:`View` and :class:`MethodView`
-classes to write class-based views.
+Trang này giới thiệu việc sử dụng các lớp :class:`View` và :class:`MethodView`
+để viết các view dựa trên lớp (class-based views).
 
-A class-based view is a class that acts as a view function. Because it
-is a class, different instances of the class can be created with
-different arguments, to change the behavior of the view. This is also
-known as generic, reusable, or pluggable views.
+Một class-based view là một lớp hoạt động như một hàm view. Bởi vì nó
+là một lớp, các thể hiện khác nhau của lớp có thể được tạo ra với
+các đối số khác nhau, để thay đổi hành vi của view. Điều này cũng được
+biết đến như là các view chung (generic), có thể tái sử dụng, hoặc có thể cắm (pluggable).
 
-An example of where this is useful is defining a class that creates an
-API based on the database model it is initialized with.
+Một ví dụ về nơi điều này hữu ích là định nghĩa một lớp tạo ra một
+API dựa trên model cơ sở dữ liệu mà nó được khởi tạo cùng.
 
-For more complex API behavior and customization, look into the various
-API extensions for Flask.
+Để có hành vi API phức tạp hơn và tùy chỉnh, hãy xem xét các
+tiện ích mở rộng API khác nhau cho Flask.
 
 
-Basic Reusable View
--------------------
+View Tái sử dụng Cơ bản
+-----------------------
 
-Let's walk through an example converting a view function to a view
-class. We start with a view function that queries a list of users then
-renders a template to show the list.
+Hãy cùng đi qua một ví dụ chuyển đổi một hàm view thành một lớp
+view. Chúng ta bắt đầu với một hàm view truy vấn một danh sách người dùng sau đó
+render một template để hiển thị danh sách.
 
 .. code-block:: python
 
@@ -32,14 +32,14 @@ renders a template to show the list.
         users = User.query.all()
         return render_template("users.html", users=users)
 
-This works for the user model, but let's say you also had more models
-that needed list pages. You'd need to write another view function for
-each model, even though the only thing that would change is the model
-and template name.
+Điều này hoạt động cho model người dùng, nhưng giả sử bạn cũng có nhiều model hơn
+cần các trang danh sách. Bạn sẽ cần viết một hàm view khác cho
+mỗi model, mặc dù điều duy nhất thay đổi là model
+và tên template.
 
-Instead, you can write a :class:`View` subclass that will query a model
-and render a template. As the first step, we'll convert the view to a
-class without any customization.
+Thay vào đó, bạn có thể viết một lớp con :class:`View` sẽ truy vấn một model
+và render một template. Là bước đầu tiên, chúng ta sẽ chuyển đổi view thành một
+lớp mà không có bất kỳ tùy chỉnh nào.
 
 .. code-block:: python
 
@@ -52,23 +52,23 @@ class without any customization.
 
     app.add_url_rule("/users/", view_func=UserList.as_view("user_list"))
 
-The :meth:`View.dispatch_request` method is the equivalent of the view
-function. Calling :meth:`View.as_view` method will create a view
-function that can be registered on the app with its
-:meth:`~flask.Flask.add_url_rule` method. The first argument to
-``as_view`` is the name to use to refer to the view with
+Phương thức :meth:`View.dispatch_request` tương đương với hàm
+view. Gọi phương thức :meth:`View.as_view` sẽ tạo ra một hàm
+view có thể được đăng ký trên ứng dụng với phương thức
+:meth:`~flask.Flask.add_url_rule` của nó. Đối số đầu tiên cho
+``as_view`` là tên để sử dụng để tham chiếu đến view với
 :func:`~flask.url_for`.
 
 .. note::
 
-    You can't decorate the class with ``@app.route()`` the way you'd
-    do with a basic view function.
+    Bạn không thể decorate lớp với ``@app.route()`` theo cách bạn sẽ
+    làm với một hàm view cơ bản.
 
-Next, we need to be able to register the same view class for different
-models and templates, to make it more useful than the original function.
-The class will take two arguments, the model and template, and store
-them on ``self``. Then ``dispatch_request`` can reference these instead
-of hard-coded values.
+Tiếp theo, chúng ta cần có thể đăng ký cùng một lớp view cho các model
+và template khác nhau, để làm cho nó hữu ích hơn hàm ban đầu.
+Lớp sẽ nhận hai đối số, model và template, và lưu trữ
+chúng trên ``self``. Sau đó ``dispatch_request`` có thể tham chiếu những cái này thay vì
+các giá trị được mã hóa cứng.
 
 .. code-block:: python
 
@@ -81,10 +81,10 @@ of hard-coded values.
             items = self.model.query.all()
             return render_template(self.template, items=items)
 
-Remember, we create the view function with ``View.as_view()`` instead of
-creating the class directly. Any extra arguments passed to ``as_view``
-are then passed when creating the class. Now we can register the same
-view to handle multiple models.
+Hãy nhớ, chúng ta tạo hàm view với ``View.as_view()`` thay vì
+tạo lớp trực tiếp. Bất kỳ đối số bổ sung nào được truyền cho ``as_view``
+sau đó được truyền khi tạo lớp. Bây giờ chúng ta có thể đăng ký cùng một
+view để xử lý nhiều model.
 
 .. code-block:: python
 
@@ -98,12 +98,12 @@ view to handle multiple models.
     )
 
 
-URL Variables
--------------
+Biến URL
+--------
 
-Any variables captured by the URL are passed as keyword arguments to the
-``dispatch_request`` method, as they would be for a regular view
-function.
+Bất kỳ biến nào được bắt bởi URL đều được truyền dưới dạng đối số từ khóa cho
+phương thức ``dispatch_request``, giống như chúng sẽ được truyền cho một hàm view
+thông thường.
 
 .. code-block:: python
 
@@ -122,23 +122,23 @@ function.
     )
 
 
-View Lifetime and ``self``
---------------------------
+Vòng đời View và ``self``
+-------------------------
 
-By default, a new instance of the view class is created every time a
-request is handled. This means that it is safe to write other data to
-``self`` during the request, since the next request will not see it,
-unlike other forms of global state.
+Theo mặc định, một thể hiện mới của lớp view được tạo mỗi khi một
+request được xử lý. Điều này có nghĩa là an toàn để ghi dữ liệu khác vào
+``self`` trong quá trình request, vì request tiếp theo sẽ không nhìn thấy nó,
+không giống như các hình thức trạng thái toàn cục khác.
 
-However, if your view class needs to do a lot of complex initialization,
-doing it for every request is unnecessary and can be inefficient. To
-avoid this, set :attr:`View.init_every_request` to ``False``, which will
-only create one instance of the class and use it for every request. In
-this case, writing to ``self`` is not safe. If you need to store data
-during the request, use :data:`~flask.g` instead.
+Tuy nhiên, nếu lớp view của bạn cần thực hiện nhiều khởi tạo phức tạp,
+làm điều đó cho mỗi request là không cần thiết và có thể không hiệu quả. Để
+tránh điều này, hãy đặt :attr:`View.init_every_request` thành ``False``, điều này sẽ
+chỉ tạo một thể hiện của lớp và sử dụng nó cho mọi request. Trong
+trường hợp này, ghi vào ``self`` là không an toàn. Nếu bạn cần lưu trữ dữ liệu
+trong quá trình request, hãy sử dụng :data:`~flask.g` thay thế.
 
-In the ``ListView`` example, nothing writes to ``self`` during the
-request, so it is more efficient to create a single instance.
+Trong ví dụ ``ListView``, không có gì ghi vào ``self`` trong quá trình
+request, vì vậy hiệu quả hơn khi tạo một thể hiện duy nhất.
 
 .. code-block:: python
 
@@ -153,16 +153,16 @@ request, so it is more efficient to create a single instance.
             items = self.model.query.all()
             return render_template(self.template, items=items)
 
-Different instances will still be created each for each ``as_view``
-call, but not for each request to those views.
+Các thể hiện khác nhau vẫn sẽ được tạo cho mỗi cuộc gọi ``as_view``,
+nhưng không phải cho mỗi request đến các view đó.
 
 
 View Decorators
 ---------------
 
-The view class itself is not the view function. View decorators need to
-be applied to the view function returned by ``as_view``, not the class
-itself. Set :attr:`View.decorators` to a list of decorators to apply.
+Bản thân lớp view không phải là hàm view. Các view decorator cần
+được áp dụng cho hàm view được trả về bởi ``as_view``, không phải bản thân
+lớp. Đặt :attr:`View.decorators` thành một danh sách các decorator để áp dụng.
 
 .. code-block:: python
 
@@ -171,8 +171,8 @@ itself. Set :attr:`View.decorators` to a list of decorators to apply.
 
     app.add_url_rule('/users/', view_func=UserList.as_view())
 
-If you didn't set ``decorators``, you could apply them manually instead.
-This is equivalent to:
+Nếu bạn không đặt ``decorators``, bạn có thể áp dụng chúng thủ công thay thế.
+Điều này tương đương với:
 
 .. code-block:: python
 
@@ -181,8 +181,8 @@ This is equivalent to:
     view = login_required(view)
     app.add_url_rule('/users/', view_func=view)
 
-Keep in mind that order matters. If you're used to ``@decorator`` style,
-this is equivalent to:
+Hãy nhớ rằng thứ tự rất quan trọng. Nếu bạn quen với kiểu ``@decorator``,
+điều này tương đương với:
 
 .. code-block:: python
 
@@ -193,13 +193,13 @@ this is equivalent to:
         ...
 
 
-Method Hints
-------------
+Gợi ý Phương thức (Method Hints)
+--------------------------------
 
-A common pattern is to register a view with ``methods=["GET", "POST"]``,
-then check ``request.method == "POST"`` to decide what to do. Setting
-:attr:`View.methods` is equivalent to passing the list of methods to
-``add_url_rule`` or ``route``.
+Một mẫu phổ biến là đăng ký một view với ``methods=["GET", "POST"]``,
+sau đó kiểm tra ``request.method == "POST"`` để quyết định làm gì. Đặt
+:attr:`View.methods` tương đương với việc truyền danh sách các phương thức cho
+``add_url_rule`` hoặc ``route``.
 
 .. code-block:: python
 
@@ -213,8 +213,8 @@ then check ``request.method == "POST"`` to decide what to do. Setting
 
     app.add_url_rule('/my-view', view_func=MyView.as_view('my-view'))
 
-This is equivalent to the following, except further subclasses can
-inherit or change the methods.
+Điều này tương đương với những điều sau, ngoại trừ các lớp con tiếp theo có thể
+kế thừa hoặc thay đổi các phương thức.
 
 .. code-block:: python
 
@@ -225,21 +225,21 @@ inherit or change the methods.
     )
 
 
-Method Dispatching and APIs
----------------------------
+Điều phối Phương thức và API
+----------------------------
 
-For APIs it can be helpful to use a different function for each HTTP
-method. :class:`MethodView` extends the basic :class:`View` to dispatch
-to different methods of the class based on the request method. Each HTTP
-method maps to a method of the class with the same (lowercase) name.
+Đối với các API, có thể hữu ích khi sử dụng một hàm khác nhau cho mỗi phương thức
+HTTP. :class:`MethodView` mở rộng :class:`View` cơ bản để điều phối
+đến các phương thức khác nhau của lớp dựa trên phương thức request. Mỗi phương thức
+HTTP ánh xạ tới một phương thức của lớp có cùng tên (chữ thường).
 
-:class:`MethodView` automatically sets :attr:`View.methods` based on the
-methods defined by the class. It even knows how to handle subclasses
-that override or define other methods.
+:class:`MethodView` tự động đặt :attr:`View.methods` dựa trên các
+phương thức được định nghĩa bởi lớp. Nó thậm chí còn biết cách xử lý các lớp con
+ghi đè hoặc định nghĩa các phương thức khác.
 
-We can make a generic ``ItemAPI`` class that provides get (detail),
-patch (edit), and delete methods for a given model. A ``GroupAPI`` can
-provide get (list) and post (create) methods.
+Chúng ta có thể tạo một lớp ``ItemAPI`` chung cung cấp các phương thức get (chi tiết),
+patch (chỉnh sửa), và delete cho một model nhất định. Một ``GroupAPI`` có thể
+cung cấp các phương thức get (danh sách) và post (tạo).
 
 .. code-block:: python
 
@@ -306,19 +306,19 @@ provide get (list) and post (create) methods.
     register_api(app, User, "users")
     register_api(app, Story, "stories")
 
-This produces the following views, a standard REST API!
+Điều này tạo ra các view sau, một REST API tiêu chuẩn!
 
-================= ========== ===================
+================ ========== ===================
 URL               Method     Description
 ----------------- ---------- -------------------
-``/users/``       ``GET``    List all users
-``/users/``       ``POST``   Create a new user
-``/users/<id>``   ``GET``    Show a single user
-``/users/<id>``   ``PATCH``  Update a user
-``/users/<id>``   ``DELETE`` Delete a user
-``/stories/``     ``GET``    List all stories
-``/stories/``     ``POST``   Create a new story
-``/stories/<id>`` ``GET``    Show a single story
-``/stories/<id>`` ``PATCH``  Update a story
-``/stories/<id>`` ``DELETE`` Delete a story
-================= ========== ===================
+``/users/``       ``GET``    Liệt kê tất cả người dùng
+``/users/``       ``POST``   Tạo một người dùng mới
+``/users/<id>``   ``GET``    Hiển thị một người dùng đơn lẻ
+``/users/<id>``   ``PATCH``  Cập nhật một người dùng
+``/users/<id>``   ``DELETE`` Xóa một người dùng
+``/stories/``     ``GET``    Liệt kê tất cả câu chuyện
+``/stories/``     ``POST``   Tạo một câu chuyện mới
+``/stories/<id>`` ``GET``    Hiển thị một câu chuyện đơn lẻ
+``/stories/<id>`` ``PATCH``  Cập nhật một câu chuyện
+``/stories/<id>`` ``DELETE`` Xóa một câu chuyện
+================ ========== ===================

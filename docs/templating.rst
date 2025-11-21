@@ -1,129 +1,129 @@
-Templates
+Template
 =========
 
-Flask leverages Jinja as its template engine.  You are obviously free to use
-a different template engine, but you still have to install Jinja to run
-Flask itself.  This requirement is necessary to enable rich extensions.
-An extension can depend on Jinja being present.
+Flask tận dụng Jinja làm template engine của nó. Bạn rõ ràng tự do sử dụng
+một template engine khác, nhưng bạn vẫn phải cài đặt Jinja để chạy
+chính Flask. Yêu cầu này là cần thiết để cho phép các extension phong phú.
+Một extension có thể phụ thuộc vào sự hiện diện của Jinja.
 
-This section only gives a very quick introduction into how Jinja
-is integrated into Flask.  If you want information on the template
-engine's syntax itself, head over to the official `Jinja Template
-Documentation <https://jinja.palletsprojects.com/templates/>`_ for
-more information.
+Phần này chỉ cung cấp một giới thiệu rất nhanh về cách Jinja
+được tích hợp vào Flask. Nếu bạn muốn thông tin về cú pháp
+của chính template engine, hãy truy cập `Tài liệu Jinja Template
+chính thức <https://jinja.palletsprojects.com/templates/>`_ để biết
+thêm thông tin.
 
-Jinja Setup
------------
+Thiết lập Jinja
+---------------
 
-Unless customized, Jinja is configured by Flask as follows:
+Trừ khi được tùy chỉnh, Jinja được cấu hình bởi Flask như sau:
 
--   autoescaping is enabled for all templates ending in ``.html``,
-    ``.htm``, ``.xml``, ``.xhtml``, as well as ``.svg`` when using
+-   autoescaping được bật cho tất cả các template kết thúc bằng ``.html``,
+    ``.htm``, ``.xml``, ``.xhtml``, cũng như ``.svg`` khi sử dụng
     :func:`~flask.templating.render_template`.
--   autoescaping is enabled for all strings when using
+-   autoescaping được bật cho tất cả các chuỗi khi sử dụng
     :func:`~flask.templating.render_template_string`.
--   a template has the ability to opt in/out autoescaping with the
-    ``{% autoescape %}`` tag.
--   Flask inserts a couple of global functions and helpers into the
-    Jinja context, additionally to the values that are present by
-    default.
+-   một template có khả năng opt in/out autoescaping với
+    thẻ ``{% autoescape %}``.
+-   Flask chèn một vài hàm và helper toàn cục vào
+    context Jinja, bổ sung cho các giá trị có sẵn theo
+    mặc định.
 
-Standard Context
-----------------
+Context Tiêu chuẩn
+------------------
 
-The following global variables are available within Jinja templates
-by default:
+Các biến toàn cục sau có sẵn trong các template Jinja
+theo mặc định:
 
 .. data:: config
    :noindex:
 
-   The current configuration object (:data:`flask.Flask.config`)
+   Đối tượng cấu hình hiện tại (:data:`flask.Flask.config`)
 
    .. versionadded:: 0.6
 
    .. versionchanged:: 0.10
-      This is now always available, even in imported templates.
+      Điều này hiện luôn có sẵn, ngay cả trong các template được import.
 
 .. data:: request
    :noindex:
 
-   The current request object (:class:`flask.request`).  This variable is
-   unavailable if the template was rendered without an active request
-   context.
+   Đối tượng request hiện tại (:class:`flask.request`). Biến này
+   không có sẵn nếu template được render mà không có request
+   context hoạt động.
 
 .. data:: session
    :noindex:
 
-   The current session object (:class:`flask.session`).  This variable
-   is unavailable if the template was rendered without an active request
-   context.
+   Đối tượng session hiện tại (:class:`flask.session`). Biến này
+   không có sẵn nếu template được render mà không có request
+   context hoạt động.
 
 .. data:: g
    :noindex:
 
-   The request-bound object for global variables (:data:`flask.g`).  This
-   variable is unavailable if the template was rendered without an active
-   request context.
+   Đối tượng liên kết request cho các biến toàn cục (:data:`flask.g`). Biến
+   này không có sẵn nếu template được render mà không có
+   request context hoạt động.
 
 .. function:: url_for
    :noindex:
 
-   The :func:`flask.url_for` function.
+   Hàm :func:`flask.url_for`.
 
 .. function:: get_flashed_messages
    :noindex:
 
-   The :func:`flask.get_flashed_messages` function.
+   Hàm :func:`flask.get_flashed_messages`.
 
-.. admonition:: The Jinja Context Behavior
+.. admonition:: Hành vi Context Jinja
 
-   These variables are added to the context of variables, they are not
-   global variables.  The difference is that by default these will not
-   show up in the context of imported templates.  This is partially caused
-   by performance considerations, partially to keep things explicit.
+   Các biến này được thêm vào context của các biến, chúng không phải là
+   biến toàn cục. Sự khác biệt là theo mặc định chúng sẽ không
+   xuất hiện trong context của các template được import. Điều này một phần do
+   các cân nhắc về hiệu suất, một phần để giữ mọi thứ rõ ràng.
 
-   What does this mean for you?  If you have a macro you want to import,
-   that needs to access the request object you have two possibilities:
+   Điều này có nghĩa gì đối với bạn? Nếu bạn có một macro bạn muốn import,
+   cần truy cập đối tượng request, bạn có hai khả năng:
 
-   1.   you explicitly pass the request to the macro as parameter, or
-        the attribute of the request object you are interested in.
-   2.   you import the macro "with context".
+   1.   bạn truyền rõ ràng request cho macro làm tham số, hoặc
+        thuộc tính của đối tượng request mà bạn quan tâm.
+   2.   bạn import macro "with context".
 
-   Importing with context looks like this:
+   Import với context trông như thế này:
 
    .. sourcecode:: jinja
 
       {% from '_helpers.html' import my_macro with context %}
 
 
-Controlling Autoescaping
-------------------------
+Kiểm soát Autoescaping
+-----------------------
 
-Autoescaping is the concept of automatically escaping special characters
-for you.  Special characters in the sense of HTML (or XML, and thus XHTML)
-are ``&``, ``>``, ``<``, ``"`` as well as ``'``.  Because these characters
-carry specific meanings in documents on their own you have to replace them
-by so called "entities" if you want to use them for text.  Not doing so
-would not only cause user frustration by the inability to use these
-characters in text, but can also lead to security problems.  (see
+Autoescaping là khái niệm tự động escape các ký tự đặc biệt
+cho bạn. Các ký tự đặc biệt theo nghĩa của HTML (hoặc XML, và do đó XHTML)
+là ``&``, ``>``, ``<``, ``"`` cũng như ``'``. Bởi vì các ký tự này
+mang ý nghĩa cụ thể trong các tài liệu riêng của chúng, bạn phải thay thế chúng
+bằng cái gọi là "entity" nếu bạn muốn sử dụng chúng cho văn bản. Không làm như vậy
+sẽ không chỉ gây ra sự thất vọng của người dùng do không thể sử dụng các
+ký tự này trong văn bản, mà còn có thể dẫn đến các vấn đề bảo mật. (xem
 :ref:`security-xss`)
 
-Sometimes however you will need to disable autoescaping in templates.
-This can be the case if you want to explicitly inject HTML into pages, for
-example if they come from a system that generates secure HTML like a
-markdown to HTML converter.
+Tuy nhiên đôi khi bạn sẽ cần tắt autoescaping trong các template.
+Điều này có thể là trường hợp nếu bạn muốn chèn HTML một cách rõ ràng vào các trang, ví dụ
+nếu chúng đến từ một hệ thống tạo HTML an toàn như một
+bộ chuyển đổi markdown sang HTML.
 
-There are three ways to accomplish that:
+Có ba cách để thực hiện điều đó:
 
--   In the Python code, wrap the HTML string in a :class:`~markupsafe.Markup`
-    object before passing it to the template.  This is in general the
-    recommended way.
--   Inside the template, use the ``|safe`` filter to explicitly mark a
-    string as safe HTML (``{{ myvariable|safe }}``)
--   Temporarily disable the autoescape system altogether.
+-   Trong mã Python, wrap chuỗi HTML trong một đối tượng :class:`~markupsafe.Markup`
+    trước khi truyền nó cho template. Đây nói chung là
+    cách được khuyến nghị.
+-   Bên trong template, sử dụng filter ``|safe`` để đánh dấu rõ ràng một
+    chuỗi là HTML an toàn (``{{ myvariable|safe }}``)
+-   Tạm thời tắt hệ thống autoescape hoàn toàn.
 
-To disable the autoescape system in templates, you can use the ``{%
-autoescape %}`` block:
+Để tắt hệ thống autoescape trong các template, bạn có thể sử dụng khối ``{%
+autoescape %}``:
 
 .. sourcecode:: html+jinja
 
@@ -132,19 +132,19 @@ autoescape %}`` block:
         <p>{{ will_not_be_escaped }}
     {% endautoescape %}
 
-Whenever you do this, please be very cautious about the variables you are
-using in this block.
+Bất cứ khi nào bạn làm điều này, hãy rất cẩn thận về các biến bạn đang
+sử dụng trong khối này.
 
 .. _registering-filters:
 
-Registering Filters, Tests, and Globals
----------------------------------------
+Đăng ký Filter, Test, và Global
+--------------------------------
 
-The Flask app and blueprints provide decorators and methods to register your own
-filters, tests, and global functions for use in Jinja templates. They all follow
-the same pattern, so the following examples only discuss filters.
+Ứng dụng Flask và blueprint cung cấp decorator và phương thức để đăng ký
+filter, test, và hàm toàn cục của riêng bạn để sử dụng trong các template Jinja. Tất cả chúng đều tuân theo
+cùng một mẫu, vì vậy các ví dụ sau chỉ thảo luận về filter.
 
-Decorate a function with :meth:`~.Flask.template_filter` to register it as a
+Decorate một hàm với :meth:`~.Flask.template_filter` để đăng ký nó làm một
 template filter.
 
 .. code-block:: python
@@ -158,8 +158,8 @@ template filter.
     {% for item in data | reverse %}
     {% endfor %}
 
-By default it will use the name of the function as the name of the filter, but
-that can be changed by passing a name to the decorator.
+Theo mặc định, nó sẽ sử dụng tên của hàm làm tên của filter, nhưng
+điều đó có thể được thay đổi bằng cách truyền một tên cho decorator.
 
 .. code-block:: python
 
@@ -167,8 +167,8 @@ that can be changed by passing a name to the decorator.
     def reverse_filter(s):
         return reversed(s)
 
-A filter can be registered separately using :meth:`~.Flask.add_template_filter`.
-The name is optional and will use the function name if not given.
+Một filter có thể được đăng ký riêng biệt bằng cách sử dụng :meth:`~.Flask.add_template_filter`.
+Tên là tùy chọn và sẽ sử dụng tên hàm nếu không được cung cấp.
 
 .. code-block:: python
 
@@ -177,41 +177,41 @@ The name is optional and will use the function name if not given.
 
     app.add_template_filter(reverse_filter, "reverse")
 
-For template tests, use the :meth:`~.Flask.template_test` decorator or
-:meth:`~.Flask.add_template_test` method. For template global functions, use the
-:meth:`~.Flask.template_global` decorator or :meth:`~.Flask.add_template_global`
-method.
+Đối với template test, sử dụng decorator :meth:`~.Flask.template_test` hoặc
+phương thức :meth:`~.Flask.add_template_test`. Đối với các hàm toàn cục template, sử dụng
+decorator :meth:`~.Flask.template_global` hoặc phương thức :meth:`~.Flask.add_template_global`
+.
 
-The same methods also exist on :class:`.Blueprint`, prefixed with ``app_`` to
-indicate that the registered functions will be avaialble to all templates, not
-only when rendering from within the blueprint.
+Các phương thức tương tự cũng tồn tại trên :class:`.Blueprint`, được tiền tố với ``app_`` để
+chỉ ra rằng các hàm được đăng ký sẽ có sẵn cho tất cả các template, không
+chỉ khi rendering từ trong blueprint.
 
-The Jinja environment is also available as :attr:`~.Flask.jinja_env`. It may be
-modified directly, as you would when using Jinja outside Flask.
+Môi trường Jinja cũng có sẵn dưới dạng :attr:`~.Flask.jinja_env`. Nó có thể được
+sửa đổi trực tiếp, như bạn sẽ làm khi sử dụng Jinja bên ngoài Flask.
 
 
-Context Processors
-------------------
+Context Processor
+-----------------
 
-To inject new variables automatically into the context of a template,
-context processors exist in Flask.  Context processors run before the
-template is rendered and have the ability to inject new values into the
-template context.  A context processor is a function that returns a
-dictionary.  The keys and values of this dictionary are then merged with
-the template context, for all templates in the app::
+Để chèn các biến mới tự động vào context của một template,
+các context processor tồn tại trong Flask. Context processor chạy trước khi
+template được render và có khả năng chèn các giá trị mới vào
+context template. Một context processor là một hàm trả về một
+dictionary. Các khóa và giá trị của dictionary này sau đó được hợp nhất với
+context template, cho tất cả các template trong ứng dụng::
 
     @app.context_processor
     def inject_user():
         return dict(user=g.user)
 
-The context processor above makes a variable called `user` available in
-the template with the value of `g.user`.  This example is not very
-interesting because `g` is available in templates anyways, but it gives an
-idea how this works.
+Context processor ở trên làm cho một biến có tên `user` có sẵn trong
+template với giá trị của `g.user`. Ví dụ này không thú vị lắm
+vì `g` có sẵn trong các template, nhưng nó cung cấp một
+ý tưởng về cách điều này hoạt động.
 
-Variables are not limited to values; a context processor can also make
-functions available to templates (since Python allows passing around
-functions)::
+Các biến không giới hạn ở các giá trị; một context processor cũng có thể làm cho
+các hàm có sẵn cho các template (vì Python cho phép truyền xung quanh
+các hàm)::
 
     @app.context_processor
     def utility_processor():
@@ -219,28 +219,28 @@ functions)::
             return f"{amount:.2f}{currency}"
         return dict(format_price=format_price)
 
-The context processor above makes the `format_price` function available to all
-templates::
+Context processor ở trên làm cho hàm `format_price` có sẵn cho tất cả
+các template::
 
     {{ format_price(0.33) }}
 
-You could also build `format_price` as a template filter (see
-:ref:`registering-filters`), but this demonstrates how to pass functions in a
+Bạn cũng có thể xây dựng `format_price` làm một template filter (xem
+:ref:`registering-filters`), nhưng điều này chứng minh cách truyền các hàm trong một
 context processor.
 
 Streaming
 ---------
 
-It can be useful to not render the whole template as one complete
-string, instead render it as a stream, yielding smaller incremental
-strings. This can be used for streaming HTML in chunks to speed up
-initial page load, or to save memory when rendering a very large
-template.
+Có thể hữu ích khi không render toàn bộ template thành một chuỗi hoàn chỉnh
+, thay vào đó render nó dưới dạng một stream, yielding các chuỗi tăng dần nhỏ hơn
+. Điều này có thể được sử dụng để streaming HTML theo từng chunk để tăng tốc
+tải trang ban đầu, hoặc để tiết kiệm bộ nhớ khi rendering một template
+rất lớn.
 
-The Jinja template engine supports rendering a template piece
-by piece, returning an iterator of strings. Flask provides the
-:func:`~flask.stream_template` and :func:`~flask.stream_template_string`
-functions to make this easier to use.
+Template engine Jinja hỗ trợ rendering một template từng
+phần, trả về một iterator của các chuỗi. Flask cung cấp
+các hàm :func:`~flask.stream_template` và :func:`~flask.stream_template_string`
+để làm cho điều này dễ sử dụng hơn.
 
 .. code-block:: python
 
@@ -250,6 +250,6 @@ functions to make this easier to use.
     def timeline():
         return stream_template("timeline.html")
 
-These functions automatically apply the
-:func:`~flask.stream_with_context` wrapper if a request is active, so
-that it remains available in the template.
+Các hàm này tự động áp dụng
+wrapper :func:`~flask.stream_with_context` nếu một request đang hoạt động, để
+nó vẫn có sẵn trong template.

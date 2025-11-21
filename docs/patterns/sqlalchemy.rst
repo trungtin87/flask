@@ -1,23 +1,23 @@
-SQLAlchemy in Flask
-===================
+SQLAlchemy trong Flask
+======================
 
-Many people prefer `SQLAlchemy`_ for database access.  In this case it's
-encouraged to use a package instead of a module for your flask application
-and drop the models into a separate module (:doc:`packages`). While that
-is not necessary, it makes a lot of sense.
+Nhiều người thích `SQLAlchemy`_ để truy cập cơ sở dữ liệu. Trong trường hợp này, nên
+sử dụng một package thay vì một module cho ứng dụng flask của bạn
+và đặt các model vào một module riêng biệt (:doc:`packages`). Mặc dù điều đó
+không cần thiết, nhưng nó rất có ý nghĩa.
 
-There are four very common ways to use SQLAlchemy.  I will outline each
-of them here:
+Có bốn cách rất phổ biến để sử dụng SQLAlchemy. Tôi sẽ phác thảo từng
+cái ở đây:
 
 Flask-SQLAlchemy Extension
---------------------------
+---------------------------
 
-Because SQLAlchemy is a common database abstraction layer and object
-relational mapper that requires a little bit of configuration effort,
-there is a Flask extension that handles that for you.  This is recommended
-if you want to get started quickly.
+Bởi vì SQLAlchemy là một lớp trừu tượng cơ sở dữ liệu phổ biến và object
+relational mapper yêu cầu một chút nỗ lực cấu hình,
+có một extension Flask xử lý điều đó cho bạn. Điều này được khuyến nghị
+nếu bạn muốn bắt đầu nhanh chóng.
 
-You can download `Flask-SQLAlchemy`_ from `PyPI
+Bạn có thể tải xuống `Flask-SQLAlchemy`_ từ `PyPI
 <https://pypi.org/project/Flask-SQLAlchemy/>`_.
 
 .. _Flask-SQLAlchemy: https://flask-sqlalchemy.palletsprojects.com/
@@ -26,12 +26,12 @@ You can download `Flask-SQLAlchemy`_ from `PyPI
 Declarative
 -----------
 
-The declarative extension in SQLAlchemy is the most recent method of using
-SQLAlchemy.  It allows you to define tables and models in one go, similar
-to how Django works.  In addition to the following text I recommend the
-official documentation on the `declarative`_ extension.
+Extension declarative trong SQLAlchemy là phương pháp gần đây nhất để sử dụng
+SQLAlchemy. Nó cho phép bạn định nghĩa các bảng và model trong một lần, tương tự
+như cách Django hoạt động. Ngoài văn bản sau, tôi khuyên bạn nên đọc
+tài liệu chính thức về extension `declarative`_.
 
-Here's the example :file:`database.py` module for your application::
+Đây là module :file:`database.py` ví dụ cho ứng dụng của bạn::
 
     from sqlalchemy import create_engine
     from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
@@ -44,22 +44,22 @@ Here's the example :file:`database.py` module for your application::
     Base.query = db_session.query_property()
 
     def init_db():
-        # import all modules here that might define models so that
-        # they will be registered properly on the metadata.  Otherwise
-        # you will have to import them first before calling init_db()
+        # import tất cả các module ở đây có thể định nghĩa model để
+        # chúng sẽ được đăng ký đúng cách trên metadata. Nếu không
+        # bạn sẽ phải import chúng trước khi gọi init_db()
         import yourapplication.models
         Base.metadata.create_all(bind=engine)
 
-To define your models, just subclass the `Base` class that was created by
-the code above.  If you are wondering why we don't have to care about
-threads here (like we did in the SQLite3 example above with the
-:data:`~flask.g` object): that's because SQLAlchemy does that for us
-already with the :class:`~sqlalchemy.orm.scoped_session`.
+Để định nghĩa các model của bạn, chỉ cần phân lớp class `Base` được tạo bởi
+mã ở trên. Nếu bạn đang tự hỏi tại sao chúng ta không phải quan tâm đến
+các thread ở đây (như chúng ta đã làm trong ví dụ SQLite3 ở trên với
+đối tượng :data:`~flask.g`): đó là vì SQLAlchemy đã làm điều đó cho chúng ta
+với :class:`~sqlalchemy.orm.scoped_session`.
 
-To use SQLAlchemy in a declarative way with your application, you just
-have to put the following code into your application module.  Flask will
-automatically remove database sessions at the end of the request or
-when the application shuts down::
+Để sử dụng SQLAlchemy theo cách declarative với ứng dụng của bạn, bạn chỉ
+cần đặt mã sau vào module ứng dụng của bạn. Flask sẽ
+tự động xóa các phiên cơ sở dữ liệu ở cuối request hoặc
+khi ứng dụng tắt::
 
     from yourapplication.database import db_session
 
@@ -67,7 +67,7 @@ when the application shuts down::
     def shutdown_session(exception=None):
         db_session.remove()
 
-Here is an example model (put this into :file:`models.py`, e.g.)::
+Đây là một model ví dụ (đặt cái này vào :file:`models.py`, ví dụ)::
 
     from sqlalchemy import Column, Integer, String
     from yourapplication.database import Base
@@ -85,12 +85,12 @@ Here is an example model (put this into :file:`models.py`, e.g.)::
         def __repr__(self):
             return f'<User {self.name!r}>'
 
-To create the database you can use the `init_db` function:
+Để tạo cơ sở dữ liệu bạn có thể sử dụng hàm `init_db`:
 
 >>> from yourapplication.database import init_db
 >>> init_db()
 
-You can insert entries into the database like this:
+Bạn có thể chèn các mục vào cơ sở dữ liệu như thế này:
 
 >>> from yourapplication.database import db_session
 >>> from yourapplication.models import User
@@ -98,7 +98,7 @@ You can insert entries into the database like this:
 >>> db_session.add(u)
 >>> db_session.commit()
 
-Querying is simple as well:
+Truy vấn cũng đơn giản:
 
 >>> User.query.all()
 [<User 'admin'>]
@@ -109,16 +109,16 @@ Querying is simple as well:
 .. _declarative: https://docs.sqlalchemy.org/en/latest/orm/extensions/declarative/
 
 Manual Object Relational Mapping
---------------------------------
+---------------------------------
 
-Manual object relational mapping has a few upsides and a few downsides
-versus the declarative approach from above.  The main difference is that
-you define tables and classes separately and map them together.  It's more
-flexible but a little more to type.  In general it works like the
-declarative approach, so make sure to also split up your application into
-multiple modules in a package.
+Manual object relational mapping có một vài ưu điểm và một vài nhược điểm
+so với cách tiếp cận declarative ở trên. Sự khác biệt chính là
+bạn định nghĩa các bảng và class riêng biệt và ánh xạ chúng lại với nhau. Nó linh hoạt hơn
+nhưng phải gõ nhiều hơn một chút. Nói chung nó hoạt động giống như
+cách tiếp cận declarative, vì vậy hãy chắc chắn cũng chia ứng dụng của bạn thành
+nhiều module trong một package.
 
-Here is an example :file:`database.py` module for your application::
+Đây là một module :file:`database.py` ví dụ cho ứng dụng của bạn::
 
     from sqlalchemy import create_engine, MetaData
     from sqlalchemy.orm import scoped_session, sessionmaker
@@ -131,8 +131,8 @@ Here is an example :file:`database.py` module for your application::
     def init_db():
         metadata.create_all(bind=engine)
 
-As in the declarative approach, you need to close the session after each app
-context. Put this into your application module::
+Như trong cách tiếp cận declarative, bạn cần đóng phiên sau mỗi app
+context. Đặt cái này vào module ứng dụng của bạn::
 
     from yourapplication.database import db_session
 
@@ -140,7 +140,7 @@ context. Put this into your application module::
     def shutdown_session(exception=None):
         db_session.remove()
 
-Here is an example table and model (put this into :file:`models.py`)::
+Đây là một bảng và model ví dụ (đặt cái này vào :file:`models.py`)::
 
     from sqlalchemy import Table, Column, Integer, String
     from sqlalchemy.orm import mapper
@@ -163,51 +163,51 @@ Here is an example table and model (put this into :file:`models.py`)::
     )
     mapper(User, users)
 
-Querying and inserting works exactly the same as in the example above.
+Truy vấn và chèn hoạt động chính xác giống như trong ví dụ trên.
 
 
 SQL Abstraction Layer
 ---------------------
 
-If you just want to use the database system (and SQL) abstraction layer
-you basically only need the engine::
+Nếu bạn chỉ muốn sử dụng lớp trừu tượng hệ thống cơ sở dữ liệu (và SQL)
+bạn về cơ bản chỉ cần engine::
 
     from sqlalchemy import create_engine, MetaData, Table
 
     engine = create_engine('sqlite:////tmp/test.db')
     metadata = MetaData(bind=engine)
 
-Then you can either declare the tables in your code like in the examples
-above, or automatically load them::
+Sau đó bạn có thể khai báo các bảng trong mã của bạn như trong các ví dụ
+ở trên, hoặc tự động tải chúng::
 
     from sqlalchemy import Table
 
     users = Table('users', metadata, autoload=True)
 
-To insert data you can use the `insert` method.  We have to get a
-connection first so that we can use a transaction:
+Để chèn dữ liệu bạn có thể sử dụng phương thức `insert`. Chúng ta phải lấy một
+kết nối trước để chúng ta có thể sử dụng một giao dịch:
 
 >>> con = engine.connect()
 >>> con.execute(users.insert(), name='admin', email='admin@localhost')
 
-SQLAlchemy will automatically commit for us.
+SQLAlchemy sẽ tự động commit cho chúng ta.
 
-To query your database, you use the engine directly or use a connection:
+Để truy vấn cơ sở dữ liệu của bạn, bạn sử dụng engine trực tiếp hoặc sử dụng một kết nối:
 
 >>> users.select(users.c.id == 1).execute().first()
 (1, 'admin', 'admin@localhost')
 
-These results are also dict-like tuples:
+Các kết quả này cũng là các tuple giống dict:
 
 >>> r = users.select(users.c.id == 1).execute().first()
 >>> r['name']
 'admin'
 
-You can also pass strings of SQL statements to the
-:meth:`~sqlalchemy.engine.base.Connection.execute` method:
+Bạn cũng có thể truyền các chuỗi câu lệnh SQL cho phương thức
+:meth:`~sqlalchemy.engine.base.Connection.execute`:
 
 >>> engine.execute('select * from users where id = :1', [1]).first()
 (1, 'admin', 'admin@localhost')
 
-For more information about SQLAlchemy, head over to the
+Để biết thêm thông tin về SQLAlchemy, hãy truy cập
 `website <https://www.sqlalchemy.org/>`_.

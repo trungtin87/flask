@@ -1,46 +1,46 @@
 Signals
 =======
 
-Signals are a lightweight way to notify subscribers of certain events during the
-lifecycle of the application and each request. When an event occurs, it emits the
-signal, which calls each subscriber.
+Signals là một cách nhẹ nhàng để thông báo cho các subscriber về các sự kiện nhất định trong
+vòng đời của ứng dụng và mỗi request. Khi một sự kiện xảy ra, nó phát ra
+signal, signal này gọi mỗi subscriber.
 
-Signals are implemented by the `Blinker`_ library. See its documentation for detailed
-information. Flask provides some built-in signals. Extensions may provide their own.
+Signals được triển khai bởi thư viện `Blinker`_. Xem tài liệu của nó để biết thông tin
+chi tiết. Flask cung cấp một số signals tích hợp. Các tiện ích mở rộng có thể cung cấp signals của riêng chúng.
 
-Many signals mirror Flask's decorator-based callbacks with similar names. For example,
-the :data:`.request_started` signal is similar to the :meth:`~.Flask.before_request`
-decorator. The advantage of signals over handlers is that they can be subscribed to
-temporarily, and can't directly affect the application. This is useful for testing,
-metrics, auditing, and more. For example, if you want to know what templates were
-rendered at what parts of what requests, there is a signal that will notify you of that
-information.
-
-
-Core Signals
-------------
-
-See :ref:`core-signals-list` for a list of all built-in signals. The :doc:`lifecycle`
-page also describes the order that signals and decorators execute.
+Nhiều signals phản ánh các callback dựa trên decorator của Flask với tên tương tự. Ví dụ,
+signal :data:`.request_started` tương tự như decorator :meth:`~.Flask.before_request`.
+Ưu điểm của signals so với các trình xử lý là chúng có thể được đăng ký
+tạm thời, và không thể ảnh hưởng trực tiếp đến ứng dụng. Điều này hữu ích cho việc kiểm thử,
+số liệu (metrics), kiểm toán, và hơn thế nữa. Ví dụ, nếu bạn muốn biết những template nào đã được
+render ở những phần nào của những request nào, có một signal sẽ thông báo cho bạn về
+thông tin đó.
 
 
-Subscribing to Signals
-----------------------
+Signals Cốt lõi
+---------------
 
-To subscribe to a signal, you can use the
-:meth:`~blinker.base.Signal.connect` method of a signal.  The first
-argument is the function that should be called when the signal is emitted,
-the optional second argument specifies a sender.  To unsubscribe from a
-signal, you can use the :meth:`~blinker.base.Signal.disconnect` method.
+Xem :ref:`core-signals-list` để biết danh sách tất cả các signals tích hợp. Trang :doc:`lifecycle`
+cũng mô tả thứ tự mà signals và decorators thực thi.
 
-For all core Flask signals, the sender is the application that issued the
-signal.  When you subscribe to a signal, be sure to also provide a sender
-unless you really want to listen for signals from all applications.  This is
-especially true if you are developing an extension.
 
-For example, here is a helper context manager that can be used in a unit test
-to determine which templates were rendered and what variables were passed
-to the template::
+Đăng ký Signals
+---------------
+
+Để đăng ký một signal, bạn có thể sử dụng phương thức
+:meth:`~blinker.base.Signal.connect` của một signal. Đối số đầu tiên
+là hàm sẽ được gọi khi signal được phát ra,
+đối số thứ hai tùy chọn chỉ định một người gửi (sender). Để hủy đăng ký khỏi một
+signal, bạn có thể sử dụng phương thức :meth:`~blinker.base.Signal.disconnect`.
+
+Đối với tất cả các signals cốt lõi của Flask, người gửi là ứng dụng đã phát hành
+signal. Khi bạn đăng ký một signal, hãy chắc chắn cũng cung cấp một người gửi
+trừ khi bạn thực sự muốn lắng nghe signals từ tất cả các ứng dụng. Điều này
+đặc biệt đúng nếu bạn đang phát triển một tiện ích mở rộng.
+
+Ví dụ, đây là một trình quản lý ngữ cảnh (context manager) trợ giúp có thể được sử dụng trong một bài kiểm thử đơn vị
+để xác định template nào đã được render và biến nào đã được truyền
+cho template::
 
     from flask import template_rendered
     from contextlib import contextmanager
@@ -56,7 +56,7 @@ to the template::
         finally:
             template_rendered.disconnect(record, app)
 
-This can now easily be paired with a test client::
+Bây giờ cái này có thể dễ dàng được ghép nối với một test client::
 
     with captured_templates(app) as templates:
         rv = app.test_client().get('/')
@@ -66,19 +66,19 @@ This can now easily be paired with a test client::
         assert template.name == 'index.html'
         assert len(context['items']) == 10
 
-Make sure to subscribe with an extra ``**extra`` argument so that your
-calls don't fail if Flask introduces new arguments to the signals.
+Hãy chắc chắn đăng ký với một đối số ``**extra`` bổ sung để
+các cuộc gọi của bạn không thất bại nếu Flask giới thiệu các đối số mới cho các signals.
 
-All the template rendering in the code issued by the application `app`
-in the body of the ``with`` block will now be recorded in the `templates`
-variable.  Whenever a template is rendered, the template object as well as
-context are appended to it.
+Tất cả việc render template trong mã được phát hành bởi ứng dụng `app`
+trong thân của khối ``with`` bây giờ sẽ được ghi lại trong biến `templates`.
+Bất cứ khi nào một template được render, đối tượng template cũng như
+context được thêm vào nó.
 
-Additionally there is a convenient helper method
-(:meth:`~blinker.base.Signal.connected_to`)  that allows you to
-temporarily subscribe a function to a signal with a context manager on
-its own.  Because the return value of the context manager cannot be
-specified that way, you have to pass the list in as an argument::
+Ngoài ra còn có một phương thức trợ giúp thuận tiện
+(:meth:`~blinker.base.Signal.connected_to`) cho phép bạn
+tạm thời đăng ký một hàm vào một signal với một trình quản lý ngữ cảnh của
+riêng nó. Bởi vì giá trị trả về của trình quản lý ngữ cảnh không thể được
+chỉ định theo cách đó, bạn phải truyền danh sách vào như một đối số::
 
     from flask import template_rendered
 
@@ -87,41 +87,41 @@ specified that way, you have to pass the list in as an argument::
             recorded.append((template, context))
         return template_rendered.connected_to(record, app)
 
-The example above would then look like this::
+Ví dụ trên sau đó sẽ trông như thế này::
 
     templates = []
     with captured_templates(app, templates, **extra):
         ...
         template, context = templates[0]
 
-Creating Signals
-----------------
+Tạo Signals
+-----------
 
-If you want to use signals in your own application, you can use the
-blinker library directly.  The most common use case are named signals in a
-custom :class:`~blinker.base.Namespace`.  This is what is recommended
-most of the time::
+Nếu bạn muốn sử dụng signals trong ứng dụng của riêng bạn, bạn có thể sử dụng
+thư viện blinker trực tiếp. Trường hợp sử dụng phổ biến nhất là các signals được đặt tên trong một
+:class:`~blinker.base.Namespace` tùy chỉnh. Đây là những gì được khuyến nghị
+hầu hết thời gian::
 
     from blinker import Namespace
     my_signals = Namespace()
 
-Now you can create new signals like this::
+Bây giờ bạn có thể tạo các signals mới như thế này::
 
     model_saved = my_signals.signal('model-saved')
 
-The name for the signal here makes it unique and also simplifies
-debugging.  You can access the name of the signal with the
-:attr:`~blinker.base.NamedSignal.name` attribute.
+Tên cho signal ở đây làm cho nó duy nhất và cũng đơn giản hóa
+việc gỡ lỗi. Bạn có thể truy cập tên của signal với thuộc tính
+:attr:`~blinker.base.NamedSignal.name`.
 
 .. _signals-sending:
 
-Sending Signals
----------------
+Gửi Signals
+-----------
 
-If you want to emit a signal, you can do so by calling the
-:meth:`~blinker.base.Signal.send` method.  It accepts a sender as first
-argument and optionally some keyword arguments that are forwarded to the
-signal subscribers::
+Nếu bạn muốn phát ra một signal, bạn có thể làm như vậy bằng cách gọi phương thức
+:meth:`~blinker.base.Signal.send`. Nó chấp nhận một người gửi làm đối số đầu tiên
+và tùy chọn một số đối số từ khóa được chuyển tiếp đến các
+subscriber của signal::
 
     class Model(object):
         ...
@@ -129,32 +129,32 @@ signal subscribers::
         def save(self):
             model_saved.send(self)
 
-Try to always pick a good sender.  If you have a class that is emitting a
-signal, pass ``self`` as sender.  If you are emitting a signal from a random
-function, you can pass ``current_app._get_current_object()`` as sender.
+Cố gắng luôn chọn một người gửi tốt. Nếu bạn có một lớp đang phát ra một
+signal, hãy truyền ``self`` làm người gửi. Nếu bạn đang phát ra một signal từ một hàm
+ngẫu nhiên, bạn có thể truyền ``current_app._get_current_object()`` làm người gửi.
 
-.. admonition:: Passing Proxies as Senders
+.. admonition:: Truyền Proxy làm Người gửi
 
-   Never pass :data:`~flask.current_app` as sender to a signal.  Use
-   ``current_app._get_current_object()`` instead.  The reason for this is
-   that :data:`~flask.current_app` is a proxy and not the real application
-   object.
-
-
-Signals and Flask's Request Context
------------------------------------
-
-Context-local proxies are available between :data:`~flask.request_started` and
-:data:`~flask.request_finished`, so you can rely on :class:`flask.g` and others
-as needed. Note the limitations described in :ref:`signals-sending` and the
-:data:`~flask.request_tearing_down` signal.
+   Đừng bao giờ truyền :data:`~flask.current_app` làm người gửi cho một signal. Sử dụng
+   ``current_app._get_current_object()`` thay thế. Lý do cho điều này là
+   :data:`~flask.current_app` là một proxy và không phải là đối tượng ứng dụng
+   thực sự.
 
 
-Decorator Based Signal Subscriptions
+Signals và Request Context của Flask
 ------------------------------------
 
-You can also easily subscribe to signals by using the
-:meth:`~blinker.base.NamedSignal.connect_via` decorator::
+Các proxy context-local có sẵn giữa :data:`~flask.request_started` và
+:data:`~flask.request_finished`, vì vậy bạn có thể dựa vào :class:`flask.g` và các cái khác
+khi cần thiết. Lưu ý các hạn chế được mô tả trong :ref:`signals-sending` và
+signal :data:`~flask.request_tearing_down`.
+
+
+Đăng ký Signal Dựa trên Decorator
+---------------------------------
+
+Bạn cũng có thể dễ dàng đăng ký vào các signals bằng cách sử dụng decorator
+:meth:`~blinker.base.NamedSignal.connect_via`::
 
     from flask import template_rendered
 

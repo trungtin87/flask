@@ -1,28 +1,28 @@
-View Decorators
-===============
+View Decorator
+==============
 
-Python has a really interesting feature called function decorators.  This
-allows some really neat things for web applications.  Because each view in
-Flask is a function, decorators can be used to inject additional
-functionality to one or more functions.  The :meth:`~flask.Flask.route`
-decorator is the one you probably used already.  But there are use cases
-for implementing your own decorator.  For instance, imagine you have a
-view that should only be used by people that are logged in.  If a user
-goes to the site and is not logged in, they should be redirected to the
-login page.  This is a good example of a use case where a decorator is an
-excellent solution.
+Python có một tính năng thực sự thú vị gọi là function decorator. Điều này
+cho phép một số điều thực sự gọn gàng cho các ứng dụng web. Bởi vì mỗi view trong
+Flask là một hàm, decorator có thể được sử dụng để inject chức năng
+bổ sung vào một hoặc nhiều hàm. Decorator :meth:`~flask.Flask.route`
+là cái bạn có thể đã sử dụng rồi. Nhưng có các trường hợp sử dụng
+để triển khai decorator của riêng bạn. Ví dụ, hãy tưởng tượng bạn có một
+view chỉ nên được sử dụng bởi những người đã đăng nhập. Nếu một người dùng
+đến trang web và chưa đăng nhập, họ nên được chuyển hướng đến
+trang đăng nhập. Đây là một ví dụ tốt về một trường hợp sử dụng mà decorator là một
+giải pháp tuyệt vời.
 
 Login Required Decorator
 ------------------------
 
-So let's implement such a decorator.  A decorator is a function that
-wraps and replaces another function.  Since the original function is
-replaced, you need to remember to copy the original function's information
-to the new function.  Use :func:`functools.wraps` to handle this for you.
+Vì vậy, hãy triển khai một decorator như vậy. Một decorator là một hàm
+bao bọc và thay thế một hàm khác. Vì hàm gốc bị
+thay thế, bạn cần nhớ sao chép thông tin của hàm gốc
+sang hàm mới. Sử dụng :func:`functools.wraps` để xử lý điều này cho bạn.
 
-This example assumes that the login page is called ``'login'`` and that
-the current user is stored in ``g.user`` and is ``None`` if there is no-one
-logged in. ::
+Ví dụ này giả định rằng trang đăng nhập được gọi là ``'login'`` và
+người dùng hiện tại được lưu trữ trong ``g.user`` và là ``None`` nếu không có ai
+đăng nhập. ::
 
     from functools import wraps
     from flask import g, request, redirect, url_for
@@ -35,9 +35,9 @@ logged in. ::
             return f(*args, **kwargs)
         return decorated_function
 
-To use the decorator, apply it as innermost decorator to a view function.
-When applying further decorators, always remember
-that the :meth:`~flask.Flask.route` decorator is the outermost. ::
+Để sử dụng decorator, áp dụng nó như decorator trong cùng cho một view function.
+Khi áp dụng các decorator khác, luôn nhớ
+rằng decorator :meth:`~flask.Flask.route` là decorator ngoài cùng. ::
 
     @app.route('/secret_page')
     @login_required
@@ -45,10 +45,10 @@ that the :meth:`~flask.Flask.route` decorator is the outermost. ::
         pass
 
 .. note::
-    The ``next`` value will exist in ``request.args`` after a ``GET`` request for
-    the login page.  You'll have to pass it along when sending the ``POST`` request
-    from the login form.  You can do this with a hidden input tag, then retrieve it
-    from ``request.form`` when logging the user in. ::
+    Giá trị ``next`` sẽ tồn tại trong ``request.args`` sau một request ``GET`` cho
+    trang đăng nhập. Bạn sẽ phải truyền nó cùng khi gửi request ``POST``
+    từ form đăng nhập. Bạn có thể làm điều này với một thẻ input ẩn, sau đó lấy nó
+    từ ``request.form`` khi đăng nhập người dùng. ::
 
         <input type="hidden" value="{{ request.args.get('next', '') }}"/>
 
@@ -56,28 +56,28 @@ that the :meth:`~flask.Flask.route` decorator is the outermost. ::
 Caching Decorator
 -----------------
 
-Imagine you have a view function that does an expensive calculation and
-because of that you would like to cache the generated results for a
-certain amount of time.  A decorator would be nice for that.  We're
-assuming you have set up a cache like mentioned in :doc:`caching`.
+Hãy tưởng tượng bạn có một view function thực hiện một phép tính tốn kém và
+vì điều đó bạn muốn cache các kết quả được tạo ra trong một
+khoảng thời gian nhất định. Một decorator sẽ rất tốt cho điều đó. Chúng tôi
+giả định bạn đã thiết lập một cache như đã đề cập trong :doc:`caching`.
 
-Here is an example cache function.  It generates the cache key from a
-specific prefix (actually a format string) and the current path of the
-request.  Notice that we are using a function that first creates the
-decorator that then decorates the function.  Sounds awful? Unfortunately
-it is a little bit more complex, but the code should still be
-straightforward to read.
+Đây là một hàm cache ví dụ. Nó tạo ra cache key từ một
+tiền tố cụ thể (thực sự là một chuỗi định dạng) và đường dẫn hiện tại của
+request. Lưu ý rằng chúng ta đang sử dụng một hàm đầu tiên tạo
+decorator sau đó decorate hàm. Nghe có vẻ khủng khiếp? Thật không may
+nó phức tạp hơn một chút, nhưng mã vẫn nên
+dễ đọc.
 
-The decorated function will then work as follows
+Hàm được decorate sau đó sẽ hoạt động như sau
 
-1. get the unique cache key for the current request based on the current
-   path.
-2. get the value for that key from the cache. If the cache returned
-   something we will return that value.
-3. otherwise the original function is called and the return value is
-   stored in the cache for the timeout provided (by default 5 minutes).
+1. lấy cache key duy nhất cho request hiện tại dựa trên đường dẫn
+   hiện tại.
+2. lấy giá trị cho key đó từ cache. Nếu cache trả về
+   một cái gì đó chúng ta sẽ trả về giá trị đó.
+3. nếu không hàm gốc được gọi và giá trị trả về được
+   lưu trữ trong cache cho timeout được cung cấp (theo mặc định 5 phút).
 
-Here the code::
+Đây là mã::
 
     from functools import wraps
     from flask import request
@@ -96,18 +96,18 @@ Here the code::
             return decorated_function
         return decorator
 
-Notice that this assumes an instantiated ``cache`` object is available, see
+Lưu ý rằng điều này giả định một đối tượng ``cache`` được khởi tạo có sẵn, xem
 :doc:`caching`.
 
 
 Templating Decorator
 --------------------
 
-A common pattern invented by the TurboGears guys a while back is a
-templating decorator.  The idea of that decorator is that you return a
-dictionary with the values passed to the template from the view function
-and the template is automatically rendered.  With that, the following
-three examples do exactly the same::
+Một mẫu phổ biến được phát minh bởi các anh chàng TurboGears một thời gian trước là một
+templating decorator. Ý tưởng của decorator đó là bạn trả về một
+dictionary với các giá trị được truyền cho template từ view function
+và template được tự động render. Với điều đó, ba
+ví dụ sau làm chính xác điều tương tự::
 
     @app.route('/')
     def index():
@@ -123,15 +123,15 @@ three examples do exactly the same::
     def index():
         return dict(value=42)
 
-As you can see, if no template name is provided it will use the endpoint
-of the URL map with dots converted to slashes + ``'.html'``.  Otherwise
-the provided template name is used.  When the decorated function returns,
-the dictionary returned is passed to the template rendering function.  If
-``None`` is returned, an empty dictionary is assumed, if something else than
-a dictionary is returned we return it from the function unchanged.  That
-way you can still use the redirect function or return simple strings.
+Như bạn có thể thấy, nếu không có tên template nào được cung cấp, nó sẽ sử dụng endpoint
+của URL map với các dấu chấm được chuyển đổi thành dấu gạch chéo + ``'.html'``. Nếu không
+tên template được cung cấp sẽ được sử dụng. Khi hàm được decorate trả về,
+dictionary được trả về được truyền cho hàm render template. Nếu
+``None`` được trả về, một dictionary trống được giả định, nếu một cái gì đó khác ngoài
+một dictionary được trả về, chúng ta trả về nó từ hàm không thay đổi. Bằng cách đó
+bạn vẫn có thể sử dụng hàm redirect hoặc trả về các chuỗi đơn giản.
 
-Here is the code for that decorator::
+Đây là mã cho decorator đó::
 
     from functools import wraps
     from flask import request, render_template
@@ -156,9 +156,9 @@ Here is the code for that decorator::
 Endpoint Decorator
 ------------------
 
-When you want to use the werkzeug routing system for more flexibility you
-need to map the endpoint as defined in the :class:`~werkzeug.routing.Rule`
-to a view function. This is possible with this decorator. For example::
+Khi bạn muốn sử dụng hệ thống routing werkzeug để có tính linh hoạt hơn, bạn
+cần ánh xạ endpoint như được định nghĩa trong :class:`~werkzeug.routing.Rule`
+đến một view function. Điều này có thể thực hiện được với decorator này. Ví dụ::
 
     from flask import Flask
     from werkzeug.routing import Rule

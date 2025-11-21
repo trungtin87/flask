@@ -1,49 +1,49 @@
 gevent
 ======
 
-Prefer using :doc:`gunicorn` or :doc:`uwsgi` with gevent workers rather
-than using `gevent`_ directly. Gunicorn and uWSGI provide much more
-configurable and production-tested servers.
+Ưu tiên sử dụng :doc:`gunicorn` hoặc :doc:`uwsgi` với các worker gevent hơn
+là sử dụng `gevent`_ trực tiếp. Gunicorn và uWSGI cung cấp các máy chủ
+có thể cấu hình hơn nhiều và đã được kiểm thử trong sản xuất.
 
-`gevent`_ allows writing asynchronous, coroutine-based code that looks
-like standard synchronous Python. It uses `greenlet`_ to enable task
-switching without writing ``async/await`` or using ``asyncio``.
+`gevent`_ cho phép viết mã bất đồng bộ, dựa trên coroutine trông
+giống như Python đồng bộ tiêu chuẩn. Nó sử dụng `greenlet`_ để cho phép chuyển đổi
+tác vụ mà không cần viết ``async/await`` hoặc sử dụng ``asyncio``.
 
-:doc:`eventlet` is another library that does the same thing. Certain
-dependencies you have, or other considerations, may affect which of the
-two you choose to use.
+:doc:`eventlet` là một thư viện khác làm điều tương tự. Một số
+phụ thuộc bạn có, hoặc các cân nhắc khác, có thể ảnh hưởng đến việc bạn chọn sử dụng
+cái nào trong hai cái.
 
-gevent provides a WSGI server that can handle many connections at once
-instead of one per worker process. You must actually use gevent in your
-own code to see any benefit to using the server.
+gevent cung cấp một máy chủ WSGI có thể xử lý nhiều kết nối cùng một lúc
+thay vì một kết nối trên mỗi worker process. Bạn thực sự phải sử dụng gevent trong
+mã của riêng bạn để thấy bất kỳ lợi ích nào khi sử dụng máy chủ.
 
 .. _gevent: https://www.gevent.org/
 .. _greenlet: https://greenlet.readthedocs.io/en/latest/
 
 
-Installing
-----------
+Cài đặt
+-------
 
-When using gevent, greenlet>=1.0 is required, otherwise context locals
-such as ``request`` will not work as expected. When using PyPy,
-PyPy>=7.3.7 is required.
+Khi sử dụng gevent, yêu cầu greenlet>=1.0, nếu không các biến cục bộ ngữ cảnh
+như ``request`` sẽ không hoạt động như mong đợi. Khi sử dụng PyPy,
+yêu cầu PyPy>=7.3.7.
 
-Create a virtualenv, install your application, then install ``gevent``.
+Tạo một virtualenv, cài đặt ứng dụng của bạn, sau đó cài đặt ``gevent``.
 
 .. code-block:: text
 
     $ cd hello-app
     $ python -m venv .venv
     $ . .venv/bin/activate
-    $ pip install .  # install your application
+    $ pip install .  # cài đặt ứng dụng của bạn
     $ pip install gevent
 
 
-Running
--------
+Chạy
+----
 
-To use gevent to serve your application, write a script that imports its
-``WSGIServer``, as well as your app or app factory.
+Để sử dụng gevent để phục vụ ứng dụng của bạn, hãy viết một script import
+``WSGIServer`` của nó, cũng như ứng dụng hoặc app factory của bạn.
 
 .. code-block:: python
     :caption: ``wsgi.py``
@@ -59,22 +59,22 @@ To use gevent to serve your application, write a script that imports its
 
     $ python wsgi.py
 
-No output is shown when the server starts.
+Không có đầu ra nào được hiển thị khi máy chủ khởi động.
 
 
-Binding Externally
-------------------
+Binding Bên ngoài
+-----------------
 
-gevent should not be run as root because it would cause your
-application code to run as root, which is not secure. However, this
-means it will not be possible to bind to port 80 or 443. Instead, a
-reverse proxy such as :doc:`nginx` or :doc:`apache-httpd` should be used
-in front of gevent.
+gevent không nên được chạy dưới quyền root vì nó sẽ khiến
+mã ứng dụng của bạn chạy dưới quyền root, điều này không an toàn. Tuy nhiên, điều này
+có nghĩa là sẽ không thể bind vào cổng 80 hoặc 443. Thay vào đó, một
+reverse proxy như :doc:`nginx` hoặc :doc:`apache-httpd` nên được sử dụng
+phía trước gevent.
 
-You can bind to all external IPs on a non-privileged port by using
-``0.0.0.0`` in the server arguments shown in the previous section. Don't
-do this when using a reverse proxy setup, otherwise it will be possible
-to bypass the proxy.
+Bạn có thể bind vào tất cả các IP bên ngoài trên một cổng không có đặc quyền bằng cách sử dụng
+``0.0.0.0`` trong các đối số máy chủ được hiển thị trong phần trước. Đừng
+làm điều này khi sử dụng thiết lập reverse proxy, nếu không sẽ có thể
+bỏ qua proxy.
 
-``0.0.0.0`` is not a valid address to navigate to, you'd use a specific
-IP address in your browser.
+``0.0.0.0`` không phải là một địa chỉ hợp lệ để điều hướng đến, bạn sẽ sử dụng một
+địa chỉ IP cụ thể trong trình duyệt của mình.

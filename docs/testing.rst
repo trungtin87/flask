@@ -1,11 +1,11 @@
-Testing Flask Applications
-==========================
+Kiểm thử Ứng dụng Flask
+=======================
 
-Flask provides utilities for testing an application. This documentation
-goes over techniques for working with different parts of the application
-in tests.
+Flask cung cấp các tiện ích để kiểm thử một ứng dụng. Tài liệu này
+đi qua các kỹ thuật để làm việc với các phần khác nhau của ứng dụng
+trong các bài kiểm thử.
 
-We will use the `pytest`_ framework to set up and run our tests.
+Chúng ta sẽ sử dụng framework `pytest`_ để thiết lập và chạy các bài kiểm thử của mình.
 
 .. code-block:: text
 
@@ -13,43 +13,43 @@ We will use the `pytest`_ framework to set up and run our tests.
 
 .. _pytest: https://docs.pytest.org/
 
-The :doc:`tutorial </tutorial/index>` goes over how to write tests for
-100% coverage of the sample Flaskr blog application. See
-:doc:`the tutorial on tests </tutorial/tests>` for a detailed
-explanation of specific tests for an application.
+:doc:`Tutorial </tutorial/index>` đi qua cách viết các bài kiểm thử cho
+100% coverage của ứng dụng blog Flaskr mẫu. Xem
+:doc:`tutorial về các bài kiểm thử </tutorial/tests>` để biết
+giải thích chi tiết về các bài kiểm thử cụ thể cho một ứng dụng.
 
 
-Identifying Tests
------------------
+Xác định Bài kiểm thử
+---------------------
 
-Tests are typically located in the ``tests`` folder. Tests are functions
-that start with ``test_``, in Python modules that start with ``test_``.
-Tests can also be further grouped in classes that start with ``Test``.
+Các bài kiểm thử thường nằm trong thư mục ``tests``. Các bài kiểm thử là các hàm
+bắt đầu bằng ``test_``, trong các module Python bắt đầu bằng ``test_``.
+Các bài kiểm thử cũng có thể được nhóm thêm trong các class bắt đầu bằng ``Test``.
 
-It can be difficult to know what to test. Generally, try to test the
-code that you write, not the code of libraries that you use, since they
-are already tested. Try to extract complex behaviors as separate
-functions to test individually.
+Có thể khó biết nên kiểm thử cái gì. Nói chung, hãy cố gắng kiểm thử
+mã mà bạn viết, không phải mã của các thư viện mà bạn sử dụng, vì chúng
+đã được kiểm thử rồi. Hãy cố gắng trích xuất các hành vi phức tạp thành các
+hàm riêng biệt để kiểm thử riêng lẻ.
 
 
-Fixtures
---------
+Fixture
+-------
 
-Pytest *fixtures* allow writing pieces of code that are reusable across
-tests. A simple fixture returns a value, but a fixture can also do
-setup, yield a value, then do teardown. Fixtures for the application,
-test client, and CLI runner are shown below, they can be placed in
+Pytest *fixture* cho phép viết các đoạn mã có thể tái sử dụng qua
+các bài kiểm thử. Một fixture đơn giản trả về một giá trị, nhưng một fixture cũng có thể
+thiết lập, yield một giá trị, sau đó dọn dẹp. Các fixture cho ứng dụng,
+test client, và CLI runner được hiển thị bên dưới, chúng có thể được đặt trong
 ``tests/conftest.py``.
 
-If you're using an
-:doc:`application factory </patterns/appfactories>`, define an ``app``
-fixture to create and configure an app instance. You can add code before
-and after the ``yield`` to set up and tear down other resources, such as
-creating and clearing a database.
+Nếu bạn đang sử dụng một
+:doc:`application factory </patterns/appfactories>`, hãy định nghĩa một fixture ``app``
+để tạo và cấu hình một instance ứng dụng. Bạn có thể thêm mã trước
+và sau ``yield`` để thiết lập và dọn dẹp các tài nguyên khác, chẳng hạn như
+tạo và xóa một cơ sở dữ liệu.
 
-If you're not using a factory, you already have an app object you can
-import and configure directly. You can still use an ``app`` fixture to
-set up and tear down resources.
+Nếu bạn không sử dụng factory, bạn đã có một đối tượng app mà bạn có thể
+import và cấu hình trực tiếp. Bạn vẫn có thể sử dụng một fixture ``app`` để
+thiết lập và dọn dẹp tài nguyên.
 
 .. code-block:: python
 
@@ -80,26 +80,26 @@ set up and tear down resources.
         return app.test_cli_runner()
 
 
-Sending Requests with the Test Client
--------------------------------------
+Gửi Request với Test Client
+----------------------------
 
-The test client makes requests to the application without running a live
-server. Flask's client extends
-:doc:`Werkzeug's client <werkzeug:test>`, see those docs for additional
-information.
+Test client thực hiện các request đến ứng dụng mà không cần chạy một máy chủ
+live. Client của Flask mở rộng
+:doc:`client của Werkzeug <werkzeug:test>`, xem các tài liệu đó để biết thêm
+thông tin.
 
-The ``client`` has methods that match the common HTTP request methods,
-such as ``client.get()`` and ``client.post()``. They take many arguments
-for building the request; you can find the full documentation in
-:class:`~werkzeug.test.EnvironBuilder`. Typically you'll use ``path``,
-``query_string``, ``headers``, and ``data`` or ``json``.
+``client`` có các phương thức khớp với các phương thức HTTP request phổ biến,
+chẳng hạn như ``client.get()`` và ``client.post()``. Chúng nhận nhiều đối số
+để xây dựng request; bạn có thể tìm tài liệu đầy đủ trong
+:class:`~werkzeug.test.EnvironBuilder`. Thông thường bạn sẽ sử dụng ``path``,
+``query_string``, ``headers``, và ``data`` hoặc ``json``.
 
-To make a request, call the method the request should use with the path
-to the route to test. A :class:`~werkzeug.test.TestResponse` is returned
-to examine the response data. It has all the usual properties of a
-response object. You'll usually look at ``response.data``, which is the
-bytes returned by the view. If you want to use text, Werkzeug 2.1
-provides ``response.text``, or use ``response.get_data(as_text=True)``.
+Để thực hiện một request, hãy gọi phương thức mà request nên sử dụng với đường dẫn
+đến route để kiểm thử. Một :class:`~werkzeug.test.TestResponse` được trả về
+để kiểm tra dữ liệu phản hồi. Nó có tất cả các thuộc tính thông thường của một
+đối tượng phản hồi. Bạn thường sẽ xem ``response.data``, là
+byte được trả về bởi view. Nếu bạn muốn sử dụng văn bản, Werkzeug 2.1
+cung cấp ``response.text``, hoặc sử dụng ``response.get_data(as_text=True)``.
 
 .. code-block:: python
 
@@ -108,30 +108,30 @@ provides ``response.text``, or use ``response.get_data(as_text=True)``.
         assert b"<h2>Hello, World!</h2>" in response.data
 
 
-Pass a dict ``query_string={"key": "value", ...}`` to set arguments in
-the query string (after the ``?`` in the URL). Pass a dict
-``headers={}`` to set request headers.
+Truyền một dict ``query_string={"key": "value", ...}`` để đặt các đối số trong
+query string (sau ``?`` trong URL). Truyền một dict
+``headers={}`` để đặt các request header.
 
-To send a request body in a POST or PUT request, pass a value to
-``data``. If raw bytes are passed, that exact body is used. Usually,
-you'll pass a dict to set form data.
+Để gửi một request body trong một POST hoặc PUT request, hãy truyền một giá trị cho
+``data``. Nếu raw byte được truyền, body chính xác đó được sử dụng. Thông thường,
+bạn sẽ truyền một dict để đặt dữ liệu form.
 
 
-Form Data
-~~~~~~~~~
+Dữ liệu Form
+~~~~~~~~~~~~
 
-To send form data, pass a dict to ``data``. The ``Content-Type`` header
-will be set to ``multipart/form-data`` or
-``application/x-www-form-urlencoded`` automatically.
+Để gửi dữ liệu form, hãy truyền một dict cho ``data``. Header ``Content-Type``
+sẽ được đặt thành ``multipart/form-data`` hoặc
+``application/x-www-form-urlencoded`` tự động.
 
-If a value is a file object opened for reading bytes (``"rb"`` mode), it
-will be treated as an uploaded file. To change the detected filename and
-content type, pass a ``(file, filename, content_type)`` tuple. File
-objects will be closed after making the request, so they do not need to
-use the usual ``with open() as f:`` pattern.
+Nếu một giá trị là một file object được mở để đọc byte (chế độ ``"rb"``), nó
+sẽ được coi là một file được tải lên. Để thay đổi tên file và
+loại nội dung được phát hiện, hãy truyền một tuple ``(file, filename, content_type)``. Các file
+object sẽ được đóng sau khi thực hiện request, vì vậy chúng không cần
+sử dụng mẫu ``with open() as f:`` thông thường.
 
-It can be useful to store files in a ``tests/resources`` folder, then
-use ``pathlib.Path`` to get files relative to the current test file.
+Có thể hữu ích khi lưu trữ các file trong thư mục ``tests/resources``, sau đó
+sử dụng ``pathlib.Path`` để lấy các file tương đối với file kiểm thử hiện tại.
 
 .. code-block:: python
 
@@ -149,14 +149,14 @@ use ``pathlib.Path`` to get files relative to the current test file.
         assert response.status_code == 200
 
 
-JSON Data
-~~~~~~~~~
+Dữ liệu JSON
+~~~~~~~~~~~~
 
-To send JSON data, pass an object to ``json``. The ``Content-Type``
-header will be set to ``application/json`` automatically.
+Để gửi dữ liệu JSON, hãy truyền một đối tượng cho ``json``. Header ``Content-Type``
+sẽ được đặt thành ``application/json`` tự động.
 
-Similarly, if the response contains JSON data, the ``response.json``
-attribute will contain the deserialized object.
+Tương tự, nếu phản hồi chứa dữ liệu JSON, thuộc tính ``response.json``
+sẽ chứa đối tượng đã được deserialize.
 
 .. code-block:: python
 
@@ -176,18 +176,18 @@ attribute will contain the deserialized object.
         assert response.json["data"]["user"]["name"] == "Flask"
 
 
-Following Redirects
--------------------
+Theo dõi Redirect
+-----------------
 
-By default, the client does not make additional requests if the response
-is a redirect. By passing ``follow_redirects=True`` to a request method,
-the client will continue to make requests until a non-redirect response
-is returned.
+Theo mặc định, client không thực hiện các request bổ sung nếu phản hồi
+là một redirect. Bằng cách truyền ``follow_redirects=True`` cho một phương thức request,
+client sẽ tiếp tục thực hiện các request cho đến khi một phản hồi không redirect
+được trả về.
 
-:attr:`TestResponse.history <werkzeug.test.TestResponse.history>` is
-a tuple of the responses that led up to the final response. Each
-response has a :attr:`~werkzeug.test.TestResponse.request` attribute
-which records the request that produced that response.
+:attr:`TestResponse.history <werkzeug.test.TestResponse.history>` là
+một tuple của các phản hồi dẫn đến phản hồi cuối cùng. Mỗi
+phản hồi có một thuộc tính :attr:`~werkzeug.test.TestResponse.request`
+ghi lại request đã tạo ra phản hồi đó.
 
 .. code-block:: python
 
@@ -199,13 +199,13 @@ which records the request that produced that response.
         assert response.request.path == "/index"
 
 
-Accessing and Modifying the Session
------------------------------------
+Truy cập và Sửa đổi Session
+----------------------------
 
-To access Flask's context variables, mainly
-:data:`~flask.session`, use the client in a ``with`` statement.
-The app and request context will remain active *after* making a request,
-until the ``with`` block ends.
+Để truy cập các biến context của Flask, chủ yếu là
+:data:`~flask.session`, hãy sử dụng client trong một câu lệnh ``with``.
+App và request context sẽ vẫn hoạt động *sau khi* thực hiện một request,
+cho đến khi khối ``with`` kết thúc.
 
 .. code-block:: python
 
@@ -219,11 +219,11 @@ until the ``with`` block ends.
 
         # session is no longer accessible
 
-If you want to access or set a value in the session *before* making a
-request, use the client's
-:meth:`~flask.testing.FlaskClient.session_transaction` method in a
-``with`` statement. It returns a session object, and will save the
-session once the block ends.
+Nếu bạn muốn truy cập hoặc đặt một giá trị trong session *trước khi* thực hiện một
+request, hãy sử dụng phương thức
+:meth:`~flask.testing.FlaskClient.session_transaction` của client trong một
+câu lệnh ``with``. Nó trả về một đối tượng session, và sẽ lưu
+session khi khối kết thúc.
 
 .. code-block:: python
 
@@ -242,18 +242,18 @@ session once the block ends.
 
 .. _testing-cli:
 
-Running Commands with the CLI Runner
-------------------------------------
+Chạy Lệnh với CLI Runner
+-------------------------
 
-Flask provides :meth:`~flask.Flask.test_cli_runner` to create a
-:class:`~flask.testing.FlaskCliRunner`, which runs CLI commands in
-isolation and captures the output in a :class:`~click.testing.Result`
-object. Flask's runner extends :doc:`Click's runner <click:testing>`,
-see those docs for additional information.
+Flask cung cấp :meth:`~flask.Flask.test_cli_runner` để tạo một
+:class:`~flask.testing.FlaskCliRunner`, chạy các lệnh CLI trong
+isolation và bắt đầu ra trong một đối tượng :class:`~click.testing.Result`
+. Runner của Flask mở rộng :doc:`runner của Click <click:testing>`,
+xem các tài liệu đó để biết thêm thông tin.
 
-Use the runner's :meth:`~flask.testing.FlaskCliRunner.invoke` method to
-call commands in the same way they would be called with the ``flask``
-command from the command line.
+Sử dụng phương thức :meth:`~flask.testing.FlaskCliRunner.invoke` của runner để
+gọi các lệnh theo cách giống như chúng sẽ được gọi với lệnh ``flask``
+từ dòng lệnh.
 
 .. code-block:: python
 
@@ -272,18 +272,18 @@ command from the command line.
         assert "Flask" in result.output
 
 
-Tests that depend on an Active Context
---------------------------------------
+Bài kiểm thử phụ thuộc vào Context Hoạt động
+---------------------------------------------
 
-You may have functions that are called from views or commands, that expect an
-active :doc:`app context </appcontext>` because they access :data:`.request`,
-:data:`.session`, :data:`.g`, or :data:`.current_app`. Rather than testing them by
-making a request or invoking the command, you can create and activate a context
-directly.
+Bạn có thể có các hàm được gọi từ các view hoặc lệnh, mong đợi một
+:doc:`app context </appcontext>` hoạt động vì chúng truy cập :data:`.request`,
+:data:`.session`, :data:`.g`, hoặc :data:`.current_app`. Thay vì kiểm thử chúng bằng cách
+thực hiện một request hoặc gọi lệnh, bạn có thể tạo và kích hoạt một context
+trực tiếp.
 
-Use ``with app.app_context()`` to push an application context. For
-example, database extensions usually require an active app context to
-make queries.
+Sử dụng ``with app.app_context()`` để push một application context. Ví dụ
+, các extension cơ sở dữ liệu thường yêu cầu một app context hoạt động để
+thực hiện các truy vấn.
 
 .. code-block:: python
 
@@ -291,8 +291,8 @@ make queries.
         with app.app_context():
             post = db.session.query(Post).get(1)
 
-Use ``with app.test_request_context()`` to push a request context. It
-takes the same arguments as the test client's request methods.
+Sử dụng ``with app.test_request_context()`` để push một request context. Nó
+nhận các đối số giống như các phương thức request của test client.
 
 .. code-block:: python
 
@@ -305,10 +305,10 @@ takes the same arguments as the test client's request methods.
 
         assert messages["name"][0] == "Name cannot be empty."
 
-Creating a test request context doesn't run any of the Flask dispatching
-code, so ``before_request`` functions are not called. If you need to
-call these, usually it's better to make a full request instead. However,
-it's possible to call them manually.
+Tạo một test request context không chạy bất kỳ mã dispatching nào của Flask
+, vì vậy các hàm ``before_request`` không được gọi. Nếu bạn cần
+gọi chúng, thường tốt hơn là thực hiện một request đầy đủ thay thế. Tuy nhiên,
+có thể gọi chúng thủ công.
 
 .. code-block:: python
 

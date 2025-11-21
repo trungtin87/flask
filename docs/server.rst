@@ -1,56 +1,56 @@
 .. currentmodule:: flask
 
-Development Server
-==================
+Máy chủ Phát triển (Development Server)
+========================================
 
-Flask provides a ``run`` command to run the application with a development server. In
-debug mode, this server provides an interactive debugger and will reload when code is
-changed.
+Flask cung cấp lệnh ``run`` để chạy ứng dụng với một máy chủ phát triển. Trong
+chế độ debug, máy chủ này cung cấp một debugger tương tác và sẽ tải lại khi mã được
+thay đổi.
 
 .. warning::
 
-    Do not use the development server when deploying to production. It
-    is intended for use only during local development. It is not
-    designed to be particularly efficient, stable, or secure.
+    Không sử dụng máy chủ phát triển khi triển khai lên production. Nó
+    chỉ dành cho sử dụng trong quá trình phát triển cục bộ. Nó không
+    được thiết kế để đặc biệt hiệu quả, ổn định hoặc an toàn.
 
-    See :doc:`/deploying/index` for deployment options.
+    Xem :doc:`/deploying/index` để biết các tùy chọn triển khai.
 
-Command Line
-------------
+Dòng lệnh
+---------
 
-The ``flask run`` CLI command is the recommended way to run the development server. Use
-the ``--app`` option to point to your application, and the ``--debug`` option to enable
-debug mode.
+Lệnh CLI ``flask run`` là cách được khuyến nghị để chạy máy chủ phát triển. Sử dụng
+tùy chọn ``--app`` để trỏ đến ứng dụng của bạn, và tùy chọn ``--debug`` để bật
+chế độ debug.
 
 .. code-block:: text
 
     $ flask --app hello run --debug
 
-This enables debug mode, including the interactive debugger and reloader, and then
-starts the server on http://localhost:5000/. Use ``flask run --help`` to see the
-available options, and :doc:`/cli` for detailed instructions about configuring and using
-the CLI.
+Điều này bật chế độ debug, bao gồm debugger tương tác và reloader, và sau đó
+khởi động máy chủ trên http://localhost:5000/. Sử dụng ``flask run --help`` để xem các
+tùy chọn có sẵn, và :doc:`/cli` để biết hướng dẫn chi tiết về cấu hình và sử dụng
+CLI.
 
 
 .. _address-already-in-use:
 
-Address already in use
-~~~~~~~~~~~~~~~~~~~~~~
+Địa chỉ đã được sử dụng
+~~~~~~~~~~~~~~~~~~~~~~~
 
-If another program is already using port 5000, you'll see an ``OSError``
-when the server tries to start. It may have one of the following
-messages:
+Nếu một chương trình khác đã sử dụng cổng 5000, bạn sẽ thấy một ``OSError``
+khi máy chủ cố gắng khởi động. Nó có thể có một trong các
+thông báo sau:
 
 -   ``OSError: [Errno 98] Address already in use``
 -   ``OSError: [WinError 10013] An attempt was made to access a socket
     in a way forbidden by its access permissions``
 
-Either identify and stop the other program, or use
-``flask run --port 5001`` to pick a different port.
+Hãy xác định và dừng chương trình khác, hoặc sử dụng
+``flask run --port 5001`` để chọn một cổng khác.
 
-You can use ``netstat`` or ``lsof`` to identify what process id is using
-a port, then use other operating system tools stop that process. The
-following example shows that process id 6847 is using port 5000.
+Bạn có thể sử dụng ``netstat`` hoặc ``lsof`` để xác định process id nào đang sử dụng
+một cổng, sau đó sử dụng các công cụ hệ điều hành khác để dừng process đó.
+Ví dụ sau cho thấy process id 6847 đang sử dụng cổng 5000.
 
 .. tabs::
 
@@ -75,35 +75,35 @@ following example shows that process id 6847 is using port 5000.
             > netstat -ano | findstr 5000
             TCP 127.0.0.1:5000 0.0.0.0:0 LISTENING 6847
 
-macOS Monterey and later automatically starts a service that uses port
-5000. You can choose to disable this service instead of using a different port by
-searching for "AirPlay Receiver" in System Settings and toggling it off.
+macOS Monterey và các phiên bản mới hơn tự động khởi động một dịch vụ sử dụng cổng
+5000. Bạn có thể chọn tắt dịch vụ này thay vì sử dụng một cổng khác bằng cách
+tìm kiếm "AirPlay Receiver" trong System Settings và tắt nó đi.
 
 
-Deferred Errors on Reload
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Lỗi Hoãn lại khi Tải lại (Deferred Errors on Reload)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When using the ``flask run`` command with the reloader, the server will
-continue to run even if you introduce syntax errors or other
-initialization errors into the code. Accessing the site will show the
-interactive debugger for the error, rather than crashing the server.
+Khi sử dụng lệnh ``flask run`` với reloader, máy chủ sẽ
+tiếp tục chạy ngay cả khi bạn đưa ra lỗi cú pháp hoặc các
+lỗi khởi tạo khác vào mã. Truy cập trang web sẽ hiển thị
+debugger tương tác cho lỗi, thay vì làm crash máy chủ.
 
-If a syntax error is already present when calling ``flask run``, it will
-fail immediately and show the traceback rather than waiting until the
-site is accessed. This is intended to make errors more visible initially
-while still allowing the server to handle errors on reload.
+Nếu lỗi cú pháp đã tồn tại khi gọi ``flask run``, nó sẽ
+thất bại ngay lập tức và hiển thị traceback thay vì chờ đợi cho đến khi
+trang web được truy cập. Điều này nhằm làm cho các lỗi dễ thấy hơn ban đầu
+trong khi vẫn cho phép máy chủ xử lý các lỗi khi tải lại.
 
 
-In Code
--------
+Trong Mã
+---------
 
-The development server can also be started from Python with the :meth:`Flask.run`
-method. This method takes arguments similar to the CLI options to control the server.
-The main difference from the CLI command is that the server will crash if there are
-errors when reloading. ``debug=True`` can be passed to enable debug mode.
+Máy chủ phát triển cũng có thể được khởi động từ Python với phương thức :meth:`Flask.run`
+. Phương thức này nhận các đối số tương tự như các tùy chọn CLI để kiểm soát máy chủ.
+Sự khác biệt chính so với lệnh CLI là máy chủ sẽ crash nếu có
+lỗi khi tải lại. ``debug=True`` có thể được truyền để bật chế độ debug.
 
-Place the call in a main block, otherwise it will interfere when trying to import and
-run the application with a production server later.
+Đặt cuộc gọi trong một khối main, nếu không nó sẽ can thiệp khi cố gắng import và
+chạy ứng dụng với một máy chủ production sau này.
 
 .. code-block:: python
 

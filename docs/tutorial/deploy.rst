@@ -1,62 +1,62 @@
-Deploy to Production
-====================
+Triển khai lên Production
+=========================
 
-This part of the tutorial assumes you have a server that you want to
-deploy your application to. It gives an overview of how to create the
-distribution file and install it, but won't go into specifics about
-what server or software to use. You can set up a new environment on your
-development computer to try out the instructions below, but probably
-shouldn't use it for hosting a real public application. See
-:doc:`/deploying/index` for a list of many different ways to host your
-application.
+Phần này của tutorial giả định bạn có một máy chủ mà bạn muốn
+triển khai ứng dụng của mình lên đó. Nó cung cấp cái nhìn tổng quan về cách tạo
+file phân phối và cài đặt nó, nhưng sẽ không đi vào chi tiết về
+máy chủ hoặc phần mềm nào để sử dụng. Bạn có thể thiết lập một môi trường mới trên
+máy tính phát triển của mình để thử các hướng dẫn bên dưới, nhưng có lẽ
+không nên sử dụng nó để lưu trữ một ứng dụng công khai thực sự. Xem
+:doc:`/deploying/index` để có danh sách nhiều cách khác nhau để lưu trữ
+ứng dụng của bạn.
 
 
-Build and Install
------------------
+Xây dựng và Cài đặt
+-------------------
 
-When you want to deploy your application elsewhere, you build a *wheel*
-(``.whl``) file. Install and use the ``build`` tool to do this.
+Khi bạn muốn triển khai ứng dụng của mình ở nơi khác, bạn xây dựng một file *wheel*
+(``.whl``). Cài đặt và sử dụng công cụ ``build`` để làm điều này.
 
 .. code-block:: none
 
     $ pip install build
     $ python -m build --wheel
 
-You can find the file in ``dist/flaskr-1.0.0-py3-none-any.whl``. The
-file name is in the format of {project name}-{version}-{python tag}
--{abi tag}-{platform tag}.
+Bạn có thể tìm thấy file trong ``dist/flaskr-1.0.0-py3-none-any.whl``. Tên
+file ở định dạng {tên dự án}-{phiên bản}-{thẻ python}
+-{thẻ abi}-{thẻ nền tảng}.
 
-Copy this file to another machine,
-:ref:`set up a new virtualenv <install-create-env>`, then install the
-file with ``pip``.
+Sao chép file này sang một máy khác,
+:ref:`thiết lập một virtualenv mới <install-create-env>`, sau đó cài đặt
+file với ``pip``.
 
 .. code-block:: none
 
     $ pip install flaskr-1.0.0-py3-none-any.whl
 
-Pip will install your project along with its dependencies.
+Pip sẽ cài đặt dự án của bạn cùng với các dependency của nó.
 
-Since this is a different machine, you need to run ``init-db`` again to
-create the database in the instance folder.
+Vì đây là một máy khác, bạn cần chạy ``init-db`` lại để
+tạo cơ sở dữ liệu trong instance folder.
 
     .. code-block:: text
 
         $ flask --app flaskr init-db
 
-When Flask detects that it's installed (not in editable mode), it uses
-a different directory for the instance folder. You can find it at
-``.venv/var/flaskr-instance`` instead.
+Khi Flask phát hiện rằng nó đã được cài đặt (không ở chế độ editable), nó sử dụng
+một thư mục khác cho instance folder. Bạn có thể tìm thấy nó tại
+``.venv/var/flaskr-instance`` thay thế.
 
 
-Configure the Secret Key
-------------------------
+Cấu hình Secret Key
+-------------------
 
-In the beginning of the tutorial that you gave a default value for
-:data:`SECRET_KEY`. This should be changed to some random bytes in
-production. Otherwise, attackers could use the public ``'dev'`` key to
-modify the session cookie, or anything else that uses the secret key.
+Ở đầu tutorial, bạn đã đưa ra một giá trị mặc định cho
+:data:`SECRET_KEY`. Điều này nên được thay đổi thành một số byte ngẫu nhiên trong
+production. Nếu không, kẻ tấn công có thể sử dụng khóa ``'dev'`` công khai để
+sửa đổi session cookie, hoặc bất cứ thứ gì khác sử dụng secret key.
 
-You can use the following command to output a random secret key:
+Bạn có thể sử dụng lệnh sau để xuất ra một secret key ngẫu nhiên:
 
 .. code-block:: none
 
@@ -64,36 +64,36 @@ You can use the following command to output a random secret key:
 
     '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
 
-Create the ``config.py`` file in the instance folder, which the factory
-will read from if it exists. Copy the generated value into it.
+Tạo file ``config.py`` trong instance folder, mà factory
+sẽ đọc từ đó nếu nó tồn tại. Sao chép giá trị được tạo vào đó.
 
 .. code-block:: python
     :caption: ``.venv/var/flaskr-instance/config.py``
 
     SECRET_KEY = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
 
-You can also set any other necessary configuration here, although
-``SECRET_KEY`` is the only one needed for Flaskr.
+Bạn cũng có thể đặt bất kỳ cấu hình cần thiết nào khác ở đây, mặc dù
+``SECRET_KEY`` là cấu hình duy nhất cần thiết cho Flaskr.
 
 
-Run with a Production Server
-----------------------------
+Chạy với Máy chủ Production
+---------------------------
 
-When running publicly rather than in development, you should not use the
-built-in development server (``flask run``). The development server is
-provided by Werkzeug for convenience, but is not designed to be
-particularly efficient, stable, or secure.
+Khi chạy công khai thay vì trong phát triển, bạn không nên sử dụng
+máy chủ phát triển tích hợp sẵn (``flask run``). Máy chủ phát triển được
+cung cấp bởi Werkzeug để thuận tiện, nhưng không được thiết kế để
+đặc biệt hiệu quả, ổn định hoặc an toàn.
 
-Instead, use a production WSGI server. For example, to use `Waitress`_,
-first install it in the virtual environment:
+Thay vào đó, hãy sử dụng một máy chủ WSGI production. Ví dụ, để sử dụng `Waitress`_,
+trước tiên hãy cài đặt nó trong môi trường ảo:
 
 .. code-block:: none
 
     $ pip install waitress
 
-You need to tell Waitress about your application, but it doesn't use
-``--app`` like ``flask run`` does. You need to tell it to import and
-call the application factory to get an application object.
+Bạn cần cho Waitress biết về ứng dụng của mình, nhưng nó không sử dụng
+``--app`` như ``flask run``. Bạn cần cho nó biết import và
+gọi application factory để lấy một đối tượng ứng dụng.
 
 .. code-block:: none
 
@@ -101,11 +101,11 @@ call the application factory to get an application object.
 
     Serving on http://0.0.0.0:8080
 
-See :doc:`/deploying/index` for a list of many different ways to host
-your application. Waitress is just an example, chosen for the tutorial
-because it supports both Windows and Linux. There are many more WSGI
-servers and deployment options that you may choose for your project.
+Xem :doc:`/deploying/index` để có danh sách nhiều cách khác nhau để lưu trữ
+ứng dụng của bạn. Waitress chỉ là một ví dụ, được chọn cho tutorial
+vì nó hỗ trợ cả Windows và Linux. Có nhiều máy chủ WSGI
+và tùy chọn triển khai hơn mà bạn có thể chọn cho dự án của mình.
 
 .. _Waitress: https://docs.pylonsproject.org/projects/waitress/en/stable/
 
-Continue to :doc:`next`.
+Tiếp tục đến :doc:`next`.

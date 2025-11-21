@@ -1,33 +1,33 @@
 mod_wsgi
 ========
 
-`mod_wsgi`_ is a WSGI server integrated with the `Apache httpd`_ server.
-The modern `mod_wsgi-express`_ command makes it easy to configure and
-start the server without needing to write Apache httpd configuration.
+`mod_wsgi`_ là một máy chủ WSGI được tích hợp với máy chủ `Apache httpd`_.
+Lệnh `mod_wsgi-express`_ hiện đại giúp dễ dàng cấu hình và
+khởi động máy chủ mà không cần viết cấu hình Apache httpd.
 
-*   Tightly integrated with Apache httpd.
-*   Supports Windows directly.
-*   Requires a compiler and the Apache development headers to install.
-*   Does not require a reverse proxy setup.
+*   Tích hợp chặt chẽ với Apache httpd.
+*   Hỗ trợ Windows trực tiếp.
+*   Yêu cầu trình biên dịch và các header phát triển Apache để cài đặt.
+*   Không yêu cầu thiết lập reverse proxy.
 
-This page outlines the basics of running mod_wsgi-express, not the more
-complex installation and configuration with httpd. Be sure to read the
-`mod_wsgi-express`_, `mod_wsgi`_, and `Apache httpd`_ documentation to
-understand what features are available.
+Trang này phác thảo những điều cơ bản về việc chạy mod_wsgi-express, không phải
+việc cài đặt và cấu hình phức tạp hơn với httpd. Hãy chắc chắn đọc tài liệu
+`mod_wsgi-express`_, `mod_wsgi`_, và `Apache httpd`_ để
+hiểu những tính năng nào có sẵn.
 
 .. _mod_wsgi-express: https://pypi.org/project/mod-wsgi/
 .. _mod_wsgi: https://modwsgi.readthedocs.io/
 .. _Apache httpd: https://httpd.apache.org/
 
 
-Installing
-----------
+Cài đặt
+-------
 
-Installing mod_wsgi requires a compiler and the Apache server and
-development headers installed. You will get an error if they are not.
-How to install them depends on the OS and package manager that you use.
+Cài đặt mod_wsgi yêu cầu trình biên dịch và máy chủ Apache và
+các header phát triển được cài đặt. Bạn sẽ nhận được lỗi nếu chúng không có.
+Cách cài đặt chúng phụ thuộc vào hệ điều hành và trình quản lý gói mà bạn sử dụng.
 
-Create a virtualenv, install your application, then install
+Tạo một virtualenv, cài đặt ứng dụng của bạn, sau đó cài đặt
 ``mod_wsgi``.
 
 .. code-block:: text
@@ -35,17 +35,17 @@ Create a virtualenv, install your application, then install
     $ cd hello-app
     $ python -m venv .venv
     $ . .venv/bin/activate
-    $ pip install .  # install your application
+    $ pip install .  # cài đặt ứng dụng của bạn
     $ pip install mod_wsgi
 
 
-Running
--------
+Chạy
+----
 
-The only argument to ``mod_wsgi-express`` specifies a script containing
-your Flask application, which must be called ``application``. You can
-write a small script to import your app with this name, or to create it
-if using the app factory pattern.
+Đối số duy nhất cho ``mod_wsgi-express`` chỉ định một script chứa
+ứng dụng Flask của bạn, phải được gọi là ``application``. Bạn có thể
+viết một script nhỏ để import ứng dụng của bạn với tên này, hoặc để tạo nó
+nếu sử dụng mẫu app factory.
 
 .. code-block:: python
     :caption: ``wsgi.py``
@@ -61,31 +61,31 @@ if using the app factory pattern.
 
     application = create_app()
 
-Now run the ``mod_wsgi-express start-server`` command.
+Bây giờ chạy lệnh ``mod_wsgi-express start-server``.
 
 .. code-block:: text
 
     $ mod_wsgi-express start-server wsgi.py --processes 4
 
-The ``--processes`` option specifies the number of worker processes to
-run; a starting value could be ``CPU * 2``.
+Tùy chọn ``--processes`` chỉ định số lượng worker process để
+chạy; một giá trị khởi đầu có thể là ``CPU * 2``.
 
-Logs for each request aren't show in the terminal. If an error occurs,
-its information is written to the error log file shown when starting the
-server.
+Logs cho mỗi request không được hiển thị trong terminal. Nếu một lỗi xảy ra,
+thông tin của nó được ghi vào file error log được hiển thị khi khởi động
+máy chủ.
 
 
-Binding Externally
-------------------
+Binding Bên ngoài
+-----------------
 
-Unlike the other WSGI servers in these docs, mod_wsgi can be run as
-root to bind to privileged ports like 80 and 443. However, it must be
-configured to drop permissions to a different user and group for the
-worker processes.
+Không giống như các máy chủ WSGI khác trong các tài liệu này, mod_wsgi có thể được chạy dưới quyền
+root để bind vào các cổng đặc quyền như 80 và 443. Tuy nhiên, nó phải được
+cấu hình để giảm quyền xuống một người dùng và nhóm khác cho các
+worker process.
 
-For example, if you created a ``hello`` user and group, you should
-install your virtualenv and application as that user, then tell
-mod_wsgi to drop to that user after starting.
+Ví dụ, nếu bạn tạo một người dùng và nhóm ``hello``, bạn nên
+cài đặt virtualenv và ứng dụng của bạn dưới quyền người dùng đó, sau đó bảo
+mod_wsgi giảm xuống người dùng đó sau khi khởi động.
 
 .. code-block:: text
 

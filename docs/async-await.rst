@@ -1,14 +1,14 @@
 .. _async_await:
 
-Using ``async`` and ``await``
-=============================
+Sử dụng ``async`` và ``await``
+===============================
 
 .. versionadded:: 2.0
 
-Routes, error handlers, before request, after request, and teardown
-functions can all be coroutine functions if Flask is installed with the
-``async`` extra (``pip install flask[async]``). This allows views to be
-defined with ``async def`` and use ``await``.
+Các route, error handler, before request, after request, và teardown
+function đều có thể là các coroutine function nếu Flask được cài đặt với
+``async`` extra (``pip install flask[async]``). Điều này cho phép các view được
+định nghĩa với ``async def`` và sử dụng ``await``.
 
 .. code-block:: python
 
@@ -17,91 +17,91 @@ defined with ``async def`` and use ``await``.
         data = await async_db_query(...)
         return jsonify(data)
 
-Pluggable class-based views also support handlers that are implemented as
-coroutines. This applies to the :meth:`~flask.views.View.dispatch_request`
-method in views that inherit from the :class:`flask.views.View` class, as
-well as all the HTTP method handlers in views that inherit from the
-:class:`flask.views.MethodView` class.
+Các pluggable class-based view cũng hỗ trợ các handler được triển khai dưới dạng
+coroutine. Điều này áp dụng cho phương thức :meth:`~flask.views.View.dispatch_request`
+trong các view kế thừa từ class :class:`flask.views.View`, cũng như
+tất cả các HTTP method handler trong các view kế thừa từ
+class :class:`flask.views.MethodView`.
 
-.. admonition:: Using ``async`` with greenlet
+.. admonition:: Sử dụng ``async`` với greenlet
 
-    When using gevent or eventlet to serve an application or patch the
-    runtime, greenlet>=1.0 is required. When using PyPy, PyPy>=7.3.7 is
-    required.
-
-
-Performance
------------
-
-Async functions require an event loop to run. Flask, as a WSGI
-application, uses one worker to handle one request/response cycle.
-When a request comes in to an async view, Flask will start an event loop
-in a thread, run the view function there, then return the result.
-
-Each request still ties up one worker, even for async views. The upside
-is that you can run async code within a view, for example to make
-multiple concurrent database queries, HTTP requests to an external API,
-etc. However, the number of requests your application can handle at one
-time will remain the same.
-
-**Async is not inherently faster than sync code.** Async is beneficial
-when performing concurrent IO-bound tasks, but will probably not improve
-CPU-bound tasks. Traditional Flask views will still be appropriate for
-most use cases, but Flask's async support enables writing and using
-code that wasn't possible natively before.
+    Khi sử dụng gevent hoặc eventlet để phục vụ một ứng dụng hoặc patch
+    runtime, greenlet>=1.0 là bắt buộc. Khi sử dụng PyPy, PyPy>=7.3.7 là
+    bắt buộc.
 
 
-Background tasks
-----------------
+Hiệu suất
+---------
 
-Async functions will run in an event loop until they complete, at
-which stage the event loop will stop. This means any additional
-spawned tasks that haven't completed when the async function completes
-will be cancelled. Therefore you cannot spawn background tasks, for
-example via ``asyncio.create_task``.
+Các async function yêu cầu một event loop để chạy. Flask, với tư cách là một ứng dụng WSGI
+, sử dụng một worker để xử lý một chu kỳ request/response.
+Khi một request đến một async view, Flask sẽ khởi động một event loop
+trong một thread, chạy view function ở đó, sau đó trả về kết quả.
 
-If you wish to use background tasks it is best to use a task queue to
-trigger background work, rather than spawn tasks in a view
-function. With that in mind you can spawn asyncio tasks by serving
-Flask with an ASGI server and utilising the asgiref WsgiToAsgi adapter
-as described in :doc:`deploying/asgi`. This works as the adapter creates
-an event loop that runs continually.
+Mỗi request vẫn chiếm một worker, ngay cả đối với các async view. Ưu điểm
+là bạn có thể chạy async code trong một view, ví dụ để thực hiện
+nhiều truy vấn cơ sở dữ liệu đồng thời, các HTTP request đến một API bên ngoài,
+v.v. Tuy nhiên, số lượng request mà ứng dụng của bạn có thể xử lý cùng một
+lúc sẽ vẫn giống nhau.
+
+**Async không vốn dĩ nhanh hơn sync code.** Async có lợi
+khi thực hiện các tác vụ IO-bound đồng thời, nhưng có thể sẽ không cải thiện
+các tác vụ CPU-bound. Các view Flask truyền thống vẫn sẽ phù hợp cho
+hầu hết các trường hợp sử dụng, nhưng hỗ trợ async của Flask cho phép viết và sử dụng
+mã không thể thực hiện được một cách native trước đây.
 
 
-When to use Quart instead
--------------------------
+Background task
+---------------
 
-Flask's async support is less performant than async-first frameworks due
-to the way it is implemented. If you have a mainly async codebase it
-would make sense to consider `Quart`_. Quart is a reimplementation of
-Flask based on the `ASGI`_ standard instead of WSGI. This allows it to
-handle many concurrent requests, long running requests, and websockets
-without requiring multiple worker processes or threads.
+Các async function sẽ chạy trong một event loop cho đến khi chúng hoàn thành, tại
+giai đoạn đó event loop sẽ dừng. Điều này có nghĩa là bất kỳ
+task được spawn bổ sung nào chưa hoàn thành khi async function hoàn thành
+sẽ bị hủy. Do đó bạn không thể spawn background task, ví dụ
+qua ``asyncio.create_task``.
 
-It has also already been possible to run Flask with Gevent or Eventlet
-to get many of the benefits of async request handling. These libraries
-patch low-level Python functions to accomplish this, whereas ``async``/
-``await`` and ASGI use standard, modern Python capabilities. Deciding
-whether you should use Flask, Quart, or something else is ultimately up
-to understanding the specific needs of your project.
+Nếu bạn muốn sử dụng background task, tốt nhất là sử dụng một task queue để
+kích hoạt công việc nền, thay vì spawn task trong một view
+function. Với ý nghĩ đó, bạn có thể spawn asyncio task bằng cách phục vụ
+Flask với một máy chủ ASGI và sử dụng adapter asgiref WsgiToAsgi
+như được mô tả trong :doc:`deploying/asgi`. Điều này hoạt động vì adapter tạo
+một event loop chạy liên tục.
+
+
+Khi nào nên sử dụng Quart thay thế
+-----------------------------------
+
+Hỗ trợ async của Flask kém hiệu suất hơn các framework async-first do
+cách nó được triển khai. Nếu bạn có một codebase chủ yếu là async, sẽ
+hợp lý khi xem xét `Quart`_. Quart là một triển khai lại của
+Flask dựa trên tiêu chuẩn `ASGI`_ thay vì WSGI. Điều này cho phép nó
+xử lý nhiều request đồng thời, các request chạy lâu, và websocket
+mà không yêu cầu nhiều worker process hoặc thread.
+
+Cũng đã có thể chạy Flask với Gevent hoặc Eventlet
+để có được nhiều lợi ích của xử lý request async. Các thư viện này
+patch các hàm Python cấp thấp để thực hiện điều này, trong khi ``async``/
+``await`` và ASGI sử dụng các khả năng Python tiêu chuẩn, hiện đại. Quyết định
+xem bạn nên sử dụng Flask, Quart, hay một cái gì đó khác cuối cùng là
+hiểu các nhu cầu cụ thể của dự án của bạn.
 
 .. _Quart: https://github.com/pallets/quart
 .. _ASGI: https://asgi.readthedocs.io/en/latest/
 
 
-Extensions
-----------
+Extension
+---------
 
-Flask extensions predating Flask's async support do not expect async views.
-If they provide decorators to add functionality to views, those will probably
-not work with async views because they will not await the function or be
-awaitable. Other functions they provide will not be awaitable either and
-will probably be blocking if called within an async view.
+Các Flask extension có trước hỗ trợ async của Flask không mong đợi các async view.
+Nếu chúng cung cấp decorator để thêm chức năng vào view, những decorator đó có thể sẽ
+không hoạt động với async view vì chúng sẽ không await hàm hoặc có thể
+awaitable. Các hàm khác mà chúng cung cấp cũng sẽ không awaitable và
+có thể sẽ blocking nếu được gọi trong một async view.
 
-Extension authors can support async functions by utilising the
-:meth:`flask.Flask.ensure_sync` method. For example, if the extension
-provides a view function decorator add ``ensure_sync`` before calling
-the decorated function,
+Các tác giả extension có thể hỗ trợ async function bằng cách sử dụng
+phương thức :meth:`flask.Flask.ensure_sync`. Ví dụ, nếu extension
+cung cấp một view function decorator, hãy thêm ``ensure_sync`` trước khi gọi
+hàm được decorate,
 
 .. code-block:: python
 
@@ -113,13 +113,13 @@ the decorated function,
 
         return wrapper
 
-Check the changelog of the extension you want to use to see if they've
-implemented async support, or make a feature request or PR to them.
+Kiểm tra changelog của extension bạn muốn sử dụng để xem liệu họ đã
+triển khai hỗ trợ async chưa, hoặc thực hiện feature request hoặc PR cho họ.
 
 
-Other event loops
------------------
+Event loop khác
+---------------
 
-At the moment Flask only supports :mod:`asyncio`. It's possible to
-override :meth:`flask.Flask.ensure_sync` to change how async functions
-are wrapped to use a different library.
+Hiện tại Flask chỉ hỗ trợ :mod:`asyncio`. Có thể
+ghi đè :meth:`flask.Flask.ensure_sync` để thay đổi cách các async function
+được wrap để sử dụng một thư viện khác.

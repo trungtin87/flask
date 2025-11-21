@@ -1,28 +1,28 @@
 Application Factories
 =====================
 
-If you are already using packages and blueprints for your application
-(:doc:`/blueprints`) there are a couple of really nice ways to further improve
-the experience.  A common pattern is creating the application object when
-the blueprint is imported.  But if you move the creation of this object
-into a function, you can then create multiple instances of this app later.
+Nếu bạn đã sử dụng các package và blueprint cho ứng dụng của mình
+(:doc:`/blueprints`) thì có một vài cách thực sự hay để cải thiện hơn nữa
+trải nghiệm. Một mẫu phổ biến là tạo đối tượng ứng dụng khi
+blueprint được import. Nhưng nếu bạn di chuyển việc tạo đối tượng này
+vào một hàm, bạn có thể tạo nhiều instance của ứng dụng này sau đó.
 
-So why would you want to do this?
+Vậy tại sao bạn lại muốn làm điều này?
 
-1.  Testing.  You can have instances of the application with different
-    settings to test every case.
-2.  Multiple instances.  Imagine you want to run different versions of the
-    same application.  Of course you could have multiple instances with
-    different configs set up in your webserver, but if you use factories,
-    you can have multiple instances of the same application running in the
-    same application process which can be handy.
+1.  Kiểm thử (Testing). Bạn có thể có các instance của ứng dụng với các
+    cài đặt khác nhau để kiểm thử mọi trường hợp.
+2.  Nhiều instance. Hãy tưởng tượng bạn muốn chạy các phiên bản khác nhau của
+    cùng một ứng dụng. Tất nhiên bạn có thể có nhiều instance với
+    các cấu hình khác nhau được thiết lập trong máy chủ web của mình, nhưng nếu bạn sử dụng factory,
+    bạn có thể có nhiều instance của cùng một ứng dụng chạy trong
+    cùng một quy trình ứng dụng, điều này có thể rất tiện lợi.
 
-So how would you then actually implement that?
+Vậy bạn sẽ thực sự triển khai điều đó như thế nào?
 
-Basic Factories
----------------
+Factory Cơ bản
+--------------
 
-The idea is to set up the application in a function.  Like this::
+Ý tưởng là thiết lập ứng dụng trong một hàm. Như thế này::
 
     def create_app(config_filename):
         app = Flask(__name__)
@@ -38,9 +38,9 @@ The idea is to set up the application in a function.  Like this::
 
         return app
 
-The downside is that you cannot use the application object in the blueprints
-at import time.  You can however use it from within a request.  How do you
-get access to the application with the config?  Use
+Nhược điểm là bạn không thể sử dụng đối tượng ứng dụng trong các blueprint
+tại thời điểm import. Tuy nhiên, bạn có thể sử dụng nó từ bên trong một request. Làm thế nào để bạn
+truy cập vào ứng dụng với cấu hình? Sử dụng
 :data:`~flask.current_app`::
 
     from flask import current_app, Blueprint, render_template
@@ -50,16 +50,16 @@ get access to the application with the config?  Use
     def index():
         return render_template(current_app.config['INDEX_TEMPLATE'])
 
-Here we look up the name of a template in the config.
+Ở đây chúng ta tra cứu tên của một template trong cấu hình.
 
-Factories & Extensions
-----------------------
+Factory & Extension
+-------------------
 
-It's preferable to create your extensions and app factories so that the
-extension object does not initially get bound to the application.
+Tốt hơn là nên tạo các extension và app factory của bạn sao cho
+đối tượng extension không bị ràng buộc ban đầu với ứng dụng.
 
-Using `Flask-SQLAlchemy <https://flask-sqlalchemy.palletsprojects.com/>`_,
-as an example, you should not do something along those lines::
+Sử dụng `Flask-SQLAlchemy <https://flask-sqlalchemy.palletsprojects.com/>`_,
+làm ví dụ, bạn không nên làm điều gì đó theo những dòng này::
 
     def create_app(config_filename):
         app = Flask(__name__)
@@ -67,11 +67,11 @@ as an example, you should not do something along those lines::
 
         db = SQLAlchemy(app)
 
-But, rather, in model.py (or equivalent)::
+Mà thay vào đó, trong model.py (hoặc tương đương)::
 
     db = SQLAlchemy()
 
-and in your application.py (or equivalent)::
+và trong application.py (hoặc tương đương) của bạn::
 
     def create_app(config_filename):
         app = Flask(__name__)
@@ -80,39 +80,39 @@ and in your application.py (or equivalent)::
         from yourapplication.model import db
         db.init_app(app)
 
-Using this design pattern, no application-specific state is stored on the
-extension object, so one extension object can be used for multiple apps.
-For more information about the design of extensions refer to :doc:`/extensiondev`.
+Sử dụng mẫu thiết kế này, không có trạng thái cụ thể của ứng dụng nào được lưu trữ trên
+đối tượng extension, vì vậy một đối tượng extension có thể được sử dụng cho nhiều ứng dụng.
+Để biết thêm thông tin về thiết kế của các extension, hãy tham khảo :doc:`/extensiondev`.
 
-Using Applications
-------------------
+Sử dụng Ứng dụng
+----------------
 
-To run such an application, you can use the :command:`flask` command:
+Để chạy một ứng dụng như vậy, bạn có thể sử dụng lệnh :command:`flask`:
 
 .. code-block:: text
 
     $ flask --app hello run
 
-Flask will automatically detect the factory if it is named
-``create_app`` or ``make_app`` in ``hello``. You can also pass arguments
-to the factory like this:
+Flask sẽ tự động phát hiện factory nếu nó được đặt tên là
+``create_app`` hoặc ``make_app`` trong ``hello``. Bạn cũng có thể truyền các đối số
+cho factory như thế này:
 
 .. code-block:: text
 
     $ flask --app 'hello:create_app(local_auth=True)' run
 
-Then the ``create_app`` factory in ``hello`` is called with the keyword
-argument ``local_auth=True``. See :doc:`/cli` for more detail.
+Sau đó factory ``create_app`` trong ``hello`` được gọi với đối số
+từ khóa ``local_auth=True``. Xem :doc:`/cli` để biết thêm chi tiết.
 
-Factory Improvements
---------------------
+Cải tiến Factory
+----------------
 
-The factory function above is not very clever, but you can improve it.
-The following changes are straightforward to implement:
+Hàm factory ở trên không thông minh lắm, nhưng bạn có thể cải thiện nó.
+Các thay đổi sau đây rất đơn giản để thực hiện:
 
-1.  Make it possible to pass in configuration values for unit tests so that
-    you don't have to create config files on the filesystem.
-2.  Call a function from a blueprint when the application is setting up so
-    that you have a place to modify attributes of the application (like
-    hooking in before/after request handlers etc.)
-3.  Add in WSGI middlewares when the application is being created if necessary.
+1.  Làm cho nó có thể truyền vào các giá trị cấu hình cho unit test để
+    bạn không phải tạo các file cấu hình trên hệ thống file.
+2.  Gọi một hàm từ một blueprint khi ứng dụng đang thiết lập để
+    bạn có một nơi để sửa đổi các thuộc tính của ứng dụng (như
+    hook vào các trình xử lý trước/sau request, v.v.)
+3.  Thêm vào các middleware WSGI khi ứng dụng đang được tạo nếu cần thiết.

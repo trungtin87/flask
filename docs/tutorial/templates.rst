@@ -1,47 +1,47 @@
 .. currentmodule:: flask
 
-Templates
+Template
 =========
 
-You've written the authentication views for your application, but if
-you're running the server and try to go to any of the URLs, you'll see a
-``TemplateNotFound`` error. That's because the views are calling
-:func:`render_template`, but you haven't written the templates yet.
-The template files will be stored in the ``templates`` directory inside
-the ``flaskr`` package.
+Bạn đã viết các view xác thực cho ứng dụng của mình, nhưng nếu
+bạn đang chạy máy chủ và cố gắng truy cập bất kỳ URL nào, bạn sẽ thấy một
+lỗi ``TemplateNotFound``. Đó là vì các view đang gọi
+:func:`render_template`, nhưng bạn chưa viết các template.
+Các file template sẽ được lưu trữ trong thư mục ``templates`` bên trong
+package ``flaskr``.
 
-Templates are files that contain static data as well as placeholders
-for dynamic data. A template is rendered with specific data to produce a
-final document. Flask uses the `Jinja`_ template library to render
-templates.
+Template là các file chứa dữ liệu tĩnh cũng như các placeholder
+cho dữ liệu động. Một template được render với dữ liệu cụ thể để tạo ra một
+tài liệu cuối cùng. Flask sử dụng thư viện template `Jinja`_ để render
+template.
 
-In your application, you will use templates to render `HTML`_ which
-will display in the user's browser. In Flask, Jinja is configured to
-*autoescape* any data that is rendered in HTML templates. This means
-that it's safe to render user input; any characters they've entered that
-could mess with the HTML, such as ``<`` and ``>`` will be *escaped* with
-*safe* values that look the same in the browser but don't cause unwanted
-effects.
+Trong ứng dụng của bạn, bạn sẽ sử dụng template để render `HTML`_ sẽ
+hiển thị trong trình duyệt của người dùng. Trong Flask, Jinja được cấu hình để
+*autoescape* bất kỳ dữ liệu nào được render trong các template HTML. Điều này có nghĩa là
+việc render đầu vào của người dùng là an toàn; bất kỳ ký tự nào họ đã nhập có thể
+làm rối HTML, chẳng hạn như ``<`` và ``>`` sẽ được *escaped* với
+các giá trị *an toàn* trông giống nhau trong trình duyệt nhưng không gây ra các
+hiệu ứng không mong muốn.
 
-Jinja looks and behaves mostly like Python. Special delimiters are used
-to distinguish Jinja syntax from the static data in the template.
-Anything between ``{{`` and ``}}`` is an expression that will be output
-to the final document. ``{%`` and ``%}`` denotes a control flow
-statement like ``if`` and ``for``. Unlike Python, blocks are denoted
-by start and end tags rather than indentation since static text within
-a block could change indentation.
+Jinja trông và hoạt động giống như Python. Các dấu phân cách đặc biệt được sử dụng
+để phân biệt cú pháp Jinja với dữ liệu tĩnh trong template.
+Bất cứ thứ gì giữa ``{{`` và ``}}`` là một biểu thức sẽ được xuất ra
+tài liệu cuối cùng. ``{%`` và ``%}`` biểu thị một câu lệnh điều khiển luồng
+như ``if`` và ``for``. Không giống như Python, các khối được biểu thị
+bằng các thẻ bắt đầu và kết thúc thay vì thụt lề vì văn bản tĩnh trong
+một khối có thể thay đổi thụt lề.
 
 .. _Jinja: https://jinja.palletsprojects.com/templates/
 .. _HTML: https://developer.mozilla.org/docs/Web/HTML
 
 
-The Base Layout
----------------
+Bố cục Cơ sở
+------------
 
-Each page in the application will have the same basic layout around a
-different body. Instead of writing the entire HTML structure in each
-template, each template will *extend* a base template and override
-specific sections.
+Mỗi trang trong ứng dụng sẽ có cùng một bố cục cơ bản xung quanh một
+nội dung khác nhau. Thay vì viết toàn bộ cấu trúc HTML trong mỗi
+template, mỗi template sẽ *mở rộng* một template cơ sở và ghi đè
+các phần cụ thể.
 
 .. code-block:: html+jinja
     :caption: ``flaskr/templates/base.html``
@@ -71,36 +71,36 @@ specific sections.
       {% block content %}{% endblock %}
     </section>
 
-:data:`.g` is automatically available in templates. Based on if
-``g.user`` is set (from ``load_logged_in_user``), either the username
-and a log out link are displayed, or links to register and log in
-are displayed. :func:`url_for` is also automatically available, and is
-used to generate URLs to views instead of writing them out manually.
+:data:`.g` tự động có sẵn trong các template. Dựa trên việc
+``g.user`` có được đặt hay không (từ ``load_logged_in_user``), tên người dùng
+và một liên kết đăng xuất được hiển thị, hoặc các liên kết để đăng ký và đăng nhập
+được hiển thị. :func:`url_for` cũng tự động có sẵn, và được
+sử dụng để tạo URL cho các view thay vì viết chúng ra thủ công.
 
-After the page title, and before the content, the template loops over
-each message returned by :func:`get_flashed_messages`. You used
-:func:`flash` in the views to show error messages, and this is the code
-that will display them.
+Sau tiêu đề trang, và trước nội dung, template lặp qua
+mỗi tin nhắn được trả về bởi :func:`get_flashed_messages`. Bạn đã sử dụng
+:func:`flash` trong các view để hiển thị thông báo lỗi, và đây là mã
+sẽ hiển thị chúng.
 
-There are three blocks defined here that will be overridden in the other
-templates:
+Có ba khối được định nghĩa ở đây sẽ được ghi đè trong các
+template khác:
 
-#.  ``{% block title %}`` will change the title displayed in the
-    browser's tab and window title.
+#.  ``{% block title %}`` sẽ thay đổi tiêu đề hiển thị trong
+    tab và tiêu đề cửa sổ của trình duyệt.
 
-#.  ``{% block header %}`` is similar to ``title`` but will change the
-    title displayed on the page.
+#.  ``{% block header %}`` tương tự như ``title`` nhưng sẽ thay đổi
+    tiêu đề hiển thị trên trang.
 
-#.  ``{% block content %}`` is where the content of each page goes, such
-    as the login form or a blog post.
+#.  ``{% block content %}`` là nơi nội dung của mỗi trang đi, chẳng hạn
+    như form đăng nhập hoặc một bài viết blog.
 
-The base template is directly in the ``templates`` directory. To keep
-the others organized, the templates for a blueprint will be placed in a
-directory with the same name as the blueprint.
+Template cơ sở nằm trực tiếp trong thư mục ``templates``. Để giữ
+các template khác được tổ chức, các template cho một blueprint sẽ được đặt trong một
+thư mục có cùng tên với blueprint.
 
 
-Register
---------
+Đăng ký
+-------
 
 .. code-block:: html+jinja
     :caption: ``flaskr/templates/auth/register.html``
@@ -121,30 +121,30 @@ Register
       </form>
     {% endblock %}
 
-``{% extends 'base.html' %}`` tells Jinja that this template should
-replace the blocks from the base template. All the rendered content must
-appear inside ``{% block %}`` tags that override blocks from the base
-template.
+``{% extends 'base.html' %}`` cho Jinja biết rằng template này nên
+thay thế các khối từ template cơ sở. Tất cả nội dung được render phải
+xuất hiện bên trong các thẻ ``{% block %}`` ghi đè các khối từ template
+cơ sở.
 
-A useful pattern used here is to place ``{% block title %}`` inside
-``{% block header %}``. This will set the title block and then output
-the value of it into the header block, so that both the window and page
-share the same title without writing it twice.
+Một mẫu hữu ích được sử dụng ở đây là đặt ``{% block title %}`` bên trong
+``{% block header %}``. Điều này sẽ đặt khối title và sau đó xuất
+giá trị của nó vào khối header, để cả cửa sổ và trang
+chia sẻ cùng một tiêu đề mà không cần viết nó hai lần.
 
-The ``input`` tags are using the ``required`` attribute here. This tells
-the browser not to submit the form until those fields are filled in. If
-the user is using an older browser that doesn't support that attribute,
-or if they are using something besides a browser to make requests, you
-still want to validate the data in the Flask view. It's important to
-always fully validate the data on the server, even if the client does
-some validation as well.
+Các thẻ ``input`` đang sử dụng thuộc tính ``required`` ở đây. Điều này cho
+trình duyệt biết không gửi form cho đến khi các trường đó được điền vào. Nếu
+người dùng đang sử dụng một trình duyệt cũ hơn không hỗ trợ thuộc tính đó,
+hoặc nếu họ đang sử dụng một cái gì đó khác ngoài trình duyệt để thực hiện request, bạn
+vẫn muốn xác thực dữ liệu trong view Flask. Điều quan trọng là
+luôn xác thực đầy đủ dữ liệu trên máy chủ, ngay cả khi client cũng
+thực hiện một số xác thực.
 
 
-Log In
-------
+Đăng nhập
+---------
 
-This is identical to the register template except for the title and
-submit button.
+Điều này giống hệt với template đăng ký ngoại trừ tiêu đề và
+nút gửi.
 
 .. code-block:: html+jinja
     :caption: ``flaskr/templates/auth/login.html``
@@ -166,22 +166,22 @@ submit button.
     {% endblock %}
 
 
-Register A User
----------------
+Đăng ký Người dùng
+------------------
 
-Now that the authentication templates are written, you can register a
-user. Make sure the server is still running (``flask run`` if it's not),
-then go to http://127.0.0.1:5000/auth/register.
+Bây giờ các template xác thực đã được viết, bạn có thể đăng ký một
+người dùng. Hãy chắc chắn rằng máy chủ vẫn đang chạy (``flask run`` nếu không),
+sau đó truy cập http://127.0.0.1:5000/auth/register.
 
-Try clicking the "Register" button without filling out the form and see
-that the browser shows an error message. Try removing the ``required``
-attributes from the ``register.html`` template and click "Register"
-again. Instead of the browser showing an error, the page will reload and
-the error from :func:`flash` in the view will be shown.
+Thử nhấp vào nút "Register" mà không điền vào form và xem
+rằng trình duyệt hiển thị thông báo lỗi. Thử xóa các thuộc tính ``required``
+khỏi template ``register.html`` và nhấp "Register"
+lại. Thay vì trình duyệt hiển thị lỗi, trang sẽ tải lại và
+lỗi từ :func:`flash` trong view sẽ được hiển thị.
 
-Fill out a username and password and you'll be redirected to the login
-page. Try entering an incorrect username, or the correct username and
-incorrect password. If you log in you'll get an error because there's
-no ``index`` view to redirect to yet.
+Điền tên người dùng và mật khẩu và bạn sẽ được chuyển hướng đến trang đăng nhập
+. Thử nhập tên người dùng không chính xác, hoặc tên người dùng chính xác và
+mật khẩu không chính xác. Nếu bạn đăng nhập, bạn sẽ nhận được lỗi vì chưa có
+view ``index`` để chuyển hướng đến.
 
-Continue to :doc:`static`.
+Tiếp tục đến :doc:`static`.

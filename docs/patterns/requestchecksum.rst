@@ -1,18 +1,18 @@
 Request Content Checksums
 =========================
 
-Various pieces of code can consume the request data and preprocess it.
-For instance JSON data ends up on the request object already read and
-processed, form data ends up there as well but goes through a different
-code path.  This seems inconvenient when you want to calculate the
-checksum of the incoming request data.  This is necessary sometimes for
-some APIs.
+Nhiều đoạn mã có thể tiêu thụ dữ liệu request và xử lý trước nó.
+Ví dụ dữ liệu JSON kết thúc trên đối tượng request đã được đọc và
+xử lý, dữ liệu form cũng kết thúc ở đó nhưng đi qua một đường dẫn mã
+khác. Điều này có vẻ bất tiện khi bạn muốn tính toán
+checksum của dữ liệu request đến. Điều này đôi khi cần thiết cho
+một số API.
 
-Fortunately this is however very simple to change by wrapping the input
+May mắn thay điều này rất đơn giản để thay đổi bằng cách bao bọc input
 stream.
 
-The following example calculates the SHA1 checksum of the incoming data as
-it gets read and stores it in the WSGI environment::
+Ví dụ sau tính toán checksum SHA1 của dữ liệu đến khi
+nó được đọc và lưu trữ nó trong môi trường WSGI::
 
     import hashlib
 
@@ -38,18 +38,18 @@ it gets read and stores it in the WSGI environment::
         env['wsgi.input'] = stream
         return stream._hash
 
-To use this, all you need to do is to hook the calculating stream in
-before the request starts consuming data.  (Eg: be careful accessing
-``request.form`` or anything of that nature.  ``before_request_handlers``
-for instance should be careful not to access it).
+Để sử dụng điều này, tất cả những gì bạn cần làm là hook calculating stream vào
+trước khi request bắt đầu tiêu thụ dữ liệu. (Ví dụ: hãy cẩn thận khi truy cập
+``request.form`` hoặc bất cứ thứ gì thuộc loại đó. ``before_request_handlers``
+chẳng hạn nên cẩn thận không truy cập nó).
 
-Example usage::
+Ví dụ sử dụng::
 
     @app.route('/special-api', methods=['POST'])
     def special_api():
         hash = generate_checksum(request)
-        # Accessing this parses the input stream
+        # Truy cập này phân tích cú pháp input stream
         files = request.files
-        # At this point the hash is fully constructed.
+        # Tại thời điểm này hash được xây dựng đầy đủ.
         checksum = hash.hexdigest()
         return f"Hash was: {checksum}"

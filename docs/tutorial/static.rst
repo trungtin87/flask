@@ -1,26 +1,26 @@
-Static Files
-============
+File Tĩnh (Static Files)
+========================
 
-The authentication views and templates work, but they look very plain
-right now. Some `CSS`_ can be added to add style to the HTML layout you
-constructed. The style won't change, so it's a *static* file rather than
-a template.
+Các view và template xác thực hoạt động, nhưng chúng trông rất đơn giản
+hiện tại. Một số `CSS`_ có thể được thêm vào để thêm kiểu cho bố cục HTML bạn
+đã xây dựng. Kiểu sẽ không thay đổi, vì vậy nó là một file *tĩnh* thay vì
+một template.
 
-Flask automatically adds a ``static`` view that takes a path relative
-to the ``flaskr/static`` directory and serves it. The ``base.html``
-template already has a link to the ``style.css`` file:
+Flask tự động thêm một view ``static`` nhận một đường dẫn tương đối
+đến thư mục ``flaskr/static`` và phục vụ nó. Template ``base.html``
+đã có một liên kết đến file ``style.css``:
 
 .. code-block:: html+jinja
 
     {{ url_for('static', filename='style.css') }}
 
-Besides CSS, other types of static files might be files with JavaScript
-functions, or a logo image. They are all placed under the
-``flaskr/static`` directory and referenced with
+Bên cạnh CSS, các loại file tĩnh khác có thể là các file với các hàm JavaScript
+, hoặc một hình ảnh logo. Tất cả chúng đều được đặt dưới thư mục
+``flaskr/static`` và được tham chiếu với
 ``url_for('static', filename='...')``.
 
-This tutorial isn't focused on how to write CSS, so you can just copy
-the following into the ``flaskr/static/style.css`` file:
+Tutorial này không tập trung vào cách viết CSS, vì vậy bạn chỉ cần sao chép
+nội dung sau vào file ``flaskr/static/style.css``:
 
 .. code-block:: css
     :caption: ``flaskr/static/style.css``
@@ -52,21 +52,21 @@ the following into the ``flaskr/static/style.css`` file:
     input.danger { color: #cc2f2e; }
     input[type=submit] { align-self: start; min-width: 10em; }
 
-You can find a less compact version of ``style.css`` in the
-:gh:`example code <examples/tutorial/flaskr/static/style.css>`.
+Bạn có thể tìm thấy một phiên bản ít compact hơn của ``style.css`` trong
+:gh:`mã ví dụ <examples/tutorial/flaskr/static/style.css>`.
 
-Go to http://127.0.0.1:5000/auth/login and the page should look like the
-screenshot below.
+Truy cập http://127.0.0.1:5000/auth/login và trang sẽ trông giống như
+ảnh chụp màn hình bên dưới.
 
 .. image:: flaskr_login.png
     :align: center
     :class: screenshot
     :alt: screenshot of login page
 
-You can read more about CSS from `Mozilla's documentation <CSS_>`_. If
-you change a static file, refresh the browser page. If the change
-doesn't show up, try clearing your browser's cache.
+Bạn có thể đọc thêm về CSS từ `tài liệu của Mozilla <CSS_>`_. Nếu
+bạn thay đổi một file tĩnh, hãy làm mới trang trình duyệt. Nếu thay đổi
+không hiển thị, hãy thử xóa cache của trình duyệt.
 
 .. _CSS: https://developer.mozilla.org/docs/Web/CSS
 
-Continue to :doc:`blog`.
+Tiếp tục đến :doc:`blog`.

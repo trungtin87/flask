@@ -1,28 +1,28 @@
 .. currentmodule:: flask
 
-Blueprints and Views
-====================
+Blueprint và View
+==================
 
-A view function is the code you write to respond to requests to your
-application. Flask uses patterns to match the incoming request URL to
-the view that should handle it. The view returns data that Flask turns
-into an outgoing response. Flask can also go the other direction and
-generate a URL to a view based on its name and arguments.
+Một view function là mã bạn viết để phản hồi các request đến
+ứng dụng của bạn. Flask sử dụng các mẫu để khớp URL request đến với
+view nên xử lý nó. View trả về dữ liệu mà Flask chuyển
+thành một phản hồi đi ra. Flask cũng có thể đi theo hướng khác và
+tạo một URL đến một view dựa trên tên và đối số của nó.
 
 
-Create a Blueprint
-------------------
+Tạo một Blueprint
+-----------------
 
-A :class:`Blueprint` is a way to organize a group of related views and
-other code. Rather than registering views and other code directly with
-an application, they are registered with a blueprint. Then the blueprint
-is registered with the application when it is available in the factory
-function.
+Một :class:`Blueprint` là một cách để tổ chức một nhóm các view liên quan và
+mã khác. Thay vì đăng ký các view và mã khác trực tiếp với
+một ứng dụng, chúng được đăng ký với một blueprint. Sau đó blueprint
+được đăng ký với ứng dụng khi nó có sẵn trong hàm
+factory.
 
-Flaskr will have two blueprints, one for authentication functions and
-one for the blog posts functions. The code for each blueprint will go
-in a separate module. Since the blog needs to know about authentication,
-you'll write the authentication one first.
+Flaskr sẽ có hai blueprint, một cho các hàm xác thực và
+một cho các hàm bài viết blog. Mã cho mỗi blueprint sẽ đi
+vào một module riêng biệt. Vì blog cần biết về xác thực,
+bạn sẽ viết blueprint xác thực trước.
 
 .. code-block:: python
     :caption: ``flaskr/auth.py``
@@ -38,14 +38,14 @@ you'll write the authentication one first.
 
     bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-This creates a :class:`Blueprint` named ``'auth'``. Like the application
-object, the blueprint needs to know where it's defined, so ``__name__``
-is passed as the second argument. The ``url_prefix`` will be prepended
-to all the URLs associated with the blueprint.
+Điều này tạo ra một :class:`Blueprint` có tên ``'auth'``. Giống như đối tượng ứng dụng
+, blueprint cần biết nơi nó được định nghĩa, vì vậy ``__name__``
+được truyền làm đối số thứ hai. ``url_prefix`` sẽ được thêm vào đầu
+tất cả các URL liên quan đến blueprint.
 
-Import and register the blueprint from the factory using
-:meth:`app.register_blueprint() <Flask.register_blueprint>`. Place the
-new code at the end of the factory function before returning the app.
+Import và đăng ký blueprint từ factory bằng cách sử dụng
+:meth:`app.register_blueprint() <Flask.register_blueprint>`. Đặt
+mã mới ở cuối hàm factory trước khi trả về ứng dụng.
 
 .. code-block:: python
     :caption: ``flaskr/__init__.py``
@@ -59,22 +59,22 @@ new code at the end of the factory function before returning the app.
 
         return app
 
-The authentication blueprint will have views to register new users and
-to log in and log out.
+Blueprint xác thực sẽ có các view để đăng ký người dùng mới và
+để đăng nhập và đăng xuất.
 
 
-The First View: Register
-------------------------
+View Đầu tiên: Đăng ký
+----------------------
 
-When the user visits the ``/auth/register`` URL, the ``register`` view
-will return `HTML`_ with a form for them to fill out. When they submit
-the form, it will validate their input and either show the form again
-with an error message or create the new user and go to the login page.
+Khi người dùng truy cập URL ``/auth/register``, view ``register``
+sẽ trả về `HTML`_ với một form để họ điền vào. Khi họ gửi
+form, nó sẽ xác thực đầu vào của họ và hiển thị form lại
+với một thông báo lỗi hoặc tạo người dùng mới và đến trang đăng nhập.
 
 .. _HTML: https://developer.mozilla.org/docs/Web/HTML
 
-For now you will just write the view code. On the next page, you'll
-write templates to generate the HTML form.
+Hiện tại bạn sẽ chỉ viết mã view. Ở trang tiếp theo, bạn sẽ
+viết các template để tạo form HTML.
 
 .. code-block:: python
     :caption: ``flaskr/auth.py``
@@ -108,64 +108,64 @@ write templates to generate the HTML form.
 
         return render_template('auth/register.html')
 
-Here's what the ``register`` view function is doing:
+Đây là những gì view function ``register`` đang làm:
 
-#.  :meth:`@bp.route <Blueprint.route>` associates the URL ``/register``
-    with the ``register`` view function. When Flask receives a request
-    to ``/auth/register``, it will call the ``register`` view and use
-    the return value as the response.
+#.  :meth:`@bp.route <Blueprint.route>` liên kết URL ``/register``
+    với view function ``register``. Khi Flask nhận được một request
+    đến ``/auth/register``, nó sẽ gọi view ``register`` và sử dụng
+    giá trị trả về làm phản hồi.
 
-#.  If the user submitted the form,
-    :attr:`request.method <Request.method>` will be ``'POST'``. In this
-    case, start validating the input.
+#.  Nếu người dùng gửi form,
+    :attr:`request.method <Request.method>` sẽ là ``'POST'``. Trong trường hợp
+    này, bắt đầu xác thực đầu vào.
 
-#.  :attr:`request.form <Request.form>` is a special type of
-    :class:`dict` mapping submitted form keys and values. The user will
-    input their ``username`` and ``password``.
+#.  :attr:`request.form <Request.form>` là một loại đặc biệt của
+    :class:`dict` ánh xạ các khóa và giá trị form đã gửi. Người dùng sẽ
+    nhập ``username`` và ``password`` của họ.
 
-#.  Validate that ``username`` and ``password`` are not empty.
+#.  Xác thực rằng ``username`` và ``password`` không trống.
 
-#.  If validation succeeds, insert the new user data into the database.
+#.  Nếu xác thực thành công, chèn dữ liệu người dùng mới vào cơ sở dữ liệu.
 
-    -   :meth:`db.execute <sqlite3.Connection.execute>` takes a SQL
-        query with ``?`` placeholders for any user input, and a tuple of
-        values to replace the placeholders with. The database library
-        will take care of escaping the values so you are not vulnerable
-        to a *SQL injection attack*.
+    -   :meth:`db.execute <sqlite3.Connection.execute>` nhận một truy vấn SQL
+        với các placeholder ``?`` cho bất kỳ đầu vào người dùng nào, và một tuple các
+        giá trị để thay thế các placeholder. Thư viện cơ sở dữ liệu
+        sẽ chăm sóc việc thoát các giá trị để bạn không dễ bị tấn công
+        *SQL injection*.
 
-    -   For security, passwords should never be stored in the database
-        directly. Instead,
-        :func:`~werkzeug.security.generate_password_hash` is used to
-        securely hash the password, and that hash is stored. Since this
-        query modifies data,
-        :meth:`db.commit() <sqlite3.Connection.commit>` needs to be
-        called afterwards to save the changes.
+    -   Vì lý do bảo mật, mật khẩu không bao giờ nên được lưu trữ trong cơ sở dữ liệu
+        trực tiếp. Thay vào đó,
+        :func:`~werkzeug.security.generate_password_hash` được sử dụng để
+        hash mật khẩu một cách an toàn, và hash đó được lưu trữ. Vì truy vấn
+        này sửa đổi dữ liệu,
+        :meth:`db.commit() <sqlite3.Connection.commit>` cần được
+        gọi sau đó để lưu các thay đổi.
 
-    -   An :exc:`sqlite3.IntegrityError` will occur if the username
-        already exists, which should be shown to the user as another
-        validation error.
+    -   Một :exc:`sqlite3.IntegrityError` sẽ xảy ra nếu tên người dùng
+        đã tồn tại, điều này nên được hiển thị cho người dùng dưới dạng một
+        lỗi xác thực khác.
 
-#.  After storing the user, they are redirected to the login page.
-    :func:`url_for` generates the URL for the login view based on its
-    name. This is preferable to writing the URL directly as it allows
-    you to change the URL later without changing all code that links to
-    it. :func:`redirect` generates a redirect response to the generated
-    URL.
+#.  Sau khi lưu trữ người dùng, họ được chuyển hướng đến trang đăng nhập.
+    :func:`url_for` tạo URL cho view đăng nhập dựa trên
+    tên của nó. Điều này tốt hơn so với viết URL trực tiếp vì nó cho phép
+    bạn thay đổi URL sau mà không cần thay đổi tất cả mã liên kết đến
+    nó. :func:`redirect` tạo một phản hồi chuyển hướng đến URL được tạo
+    .
 
-#.  If validation fails, the error is shown to the user. :func:`flash`
-    stores messages that can be retrieved when rendering the template.
+#.  Nếu xác thực thất bại, lỗi được hiển thị cho người dùng. :func:`flash`
+    lưu trữ các tin nhắn có thể được truy xuất khi render template.
 
-#.  When the user initially navigates to ``auth/register``, or
-    there was a validation error, an HTML page with the registration
-    form should be shown. :func:`render_template` will render a template
-    containing the HTML, which you'll write in the next step of the
+#.  Khi người dùng ban đầu điều hướng đến ``auth/register``, hoặc
+    có lỗi xác thực, một trang HTML với form đăng ký
+    nên được hiển thị. :func:`render_template` sẽ render một template
+    chứa HTML, mà bạn sẽ viết trong bước tiếp theo của
     tutorial.
 
 
-Login
------
+Đăng nhập
+---------
 
-This view follows the same pattern as the ``register`` view above.
+View này tuân theo cùng một mẫu như view ``register`` ở trên.
 
 .. code-block:: python
     :caption: ``flaskr/auth.py``
@@ -195,29 +195,29 @@ This view follows the same pattern as the ``register`` view above.
 
         return render_template('auth/login.html')
 
-There are a few differences from the ``register`` view:
+Có một vài khác biệt so với view ``register``:
 
-#.  The user is queried first and stored in a variable for later use.
+#.  Người dùng được truy vấn trước và lưu trữ trong một biến để sử dụng sau.
 
-    :meth:`~sqlite3.Cursor.fetchone` returns one row from the query.
-    If the query returned no results, it returns ``None``. Later,
-    :meth:`~sqlite3.Cursor.fetchall` will be used, which returns a list
-    of all results.
+    :meth:`~sqlite3.Cursor.fetchone` trả về một hàng từ truy vấn.
+    Nếu truy vấn không trả về kết quả nào, nó trả về ``None``. Sau đó,
+    :meth:`~sqlite3.Cursor.fetchall` sẽ được sử dụng, trả về một danh sách
+    tất cả kết quả.
 
-#.  :func:`~werkzeug.security.check_password_hash` hashes the submitted
-    password in the same way as the stored hash and securely compares
-    them. If they match, the password is valid.
+#.  :func:`~werkzeug.security.check_password_hash` hash mật khẩu đã gửi
+    theo cùng một cách như hash được lưu trữ và so sánh chúng
+    một cách an toàn. Nếu chúng khớp, mật khẩu hợp lệ.
 
-#.  :data:`.session` is a :class:`dict` that stores data across requests.
-    When validation succeeds, the user's ``id`` is stored in a new
-    session. The data is stored in a *cookie* that is sent to the
-    browser, and the browser then sends it back with subsequent requests.
-    Flask securely *signs* the data so that it can't be tampered with.
+#.  :data:`.session` là một :class:`dict` lưu trữ dữ liệu qua các request.
+    Khi xác thực thành công, ``id`` của người dùng được lưu trữ trong một
+    session mới. Dữ liệu được lưu trữ trong một *cookie* được gửi đến
+    trình duyệt, và trình duyệt sau đó gửi nó lại với các request tiếp theo.
+    Flask *ký* dữ liệu một cách an toàn để nó không thể bị giả mạo.
 
-Now that the user's ``id`` is stored in the :data:`.session`, it will be
-available on subsequent requests. At the beginning of each request, if
-a user is logged in their information should be loaded and made
-available to other views.
+Bây giờ ``id`` của người dùng được lưu trữ trong :data:`.session`, nó sẽ
+có sẵn trên các request tiếp theo. Ở đầu mỗi request, nếu
+một người dùng đã đăng nhập, thông tin của họ nên được tải và làm cho
+có sẵn cho các view khác.
 
 .. code-block:: python
     :caption: ``flaskr/auth.py``
@@ -233,20 +233,20 @@ available to other views.
                 'SELECT * FROM user WHERE id = ?', (user_id,)
             ).fetchone()
 
-:meth:`bp.before_app_request() <Blueprint.before_app_request>` registers
-a function that runs before the view function, no matter what URL is
-requested. ``load_logged_in_user`` checks if a user id is stored in the
-:data:`.session` and gets that user's data from the database, storing it
-on :data:`g.user <g>`, which lasts for the length of the request. If
-there is no user id, or if the id doesn't exist, ``g.user`` will be
+:meth:`bp.before_app_request() <Blueprint.before_app_request>` đăng ký
+một hàm chạy trước view function, bất kể URL nào được
+yêu cầu. ``load_logged_in_user`` kiểm tra xem một user id có được lưu trữ trong
+:data:`.session` không và lấy dữ liệu của người dùng đó từ cơ sở dữ liệu, lưu trữ nó
+trên :data:`g.user <g>`, tồn tại trong suốt thời gian của request. Nếu
+không có user id, hoặc nếu id không tồn tại, ``g.user`` sẽ là
 ``None``.
 
 
-Logout
-------
+Đăng xuất
+---------
 
-To log out, you need to remove the user id from the :data:`.session`.
-Then ``load_logged_in_user`` won't load a user on subsequent requests.
+Để đăng xuất, bạn cần xóa user id khỏi :data:`.session`.
+Sau đó ``load_logged_in_user`` sẽ không tải người dùng trên các request tiếp theo.
 
 .. code-block:: python
     :caption: ``flaskr/auth.py``
@@ -257,12 +257,12 @@ Then ``load_logged_in_user`` won't load a user on subsequent requests.
         return redirect(url_for('index'))
 
 
-Require Authentication in Other Views
--------------------------------------
+Yêu cầu Xác thực trong Các View Khác
+------------------------------------
 
-Creating, editing, and deleting blog posts will require a user to be
-logged in. A *decorator* can be used to check this for each view it's
-applied to.
+Tạo, chỉnh sửa và xóa bài viết blog sẽ yêu cầu người dùng phải
+đăng nhập. Một *decorator* có thể được sử dụng để kiểm tra điều này cho mỗi view nó được
+áp dụng.
 
 .. code-block:: python
     :caption: ``flaskr/auth.py``
@@ -277,29 +277,29 @@ applied to.
 
         return wrapped_view
 
-This decorator returns a new view function that wraps the original view
-it's applied to. The new function checks if a user is loaded and
-redirects to the login page otherwise. If a user is loaded the original
-view is called and continues normally. You'll use this decorator when
-writing the blog views.
+Decorator này trả về một view function mới bao bọc view gốc
+nó được áp dụng. Hàm mới kiểm tra xem một người dùng có được tải không và
+chuyển hướng đến trang đăng nhập nếu không. Nếu một người dùng được tải, view gốc
+được gọi và tiếp tục bình thường. Bạn sẽ sử dụng decorator này khi
+viết các view blog.
 
-Endpoints and URLs
-------------------
+Endpoint và URL
+---------------
 
-The :func:`url_for` function generates the URL to a view based on a name
-and arguments. The name associated with a view is also called the
-*endpoint*, and by default it's the same as the name of the view
+Hàm :func:`url_for` tạo URL đến một view dựa trên một tên
+và đối số. Tên liên quan đến một view cũng được gọi là
+*endpoint*, và theo mặc định nó giống với tên của view
 function.
 
-For example, the ``hello()`` view that was added to the app
-factory earlier in the tutorial has the name ``'hello'`` and can be
-linked to with ``url_for('hello')``. If it took an argument, which
-you'll see later, it would be linked to using
+Ví dụ, view ``hello()`` đã được thêm vào app
+factory trước đó trong tutorial có tên ``'hello'`` và có thể được
+liên kết đến với ``url_for('hello')``. Nếu nó nhận một đối số, mà
+bạn sẽ thấy sau, nó sẽ được liên kết đến bằng cách sử dụng
 ``url_for('hello', who='World')``.
 
-When using a blueprint, the name of the blueprint is prepended to the
-name of the function, so the endpoint for the ``login`` function you
-wrote above is ``'auth.login'`` because you added it to the ``'auth'``
-blueprint.
+Khi sử dụng một blueprint, tên của blueprint được thêm vào đầu
+tên của hàm, vì vậy endpoint cho hàm ``login`` bạn
+đã viết ở trên là ``'auth.login'`` vì bạn đã thêm nó vào blueprint ``'auth'``
+.
 
-Continue to :doc:`templates`.
+Tiếp tục đến :doc:`templates`.

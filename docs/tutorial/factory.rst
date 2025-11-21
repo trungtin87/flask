@@ -1,32 +1,32 @@
 .. currentmodule:: flask
 
-Application Setup
-=================
+Thiết lập Ứng dụng
+==================
 
-A Flask application is an instance of the :class:`Flask` class.
-Everything about the application, such as configuration and URLs, will
-be registered with this class.
+Một ứng dụng Flask là một instance của class :class:`Flask`.
+Mọi thứ về ứng dụng, chẳng hạn như cấu hình và URL, sẽ
+được đăng ký với class này.
 
-The most straightforward way to create a Flask application is to create
-a global :class:`Flask` instance directly at the top of your code, like
-how the "Hello, World!" example did on the previous page. While this is
-simple and useful in some cases, it can cause some tricky issues as the
-project grows.
+Cách đơn giản nhất để tạo một ứng dụng Flask là tạo
+một instance :class:`Flask` toàn cục trực tiếp ở đầu mã của bạn, giống như
+cách ví dụ "Hello, World!" đã làm ở trang trước. Mặc dù điều này
+đơn giản và hữu ích trong một số trường hợp, nó có thể gây ra một số vấn đề khó khăn khi
+dự án phát triển.
 
-Instead of creating a :class:`Flask` instance globally, you will create
-it inside a function. This function is known as the *application
-factory*. Any configuration, registration, and other setup the
-application needs will happen inside the function, then the application
-will be returned.
+Thay vì tạo một instance :class:`Flask` toàn cục, bạn sẽ tạo
+nó bên trong một hàm. Hàm này được gọi là *application
+factory*. Bất kỳ cấu hình, đăng ký và thiết lập nào khác mà
+ứng dụng cần sẽ xảy ra bên trong hàm, sau đó ứng dụng
+sẽ được trả về.
 
 
-The Application Factory
------------------------
+Application Factory
+-------------------
 
-It's time to start coding! Create the ``flaskr`` directory and add the
-``__init__.py`` file. The ``__init__.py`` serves double duty: it will
-contain the application factory, and it tells Python that the ``flaskr``
-directory should be treated as a package.
+Đã đến lúc bắt đầu viết mã! Tạo thư mục ``flaskr`` và thêm
+file ``__init__.py``. ``__init__.py`` phục vụ hai mục đích: nó sẽ
+chứa application factory, và nó cho Python biết rằng thư mục ``flaskr``
+nên được coi là một package.
 
 .. code-block:: none
 
@@ -41,7 +41,7 @@ directory should be treated as a package.
 
 
     def create_app(test_config=None):
-        # create and configure the app
+        # tạo và cấu hình app
         app = Flask(__name__, instance_relative_config=True)
         app.config.from_mapping(
             SECRET_KEY='dev',
@@ -49,97 +49,97 @@ directory should be treated as a package.
         )
 
         if test_config is None:
-            # load the instance config, if it exists, when not testing
+            # load instance config, nếu nó tồn tại, khi không kiểm thử
             app.config.from_pyfile('config.py', silent=True)
         else:
-            # load the test config if passed in
+            # load test config nếu được truyền vào
             app.config.from_mapping(test_config)
 
-        # ensure the instance folder exists
+        # đảm bảo instance folder tồn tại
         try:
             os.makedirs(app.instance_path)
         except OSError:
             pass
 
-        # a simple page that says hello
+        # một trang đơn giản nói hello
         @app.route('/hello')
         def hello():
             return 'Hello, World!'
 
         return app
 
-``create_app`` is the application factory function. You'll add to it
-later in the tutorial, but it already does a lot.
+``create_app`` là hàm application factory. Bạn sẽ thêm vào nó
+sau trong tutorial, nhưng nó đã làm rất nhiều việc rồi.
 
-#.  ``app = Flask(__name__, instance_relative_config=True)`` creates the
-    :class:`Flask` instance.
+#.  ``app = Flask(__name__, instance_relative_config=True)`` tạo
+    instance :class:`Flask`.
 
-    *   ``__name__`` is the name of the current Python module. The app
-        needs to know where it's located to set up some paths, and
-        ``__name__`` is a convenient way to tell it that.
+    *   ``__name__`` là tên của module Python hiện tại. Ứng dụng
+        cần biết nó nằm ở đâu để thiết lập một số đường dẫn, và
+        ``__name__`` là một cách thuận tiện để cho nó biết điều đó.
 
-    *   ``instance_relative_config=True`` tells the app that
-        configuration files are relative to the
-        :ref:`instance folder <instance-folders>`. The instance folder
-        is located outside the ``flaskr`` package and can hold local
-        data that shouldn't be committed to version control, such as
-        configuration secrets and the database file.
+    *   ``instance_relative_config=True`` cho ứng dụng biết rằng
+        các file cấu hình là tương đối với
+        :ref:`instance folder <instance-folders>`. Instance folder
+        nằm bên ngoài package ``flaskr`` và có thể chứa dữ liệu cục bộ
+        không nên được commit vào version control, chẳng hạn như
+        các secret cấu hình và file cơ sở dữ liệu.
 
-#.  :meth:`app.config.from_mapping() <Config.from_mapping>` sets
-    some default configuration that the app will use:
+#.  :meth:`app.config.from_mapping() <Config.from_mapping>` đặt
+    một số cấu hình mặc định mà ứng dụng sẽ sử dụng:
 
-    *   :data:`SECRET_KEY` is used by Flask and extensions to keep data
-        safe. It's set to ``'dev'`` to provide a convenient value
-        during development, but it should be overridden with a random
-        value when deploying.
+    *   :data:`SECRET_KEY` được Flask và các extension sử dụng để giữ dữ liệu
+        an toàn. Nó được đặt thành ``'dev'`` để cung cấp một giá trị thuận tiện
+        trong quá trình phát triển, nhưng nó nên được ghi đè bằng một giá trị
+        ngẫu nhiên khi triển khai.
 
-    *   ``DATABASE`` is the path where the SQLite database file will be
-        saved. It's under
-        :attr:`app.instance_path <Flask.instance_path>`, which is the
-        path that Flask has chosen for the instance folder. You'll learn
-        more about the database in the next section.
+    *   ``DATABASE`` là đường dẫn nơi file cơ sở dữ liệu SQLite sẽ được
+        lưu. Nó nằm dưới
+        :attr:`app.instance_path <Flask.instance_path>`, là
+        đường dẫn mà Flask đã chọn cho instance folder. Bạn sẽ tìm hiểu
+        thêm về cơ sở dữ liệu trong phần tiếp theo.
 
-#.  :meth:`app.config.from_pyfile() <Config.from_pyfile>` overrides
-    the default configuration with values taken from the ``config.py``
-    file in the instance folder if it exists. For example, when
-    deploying, this can be used to set a real ``SECRET_KEY``.
+#.  :meth:`app.config.from_pyfile() <Config.from_pyfile>` ghi đè
+    cấu hình mặc định với các giá trị được lấy từ file ``config.py``
+    trong instance folder nếu nó tồn tại. Ví dụ, khi
+    triển khai, điều này có thể được sử dụng để đặt một ``SECRET_KEY`` thực.
 
-    *   ``test_config`` can also be passed to the factory, and will be
-        used instead of the instance configuration. This is so the tests
-        you'll write later in the tutorial can be configured
-        independently of any development values you have configured.
+    *   ``test_config`` cũng có thể được truyền cho factory, và sẽ được
+        sử dụng thay vì cấu hình instance. Điều này là để các bài kiểm tra
+        bạn sẽ viết sau trong tutorial có thể được cấu hình
+        độc lập với bất kỳ giá trị phát triển nào bạn đã cấu hình.
 
-#.  :func:`os.makedirs` ensures that
-    :attr:`app.instance_path <Flask.instance_path>` exists. Flask
-    doesn't create the instance folder automatically, but it needs to be
-    created because your project will create the SQLite database file
-    there.
+#.  :func:`os.makedirs` đảm bảo rằng
+    :attr:`app.instance_path <Flask.instance_path>` tồn tại. Flask
+    không tự động tạo instance folder, nhưng nó cần được
+    tạo vì dự án của bạn sẽ tạo file cơ sở dữ liệu SQLite
+    ở đó.
 
-#.  :meth:`@app.route() <Flask.route>` creates a simple route so you can
-    see the application working before getting into the rest of the
-    tutorial. It creates a connection between the URL ``/hello`` and a
-    function that returns a response, the string ``'Hello, World!'`` in
-    this case.
+#.  :meth:`@app.route() <Flask.route>` tạo một route đơn giản để bạn có thể
+    thấy ứng dụng hoạt động trước khi đi vào phần còn lại của
+    tutorial. Nó tạo một kết nối giữa URL ``/hello`` và một
+    hàm trả về một phản hồi, chuỗi ``'Hello, World!'`` trong
+    trường hợp này.
 
 
-Run The Application
--------------------
+Chạy Ứng dụng
+-------------
 
-Now you can run your application using the ``flask`` command. From the
-terminal, tell Flask where to find your application, then run it in
-debug mode. Remember, you should still be in the top-level
-``flask-tutorial`` directory, not the ``flaskr`` package.
+Bây giờ bạn có thể chạy ứng dụng của mình bằng lệnh ``flask``. Từ
+terminal, cho Flask biết nơi tìm ứng dụng của bạn, sau đó chạy nó trong
+chế độ debug. Hãy nhớ rằng, bạn vẫn nên ở trong thư mục
+``flask-tutorial`` cấp cao nhất, không phải package ``flaskr``.
 
-Debug mode shows an interactive debugger whenever a page raises an
-exception, and restarts the server whenever you make changes to the
-code. You can leave it running and just reload the browser page as you
-follow the tutorial.
+Chế độ debug hiển thị một debugger tương tác bất cứ khi nào một trang đưa ra một
+exception, và khởi động lại máy chủ bất cứ khi nào bạn thực hiện thay đổi đối với
+mã. Bạn có thể để nó chạy và chỉ cần tải lại trang trình duyệt khi bạn
+làm theo tutorial.
 
 .. code-block:: text
 
     $ flask --app flaskr run --debug
 
-You'll see output similar to this:
+Bạn sẽ thấy đầu ra tương tự như thế này:
 
 .. code-block:: text
 
@@ -150,13 +150,13 @@ You'll see output similar to this:
      * Debugger is active!
      * Debugger PIN: nnn-nnn-nnn
 
-Visit http://127.0.0.1:5000/hello in a browser and you should see the
-"Hello, World!" message. Congratulations, you're now running your Flask
-web application!
+Truy cập http://127.0.0.1:5000/hello trong trình duyệt và bạn sẽ thấy
+thông báo "Hello, World!". Chúc mừng, bạn hiện đang chạy ứng dụng
+web Flask của mình!
 
-If another program is already using port 5000, you'll see
-``OSError: [Errno 98]`` or ``OSError: [WinError 10013]`` when the
-server tries to start. See :ref:`address-already-in-use` for how to
-handle that.
+Nếu một chương trình khác đã sử dụng cổng 5000, bạn sẽ thấy
+``OSError: [Errno 98]`` hoặc ``OSError: [WinError 10013]`` khi
+máy chủ cố gắng khởi động. Xem :ref:`address-already-in-use` để biết cách
+xử lý điều đó.
 
-Continue to :doc:`database`.
+Tiếp tục đến :doc:`database`.

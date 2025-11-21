@@ -1,123 +1,80 @@
-.. currentmodule:: flask
+Giao diện Dòng Lệnh Flask
+==========================
 
-Command Line Interface
-======================
-
-Installing Flask installs the ``flask`` script, a `Click`_ command line
-interface, in your virtualenv. Executed from the terminal, this script gives
-access to built-in, extension, and application-defined commands. The ``--help``
-option will give more information about any commands and options.
+Cài đặt Flask sẽ cài đặt script ``flask`` – một giao diện dòng lệnh dựa trên `Click`_ – trong môi trường ảo của bạn. Khi chạy từ terminal, script này cho phép truy cập các lệnh tích hợp, các lệnh mở rộng và các lệnh do ứng dụng định nghĩa. Tùy chọn ``--help`` sẽ cung cấp thông tin chi tiết về bất kỳ lệnh và tùy chọn nào.
 
 .. _Click: https://click.palletsprojects.com/
 
+Khám phá Ứng dụng
+-------------------
 
-Application Discovery
----------------------
+Lệnh ``flask`` được cài đặt bởi Flask, không phải bởi ứng dụng của bạn; vì vậy nó cần biết nơi tìm ứng dụng để sử dụng. Tùy chọn ``--app`` được dùng để chỉ định cách tải ứng dụng. 
 
-The ``flask`` command is installed by Flask, not your application; it must be
-told where to find your application in order to use it. The ``--app``
-option is used to specify how to load the application.
+Mặc dù ``--app`` hỗ trợ nhiều cách chỉ định ứng dụng, hầu hết các trường hợp nên đơn giản. Dưới đây là các giá trị thường dùng:
 
-While ``--app`` supports a variety of options for specifying your
-application, most use cases should be simple. Here are the typical values:
-
-(nothing)
-    The name "app" or "wsgi" is imported (as a ".py" file, or package),
-    automatically detecting an app (``app`` or ``application``) or
-    factory (``create_app`` or ``make_app``).
-
-``--app hello``
-    The given name is imported, automatically detecting an app (``app``
-    or ``application``) or factory (``create_app`` or ``make_app``).
+- (không có gì)
+    Tên ``app`` hoặc ``wsgi`` được import (dưới dạng file ``.py`` hoặc package), tự động phát hiện một app (``app`` hoặc ``application``) hoặc một factory (``create_app`` hoặc ``make_app``).
+- ``--app hello``
+    Tên được import, tự động phát hiện một app (``app`` hoặc ``application``) hoặc một factory (``create_app`` hoặc ``make_app``).
 
 ----
 
-``--app`` has three parts: an optional path that sets the current working
-directory, a Python file or dotted import path, and an optional variable
-name of the instance or factory. If the name is a factory, it can optionally
-be followed by arguments in parentheses. The following values demonstrate these
-parts:
+``--app`` có ba phần: một đường dẫn tùy chọn để đặt thư mục làm việc hiện tại, một file Python hoặc đường dẫn import dạng dotted, và một tên biến tùy chọn của instance hoặc factory. Nếu tên là một factory, có thể theo sau là các đối số trong dấu ngoặc. Các ví dụ sau minh họa các phần này:
 
-``--app src/hello``
-    Sets the current working directory to ``src`` then imports ``hello``.
+- ``--app src/hello``
+    Đặt thư mục làm việc hiện tại thành ``src`` rồi import ``hello``.
+- ``--app hello.web``
+    Import đường dẫn ``hello.web``.
+- ``--app hello:app2``
+    Sử dụng instance Flask ``app2`` trong module ``hello``.
+- ``--app 'hello:create_app("dev")'``
+    Gọi factory ``create_app`` trong ``hello`` với đối số chuỗi ``"dev"``.
 
-``--app hello.web``
-    Imports the path ``hello.web``.
+Nếu không đặt ``--app``, lệnh sẽ cố gắng import ``app`` hoặc ``wsgi`` (dưới dạng file ``.py`` hoặc package) và tự động phát hiện một instance hoặc factory. Trong import được cung cấp, lệnh sẽ tìm một instance có tên ``app`` hoặc ``application`` trước, sau đó bất kỳ instance nào. Nếu không tìm thấy, lệnh sẽ tìm một factory ``create_app`` hoặc ``make_app`` trả về một instance.
 
-``--app hello:app2``
-    Uses the ``app2`` Flask instance in ``hello``.
+Nếu có dấu ngoặc sau tên factory, nội dung trong ngoặc sẽ được phân tích như các literal Python và truyền vào hàm. Điều này có nghĩa các chuỗi vẫn phải được đặt trong dấu ngoặc.
 
-``--app 'hello:create_app("dev")'``
-    The ``create_app`` factory in ``hello`` is called with the string ``'dev'``
-    as the argument.
-
-If ``--app`` is not set, the command will try to import "app" or
-"wsgi" (as a ".py" file, or package) and try to detect an application
-instance or factory.
-
-Within the given import, the command looks for an application instance named
-``app`` or ``application``, then any application instance. If no instance is
-found, the command looks for a factory function named ``create_app`` or
-``make_app`` that returns an instance.
-
-If parentheses follow the factory name, their contents are parsed as
-Python literals and passed as arguments and keyword arguments to the
-function. This means that strings must still be in quotes.
-
-
-Run the Development Server
+Chạy Máy Chủ Phát Triển
 --------------------------
 
-The :func:`run <cli.run_command>` command will start the development server. It
-replaces the :meth:`Flask.run` method in most cases. ::
+Lệnh :func:`run <cli.run_command>` sẽ khởi động máy chủ phát triển. Nó thay thế phương thức :meth:`Flask.run` trong hầu hết các trường hợp.
+
+::
 
     $ flask --app hello run
      * Serving Flask app "hello"
      * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
 
-.. warning:: Do not use this command to run your application in production.
-    Only use the development server during development. The development server
-    is provided for convenience, but is not designed to be particularly secure,
-    stable, or efficient. See :doc:`/deploying/index` for how to run in production.
+.. warning:: Không sử dụng lệnh này để chạy ứng dụng trong môi trường production. Chỉ dùng máy chủ phát triển trong quá trình phát triển. Máy chủ phát triển chỉ mang lại tiện lợi, nhưng không được thiết kế để an toàn, ổn định hoặc hiệu quả. Xem :doc:`/deploying/index` để biết cách chạy trong production.
 
-If another program is already using port 5000, you'll see
-``OSError: [Errno 98]`` or ``OSError: [WinError 10013]`` when the
-server tries to start. See :ref:`address-already-in-use` for how to
-handle that.
+Nếu một chương trình khác đã sử dụng cổng 5000, bạn sẽ thấy ``OSError: [Errno 98]`` hoặc ``OSError: [WinError 10013]`` khi máy chủ cố gắng khởi động. Xem :ref:`address-already-in-use` để xử lý.
 
+Chế Độ Gỡ Lỗi
+----------------
 
-Debug Mode
-~~~~~~~~~~
-
-In debug mode, the ``flask run`` command will enable the interactive debugger and the
-reloader by default, and make errors easier to see and debug. To enable debug mode, use
-the ``--debug`` option.
+Trong chế độ gỡ lỗi, lệnh ``flask run`` sẽ bật debugger tương tác và reloader mặc định, và làm cho lỗi dễ thấy và gỡ lỗi hơn. Để bật chế độ gỡ lỗi, dùng tùy chọn ``--debug``.
 
 .. code-block:: console
 
-     $ flask --app hello run --debug
-      * Serving Flask app "hello"
-      * Debug mode: on
-      * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
-      * Restarting with inotify reloader
-      * Debugger is active!
-      * Debugger PIN: 223-456-919
+    $ flask --app hello run --debug
+     * Serving Flask app "hello"
+     * Debug mode: on
+     * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+     * Restarting with inotify reloader
+     * Debugger is active!
+     * Debugger PIN: 223-456-919
 
-The ``--debug`` option can also be passed to the top level ``flask`` command to enable
-debug mode for any command. The following two ``run`` calls are equivalent.
+Tùy chọn ``--debug`` cũng có thể được truyền vào lệnh ``flask`` cấp cao để bật chế độ gỡ lỗi cho bất kỳ lệnh nào. Hai lệnh ``run`` sau đây là tương đương:
 
 .. code-block:: console
 
     $ flask --app hello --debug run
     $ flask --app hello run --debug
 
+Theo Dõi và Bỏ Qua Các Tệp Khi Reload
+--------------------------------------
 
-Watch and Ignore Files with the Reloader
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When using debug mode, the reloader will trigger whenever your Python code or imported
-modules change. The reloader can watch additional files with the ``--extra-files``
-option. Multiple paths are separated with ``:``, or ``;`` on Windows.
+Khi dùng chế độ gỡ lỗi, reloader sẽ kích hoạt mỗi khi mã Python hoặc các module được import thay đổi. Reloader có thể theo dõi các tệp bổ sung bằng tùy chọn ``--extra-files``. Các đường dẫn được phân tách bằng ``:`` (hoặc ``;`` trên Windows).
 
 .. code-block:: text
 
@@ -125,17 +82,14 @@ option. Multiple paths are separated with ``:``, or ``;`` on Windows.
      * Running on http://127.0.0.1:8000/
      * Detected change in '/path/to/file1', reloading
 
-The reloader can also ignore files using :mod:`fnmatch` patterns with the
-``--exclude-patterns`` option. Multiple patterns are separated with ``:``, or ``;`` on
-Windows.
+Reloader cũng có thể bỏ qua các tệp bằng các mẫu ``fnmatch`` qua tùy chọn ``--exclude-patterns``. Các mẫu được phân tách bằng ``:`` (hoặc ``;`` trên Windows).
 
+Mở Shell
+----------
 
-Open a Shell
-------------
+Để khám phá dữ liệu trong ứng dụng, bạn có thể khởi động một Python shell tương tác bằng lệnh :func:`shell <cli.shell_command>`. Một context ứng dụng sẽ được kích hoạt, và instance app sẽ được import.
 
-To explore the data in your application, you can start an interactive Python
-shell with the :func:`shell <cli.shell_command>` command. An application
-context will be active, and the app instance will be imported. ::
+::
 
     $ flask shell
     Python 3.10.0 (default, Oct 27 2021, 06:59:51) [GCC 11.1.0] on linux
@@ -143,414 +97,103 @@ context will be active, and the app instance will be imported. ::
     Instance: /home/david/Projects/pallets/flask/instance
     >>>
 
-Use :meth:`~Flask.shell_context_processor` to add other automatic imports.
+Sử dụng :meth:`~Flask.shell_context_processor` để tự động import các đối tượng khác.
 
+Biến Môi Trường Từ dotenv
+--------------------------
 
-.. _dotenv:
+Lệnh ``flask`` hỗ trợ thiết lập bất kỳ tùy chọn nào cho bất kỳ lệnh nào bằng biến môi trường. Các biến được đặt dạng ``FLASK_OPTION`` hoặc ``FLASK_COMMAND_OPTION``; ví dụ ``FLASK_APP`` hoặc ``FLASK_RUN_PORT``.
 
-Environment Variables From dotenv
----------------------------------
+Thay vì truyền tùy chọn mỗi lần chạy lệnh, hoặc thiết lập biến môi trường mỗi lần mở terminal, bạn có thể sử dụng hỗ trợ dotenv của Flask để tự động thiết lập biến môi trường từ các file ``.env`` và ``.flaskenv``.
 
-The ``flask`` command supports setting any option for any command with
-environment variables. The variables are named like ``FLASK_OPTION`` or
-``FLASK_COMMAND_OPTION``, for example ``FLASK_APP`` or
-``FLASK_RUN_PORT``.
+Nếu cài đặt ``python-dotenv`` thì lệnh ``flask`` sẽ đọc các biến từ các file này. Bạn cũng có thể chỉ định một file bổ sung để tải bằng tùy chọn ``--env-file``.
 
-Rather than passing options every time you run a command, or environment
-variables every time you open a new terminal, you can use Flask's dotenv
-support to set environment variables automatically.
+Các biến trong ``.env`` không nên được commit vào repository vì chúng có thể chứa thông tin nhạy cảm; ``.flaskenv`` nên chứa các biến công khai như ``FLASK_APP``.
 
-If `python-dotenv`_ is installed, running the ``flask`` command will set
-environment variables defined in the files ``.env`` and ``.flaskenv``.
-You can also specify an extra file to load with the ``--env-file``
-option. Dotenv files can be used to avoid having to set ``--app`` or
-``FLASK_APP`` manually, and to set configuration using environment
-variables similar to how some deployment services work.
+Các thư mục được quét lên trên từ thư mục bạn gọi ``flask`` để tìm các file này.
 
-Variables set on the command line are used over those set in :file:`.env`,
-which are used over those set in :file:`.flaskenv`. :file:`.flaskenv` should be
-used for public variables, such as ``FLASK_APP``, while :file:`.env` should not
-be committed to your repository so that it can set private variables.
+Các file chỉ được tải bởi lệnh ``flask`` hoặc khi gọi :meth:`~Flask.run`. Nếu muốn tải chúng trong production, hãy gọi :func:`~cli.load_dotenv` thủ công.
 
-Directories are scanned upwards from the directory you call ``flask``
-from to locate the files.
+Cài Đặt Các Lệnh
+-----------------
 
-The files are only loaded by the ``flask`` command or calling
-:meth:`~Flask.run`. If you would like to load these files when running in
-production, you should call :func:`~cli.load_dotenv` manually.
-
-.. _python-dotenv: https://github.com/theskumar/python-dotenv#readme
-
-
-Setting Command Options
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Click is configured to load default values for command options from
-environment variables. The variables use the pattern
-``FLASK_COMMAND_OPTION``. For example, to set the port for the run
-command, instead of ``flask run --port 8000``:
+Click được cấu hình để tải giá trị mặc định cho các tùy chọn lệnh từ biến môi trường. Các biến sử dụng mẫu ``FLASK_COMMAND_OPTION``. Ví dụ, để đặt cổng cho lệnh run, thay vì ``flask run --port 8000``:
 
 .. tabs::
 
-   .. group-tab:: Bash
+    .. group-tab:: Bash
 
-      .. code-block:: text
+        .. code-block:: text
 
-         $ export FLASK_RUN_PORT=8000
-         $ flask run
-          * Running on http://127.0.0.1:8000/
+            $ export FLASK_RUN_PORT=8000
+            $ flask run
+            * Running on http://127.0.0.1:8000/
 
-   .. group-tab:: Fish
+    .. group-tab:: Fish
 
-      .. code-block:: text
+        .. code-block:: text
 
-         $ set -x FLASK_RUN_PORT 8000
-         $ flask run
-          * Running on http://127.0.0.1:8000/
+            $ set -x FLASK_RUN_PORT 8000
+            $ flask run
+            * Running on http://127.0.0.1:8000/
 
-   .. group-tab:: CMD
+    .. group-tab:: CMD
 
-      .. code-block:: text
+        .. code-block:: text
 
-         > set FLASK_RUN_PORT=8000
-         > flask run
-          * Running on http://127.0.0.1:8000/
+            > set FLASK_RUN_PORT=8000
+            > flask run
+            * Running on http://127.0.0.1:8000/
 
-   .. group-tab:: Powershell
+    .. group-tab:: Powershell
 
-      .. code-block:: text
+        .. code-block:: text
 
-         > $env:FLASK_RUN_PORT = 8000
-         > flask run
-          * Running on http://127.0.0.1:8000/
+            > $env:FLASK_RUN_PORT = 8000
+            > flask run
+            * Running on http://127.0.0.1:8000/
 
-These can be added to the ``.flaskenv`` file just like ``FLASK_APP`` to
-control default command options.
+Các tùy chọn này có thể được thêm vào file ``.flaskenv`` giống như ``FLASK_APP`` để làm mặc định.
 
+Tắt dotenv
+----------
 
-Disable dotenv
-~~~~~~~~~~~~~~
-
-The ``flask`` command will show a message if it detects dotenv files but
-python-dotenv is not installed.
+Lệnh ``flask`` sẽ hiển thị thông báo nếu phát hiện file ``.env`` nhưng không cài đặt ``python-dotenv``. Để tắt việc tải file ``.env`` ngay cả khi ``python-dotenv`` đã cài, đặt biến môi trường ``FLASK_SKIP_DOTENV``.
 
 .. code-block:: bash
 
     $ flask run
      * Tip: There are .env files present. Do "pip install python-dotenv" to use them.
 
-You can tell Flask not to load dotenv files even when python-dotenv is
-installed by setting the ``FLASK_SKIP_DOTENV`` environment variable.
-This can be useful if you want to load them manually, or if you're using
-a project runner that loads them already. Keep in mind that the
-environment variables must be set before the app loads or it won't
-configure as expected.
+Cài đặt ``FLASK_SKIP_DOTENV=1`` sẽ ngăn Flask tải file ``.env``.
 
 .. tabs::
 
-   .. group-tab:: Bash
+    .. group-tab:: Bash
 
-      .. code-block:: text
+        .. code-block:: text
 
-         $ export FLASK_SKIP_DOTENV=1
-         $ flask run
+            $ export FLASK_SKIP_DOTENV=1
+            $ flask run
 
-   .. group-tab:: Fish
+    .. group-tab:: Fish
 
-      .. code-block:: text
+        .. code-block:: text
 
-         $ set -x FLASK_SKIP_DOTENV 1
-         $ flask run
+            $ set -x FLASK_SKIP_DOTENV 1
+            $ flask run
 
-   .. group-tab:: CMD
+    .. group-tab:: CMD
 
-      .. code-block:: text
+        .. code-block:: text
 
-         > set FLASK_SKIP_DOTENV=1
-         > flask run
+            > set FLASK_SKIP_DOTENV=1
+            > flask run
 
-   .. group-tab:: Powershell
+    .. group-tab:: Powershell
 
-      .. code-block:: text
+        .. code-block:: text
 
-         > $env:FLASK_SKIP_DOTENV = 1
-         > flask run
+            > $env:FLASK_SKIP_DOTENV = 1
+            > flask run
 
-
-Environment Variables From virtualenv
--------------------------------------
-
-If you do not want to install dotenv support, you can still set environment
-variables by adding them to the end of the virtualenv's :file:`activate`
-script. Activating the virtualenv will set the variables.
-
-.. tabs::
-
-   .. group-tab:: Bash
-
-      Unix Bash, :file:`.venv/bin/activate`::
-
-          $ export FLASK_APP=hello
-
-   .. group-tab:: Fish
-
-      Fish, :file:`.venv/bin/activate.fish`::
-
-          $ set -x FLASK_APP hello
-
-   .. group-tab:: CMD
-
-      Windows CMD, :file:`.venv\\Scripts\\activate.bat`::
-
-          > set FLASK_APP=hello
-
-   .. group-tab:: Powershell
-
-      Windows Powershell, :file:`.venv\\Scripts\\activate.ps1`::
-
-          > $env:FLASK_APP = "hello"
-
-It is preferred to use dotenv support over this, since :file:`.flaskenv` can be
-committed to the repository so that it works automatically wherever the project
-is checked out.
-
-
-Custom Commands
----------------
-
-The ``flask`` command is implemented using `Click`_. See that project's
-documentation for full information about writing commands.
-
-This example adds the command ``create-user`` that takes the argument
-``name``. ::
-
-    import click
-    from flask import Flask
-
-    app = Flask(__name__)
-
-    @app.cli.command("create-user")
-    @click.argument("name")
-    def create_user(name):
-        ...
-
-::
-
-    $ flask create-user admin
-
-This example adds the same command, but as ``user create``, a command in a
-group. This is useful if you want to organize multiple related commands. ::
-
-    import click
-    from flask import Flask
-    from flask.cli import AppGroup
-
-    app = Flask(__name__)
-    user_cli = AppGroup('user')
-
-    @user_cli.command('create')
-    @click.argument('name')
-    def create_user(name):
-        ...
-
-    app.cli.add_command(user_cli)
-
-::
-
-    $ flask user create demo
-
-See :ref:`testing-cli` for an overview of how to test your custom
-commands.
-
-
-Registering Commands with Blueprints
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If your application uses blueprints, you can optionally register CLI
-commands directly onto them. When your blueprint is registered onto your
-application, the associated commands will be available to the ``flask``
-command. By default, those commands will be nested in a group matching
-the name of the blueprint.
-
-.. code-block:: python
-
-    from flask import Blueprint
-
-    bp = Blueprint('students', __name__)
-
-    @bp.cli.command('create')
-    @click.argument('name')
-    def create(name):
-        ...
-
-    app.register_blueprint(bp)
-
-.. code-block:: text
-
-    $ flask students create alice
-
-You can alter the group name by specifying the ``cli_group`` parameter
-when creating the :class:`Blueprint` object, or later with
-:meth:`app.register_blueprint(bp, cli_group='...') <Flask.register_blueprint>`.
-The following are equivalent:
-
-.. code-block:: python
-
-    bp = Blueprint('students', __name__, cli_group='other')
-    # or
-    app.register_blueprint(bp, cli_group='other')
-
-.. code-block:: text
-
-    $ flask other create alice
-
-Specifying ``cli_group=None`` will remove the nesting and merge the
-commands directly to the application's level:
-
-.. code-block:: python
-
-    bp = Blueprint('students', __name__, cli_group=None)
-    # or
-    app.register_blueprint(bp, cli_group=None)
-
-.. code-block:: text
-
-    $ flask create alice
-
-
-Application Context
-~~~~~~~~~~~~~~~~~~~
-
-Commands added using the Flask app's :attr:`~Flask.cli` or
-:class:`~flask.cli.FlaskGroup` :meth:`~cli.AppGroup.command` decorator
-will be executed with an application context pushed, so your custom
-commands and parameters have access to the app and its configuration. The
-:func:`~cli.with_appcontext` decorator can be used to get the same
-behavior, but is not needed in most cases.
-
-.. code-block:: python
-
-    import click
-    from flask.cli import with_appcontext
-
-    @click.command()
-    @with_appcontext
-    def do_work():
-        ...
-
-    app.cli.add_command(do_work)
-
-
-Plugins
--------
-
-Flask will automatically load commands specified in the ``flask.commands``
-`entry point`_. This is useful for extensions that want to add commands when
-they are installed. Entry points are specified in :file:`pyproject.toml`:
-
-.. code-block:: toml
-
-    [project.entry-points."flask.commands"]
-    my-command = "my_extension.commands:cli"
-
-.. _entry point: https://packaging.python.org/tutorials/packaging-projects/#entry-points
-
-Inside :file:`my_extension/commands.py` you can then export a Click
-object::
-
-    import click
-
-    @click.command()
-    def cli():
-        ...
-
-Once that package is installed in the same virtualenv as your Flask project,
-you can run ``flask my-command`` to invoke the command.
-
-
-.. _custom-scripts:
-
-Custom Scripts
---------------
-
-When you are using the app factory pattern, it may be more convenient to define
-your own Click script. Instead of using ``--app`` and letting Flask load
-your application, you can create your own Click object and export it as a
-`console script`_ entry point.
-
-Create an instance of :class:`~cli.FlaskGroup` and pass it the factory::
-
-    import click
-    from flask import Flask
-    from flask.cli import FlaskGroup
-
-    def create_app():
-        app = Flask('wiki')
-        # other setup
-        return app
-
-    @click.group(cls=FlaskGroup, create_app=create_app)
-    def cli():
-        """Management script for the Wiki application."""
-
-Define the entry point in :file:`pyproject.toml`:
-
-.. code-block:: toml
-
-    [project.scripts]
-    wiki = "wiki:cli"
-
-Install the application in the virtualenv in editable mode and the custom
-script is available. Note that you don't need to set ``--app``. ::
-
-    $ pip install -e .
-    $ wiki run
-
-.. admonition:: Errors in Custom Scripts
-
-    When using a custom script, if you introduce an error in your
-    module-level code, the reloader will fail because it can no longer
-    load the entry point.
-
-    The ``flask`` command, being separate from your code, does not have
-    this issue and is recommended in most cases.
-
-.. _console script: https://packaging.python.org/tutorials/packaging-projects/#console-scripts
-
-
-PyCharm Integration
--------------------
-
-PyCharm Professional provides a special Flask run configuration to run the development
-server. For the Community Edition, and for other commands besides ``run``, you need to
-create a custom run configuration. These instructions should be similar for any other
-IDE you use.
-
-In PyCharm, with your project open, click on *Run* from the menu bar and go to *Edit
-Configurations*. You'll see a screen similar to this:
-
-.. image:: _static/pycharm-run-config.png
-    :align: center
-    :class: screenshot
-    :alt: Screenshot of PyCharm run configuration.
-
-Once you create a configuration for the ``flask run``, you can copy and change it to
-call any other command.
-
-Click the *+ (Add New Configuration)* button and select *Python*. Give the configuration
-a name such as "flask run".
-
-Click the *Script path* dropdown and change it to *Module name*, then input ``flask``.
-
-The *Parameters* field is set to the CLI command to execute along with any arguments.
-This example uses ``--app hello run --debug``, which will run the development server in
-debug mode. ``--app hello`` should be the import or file with your Flask app.
-
-If you installed your project as a package in your virtualenv, you may uncheck the
-*PYTHONPATH* options. This will more accurately match how you deploy later.
-
-Click *OK* to save and close the configuration. Select the configuration in the main
-PyCharm window and click the play button next to it to run the server.
-
-Now that you have a configuration for ``flask run``, you can copy that configuration and
-change the *Parameters* argument to run a different CLI command.

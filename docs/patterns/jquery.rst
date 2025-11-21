@@ -1,6 +1,6 @@
 :orphan:
 
-AJAX with jQuery
-================
+AJAX với jQuery
+===============
 
-Obsolete, see :doc:`/patterns/javascript` instead.
+Lỗi thời, xem :doc:`/patterns/javascript` thay thế.

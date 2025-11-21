@@ -1,25 +1,25 @@
-Application Dispatching
-=======================
+Điều phối Ứng dụng (Application Dispatching)
+==========================================
 
-Application dispatching is the process of combining multiple Flask
-applications on the WSGI level.  You can combine not only Flask
-applications but any WSGI application.  This would allow you to run a
-Django and a Flask application in the same interpreter side by side if
-you want.  The usefulness of this depends on how the applications work
-internally.
+Điều phối ứng dụng là quá trình kết hợp nhiều ứng dụng Flask
+ở cấp độ WSGI. Bạn có thể kết hợp không chỉ các ứng dụng Flask
+mà còn bất kỳ ứng dụng WSGI nào. Điều này sẽ cho phép bạn chạy một
+ứng dụng Django và một ứng dụng Flask trong cùng một trình thông dịch cạnh nhau nếu
+bạn muốn. Tính hữu ích của điều này phụ thuộc vào cách các ứng dụng hoạt động
+bên trong.
 
-The fundamental difference from :doc:`packages` is that in this case you
-are running the same or different Flask applications that are entirely
-isolated from each other. They run different configurations and are
-dispatched on the WSGI level.
+Sự khác biệt cơ bản so với :doc:`packages` là trong trường hợp này bạn
+đang chạy các ứng dụng Flask giống nhau hoặc khác nhau hoàn toàn
+bị cô lập với nhau. Chúng chạy các cấu hình khác nhau và được
+điều phối ở cấp độ WSGI.
 
 
-Working with this Document
---------------------------
+Làm việc với Tài liệu này
+-------------------------
 
-Each of the techniques and examples below results in an ``application``
-object that can be run with any WSGI server. For development, use the
-``flask run`` command to start a development server. For production, see
+Mỗi kỹ thuật và ví dụ dưới đây dẫn đến một đối tượng ``application``
+có thể chạy với bất kỳ máy chủ WSGI nào. Để phát triển, sử dụng lệnh
+``flask run`` để khởi động một máy chủ phát triển. Để sản xuất, xem
 :doc:`/deploying/index`.
 
 .. code-block:: python
@@ -33,18 +33,18 @@ object that can be run with any WSGI server. For development, use the
         return 'Hello World!'
 
 
-Combining Applications
-----------------------
+Kết hợp các Ứng dụng
+--------------------
 
-If you have entirely separated applications and you want them to work next
-to each other in the same Python interpreter process you can take
-advantage of the :class:`werkzeug.wsgi.DispatcherMiddleware`.  The idea
-here is that each Flask application is a valid WSGI application and they
-are combined by the dispatcher middleware into a larger one that is
-dispatched based on prefix.
+Nếu bạn có các ứng dụng hoàn toàn tách biệt và bạn muốn chúng hoạt động cạnh
+nhau trong cùng một quy trình trình thông dịch Python, bạn có thể tận dụng
+lợi thế của :class:`werkzeug.wsgi.DispatcherMiddleware`. Ý tưởng
+ở đây là mỗi ứng dụng Flask là một ứng dụng WSGI hợp lệ và chúng
+được kết hợp bởi middleware điều phối thành một ứng dụng lớn hơn được
+điều phối dựa trên tiền tố (prefix).
 
-For example you could have your main application run on ``/`` and your
-backend interface on ``/backend``.
+Ví dụ bạn có thể có ứng dụng chính của mình chạy trên ``/`` và giao diện
+backend của bạn trên ``/backend``.
 
 .. code-block:: python
 
@@ -57,27 +57,27 @@ backend interface on ``/backend``.
     })
 
 
-Dispatch by Subdomain
----------------------
+Điều phối theo Tên miền phụ (Subdomain)
+---------------------------------------
 
-Sometimes you might want to use multiple instances of the same application
-with different configurations.  Assuming the application is created inside
-a function and you can call that function to instantiate it, that is
-really easy to implement.  In order to develop your application to support
-creating new instances in functions have a look at the
-:doc:`appfactories` pattern.
+Đôi khi bạn có thể muốn sử dụng nhiều instance của cùng một ứng dụng
+với các cấu hình khác nhau. Giả sử ứng dụng được tạo bên trong
+một hàm và bạn có thể gọi hàm đó để khởi tạo nó, điều đó
+thực sự dễ dàng để triển khai. Để phát triển ứng dụng của bạn để hỗ trợ
+tạo các instance mới trong các hàm, hãy xem mẫu
+:doc:`appfactories`.
 
-A very common example would be creating applications per subdomain.  For
-instance you configure your webserver to dispatch all requests for all
-subdomains to your application and you then use the subdomain information
-to create user-specific instances.  Once you have your server set up to
-listen on all subdomains you can use a very simple WSGI application to do
-the dynamic application creation.
+Một ví dụ rất phổ biến sẽ là tạo các ứng dụng cho mỗi tên miền phụ. Ví dụ
+bạn cấu hình máy chủ web của mình để điều phối tất cả các request cho tất cả
+các tên miền phụ đến ứng dụng của bạn và sau đó bạn sử dụng thông tin tên miền phụ
+để tạo các instance cụ thể cho người dùng. Khi bạn đã thiết lập máy chủ của mình để
+lắng nghe trên tất cả các tên miền phụ, bạn có thể sử dụng một ứng dụng WSGI rất đơn giản để thực hiện
+việc tạo ứng dụng động.
 
-The perfect level for abstraction in that regard is the WSGI layer.  You
-write your own WSGI application that looks at the request that comes and
-delegates it to your Flask application.  If that application does not
-exist yet, it is dynamically created and remembered.
+Mức độ hoàn hảo cho sự trừu tượng trong khía cạnh đó là lớp WSGI. Bạn
+viết ứng dụng WSGI của riêng mình để xem xét request đến và
+ủy quyền nó cho ứng dụng Flask của bạn. Nếu ứng dụng đó chưa
+tồn tại, nó được tạo động và được ghi nhớ.
 
 .. code-block:: python
 
@@ -107,7 +107,7 @@ exist yet, it is dynamically created and remembered.
             return app(environ, start_response)
 
 
-This dispatcher can then be used like this:
+Dispatcher này sau đó có thể được sử dụng như thế này:
 
 .. code-block:: python
 
@@ -117,25 +117,25 @@ This dispatcher can then be used like this:
     def make_app(subdomain):
         user = get_user_for_subdomain(subdomain)
         if user is None:
-            # if there is no user for that subdomain we still have
-            # to return a WSGI application that handles that request.
-            # We can then just return the NotFound() exception as
-            # application which will render a default 404 page.
-            # You might also redirect the user to the main page then
+            # nếu không có người dùng cho tên miền phụ đó chúng ta vẫn phải
+            # trả về một ứng dụng WSGI xử lý request đó.
+            # Chúng ta có thể chỉ cần trả về ngoại lệ NotFound() như là
+            # ứng dụng sẽ render một trang 404 mặc định.
+            # Bạn cũng có thể chuyển hướng người dùng đến trang chính sau đó
             return NotFound()
 
-        # otherwise create the application for the specific user
+        # nếu không thì tạo ứng dụng cho người dùng cụ thể
         return create_app(user)
 
     application = SubdomainDispatcher('example.com', make_app)
 
 
-Dispatch by Path
-----------------
+Điều phối theo Đường dẫn (Path)
+-------------------------------
 
-Dispatching by a path on the URL is very similar.  Instead of looking at
-the ``Host`` header to figure out the subdomain one simply looks at the
-request path up to the first slash.
+Điều phối theo một đường dẫn trên URL rất giống nhau. Thay vì nhìn vào
+header ``Host`` để tìm ra tên miền phụ, người ta chỉ cần nhìn vào
+đường dẫn request cho đến dấu gạch chéo đầu tiên.
 
 .. code-block:: python
 
@@ -174,8 +174,8 @@ request path up to the first slash.
 
         return None
 
-The big difference between this and the subdomain one is that this one
-falls back to another application if the creator function returns ``None``.
+Sự khác biệt lớn giữa cái này và cái tên miền phụ là cái này
+dự phòng sang một ứng dụng khác nếu hàm tạo trả về ``None``.
 
 .. code-block:: python
 

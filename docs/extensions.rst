@@ -1,27 +1,27 @@
-Extensions
+Extension
 ==========
 
-Extensions are extra packages that add functionality to a Flask
-application. For example, an extension might add support for sending
-email or connecting to a database. Some extensions add entire new
-frameworks to help build certain types of applications, like a REST API.
+Extension là các package bổ sung thêm chức năng cho một
+ứng dụng Flask. Ví dụ, một extension có thể thêm hỗ trợ để gửi
+email hoặc kết nối với cơ sở dữ liệu. Một số extension thêm toàn bộ
+framework mới để giúp xây dựng các loại ứng dụng nhất định, như một REST API.
 
 
-Finding Extensions
-------------------
+Tìm Extension
+-------------
 
-Flask extensions are usually named "Flask-Foo" or "Foo-Flask". You can
-search PyPI for packages tagged with `Framework :: Flask <pypi_>`_.
+Các Flask extension thường được đặt tên là "Flask-Foo" hoặc "Foo-Flask". Bạn có thể
+tìm kiếm PyPI cho các package được gắn thẻ với `Framework :: Flask <pypi_>`_.
 
 
-Using Extensions
-----------------
+Sử dụng Extension
+-----------------
 
-Consult each extension's documentation for installation, configuration,
-and usage instructions. Generally, extensions pull their own
-configuration from :attr:`app.config <flask.Flask.config>` and are
-passed an application instance during initialization. For example,
-an extension called "Flask-Foo" might be used like this::
+Tham khảo tài liệu của từng extension để biết hướng dẫn cài đặt, cấu hình,
+và sử dụng. Nói chung, các extension lấy
+cấu hình riêng của chúng từ :attr:`app.config <flask.Flask.config>` và được
+truyền một instance ứng dụng trong quá trình khởi tạo. Ví dụ,
+một extension có tên "Flask-Foo" có thể được sử dụng như thế này::
 
     from flask_foo import Foo
 
@@ -36,13 +36,13 @@ an extension called "Flask-Foo" might be used like this::
     foo.init_app(app)
 
 
-Building Extensions
--------------------
+Xây dựng Extension
+------------------
 
-While `PyPI <pypi_>`_ contains many Flask extensions, you may not find
-an extension that fits your need. If this is the case, you can create
-your own, and publish it for others to use as well. Read
-:doc:`extensiondev` to develop your own Flask extension.
+Mặc dù `PyPI <pypi_>`_ chứa nhiều Flask extension, bạn có thể không tìm thấy
+một extension phù hợp với nhu cầu của mình. Nếu đây là trường hợp, bạn có thể tạo
+extension của riêng bạn, và publish nó cho người khác sử dụng. Đọc
+:doc:`extensiondev` để phát triển Flask extension của riêng bạn.
 
 
 .. _pypi: https://pypi.org/search/?c=Framework+%3A%3A+Flask

@@ -1,11 +1,11 @@
-Using SQLite 3 with Flask
-=========================
+Sử dụng SQLite 3 với Flask
+==========================
 
-You can implement a few functions to work with a SQLite connection during a
-request context. The connection is created the first time it's accessed,
-reused on subsequent access, until it is closed when the request context ends.
+Bạn có thể triển khai một vài hàm để làm việc với một kết nối SQLite trong một
+ngữ cảnh request. Kết nối được tạo lần đầu tiên khi nó được truy cập,
+được sử dụng lại khi truy cập tiếp theo, cho đến khi nó được đóng khi ngữ cảnh request kết thúc.
 
-Here is a simple example of how you can use SQLite 3 with Flask::
+Đây là một ví dụ đơn giản về cách bạn có thể sử dụng SQLite 3 với Flask::
 
     import sqlite3
     from flask import g
@@ -24,13 +24,13 @@ Here is a simple example of how you can use SQLite 3 with Flask::
         if db is not None:
             db.close()
 
-Now, to use the database, the application must either have an active
-application context (which is always true if there is a request in flight)
-or create an application context itself.  At that point the ``get_db``
-function can be used to get the current database connection.  Whenever the
-context is destroyed the database connection will be terminated.
+Bây giờ, để sử dụng cơ sở dữ liệu, ứng dụng phải có một ngữ cảnh
+ứng dụng đang hoạt động (điều này luôn đúng nếu có một request đang diễn ra)
+hoặc tự tạo một ngữ cảnh ứng dụng. Tại thời điểm đó hàm ``get_db``
+có thể được sử dụng để lấy kết nối cơ sở dữ liệu hiện tại. Bất cứ khi nào
+ngữ cảnh bị hủy, kết nối cơ sở dữ liệu sẽ bị chấm dứt.
 
-Example::
+Ví dụ::
 
     @app.route('/')
     def index():
@@ -40,32 +40,32 @@ Example::
 
 .. note::
 
-   Please keep in mind that the teardown request and appcontext functions
-   are always executed, even if a before-request handler failed or was
-   never executed.  Because of this we have to make sure here that the
-   database is there before we close it.
+    Hãy nhớ rằng các hàm teardown request và appcontext
+    luôn được thực thi, ngay cả khi một trình xử lý before-request thất bại hoặc
+    không bao giờ được thực thi. Vì điều này chúng ta phải chắc chắn ở đây rằng
+    cơ sở dữ liệu ở đó trước khi chúng ta đóng nó.
 
-Connect on Demand
------------------
+Kết nối theo Yêu cầu
+--------------------
 
-The upside of this approach (connecting on first use) is that this will
-only open the connection if truly necessary.  If you want to use this
-code outside a request context you can use it in a Python shell by opening
-the application context by hand::
+Ưu điểm của cách tiếp cận này (kết nối khi sử dụng lần đầu) là điều này sẽ
+chỉ mở kết nối nếu thực sự cần thiết. Nếu bạn muốn sử dụng
+mã này bên ngoài ngữ cảnh request, bạn có thể sử dụng nó trong một Python shell bằng cách mở
+ngữ cảnh ứng dụng bằng tay::
 
     with app.app_context():
-        # now you can use get_db()
+        # bây giờ bạn có thể sử dụng get_db()
 
 
-Easy Querying
--------------
+Truy vấn Dễ dàng
+----------------
 
-Now in each request handling function you can access `get_db()` to get the
-current open database connection.  To simplify working with SQLite, a
-row factory function is useful.  It is executed for every result returned
-from the database to convert the result.  For instance, in order to get
-dictionaries instead of tuples, this could be inserted into the ``get_db``
-function we created above::
+Bây giờ trong mỗi hàm xử lý request bạn có thể truy cập `get_db()` để lấy
+kết nối cơ sở dữ liệu mở hiện tại. Để đơn giản hóa việc làm việc với SQLite, một
+hàm row factory rất hữu ích. Nó được thực thi cho mỗi kết quả được trả về
+từ cơ sở dữ liệu để chuyển đổi kết quả. Ví dụ, để lấy
+các dict thay vì tuple, điều này có thể được chèn vào hàm ``get_db``
+chúng ta đã tạo ở trên::
 
     def make_dicts(cursor, row):
         return dict((cursor.description[idx][0], value)
@@ -73,19 +73,19 @@ function we created above::
 
     db.row_factory = make_dicts
 
-This will make the sqlite3 module return dicts for this database connection, which are much nicer to deal with. Even more simply, we could place this in ``get_db`` instead::
+Điều này sẽ làm cho module sqlite3 trả về các dict cho kết nối cơ sở dữ liệu này, dễ xử lý hơn nhiều. Thậm chí đơn giản hơn, chúng ta có thể đặt cái này trong ``get_db`` thay thế::
 
     db.row_factory = sqlite3.Row
 
-This would use Row objects rather than dicts to return the results of queries. These are ``namedtuple`` s, so we can access them either by index or by key. For example, assuming we have a ``sqlite3.Row`` called ``r`` for the rows ``id``, ``FirstName``, ``LastName``, and ``MiddleInitial``::
+Điều này sẽ sử dụng các đối tượng Row thay vì dict để trả về kết quả của các truy vấn. Đây là các ``namedtuple``, vì vậy chúng ta có thể truy cập chúng bằng index hoặc bằng key. Ví dụ, giả sử chúng ta có một ``sqlite3.Row`` được gọi là ``r`` cho các hàng ``id``, ``FirstName``, ``LastName``, và ``MiddleInitial``::
 
-    >>> # You can get values based on the row's name
+    >>> # Bạn có thể lấy giá trị dựa trên tên của hàng
     >>> r['FirstName']
     John
-    >>> # Or, you can get them based on index
+    >>> # Hoặc, bạn có thể lấy chúng dựa trên index
     >>> r[1]
     John
-    # Row objects are also iterable:
+    # Các đối tượng Row cũng có thể lặp lại:
     >>> for value in r:
     ...     print(value)
     1
@@ -93,8 +93,8 @@ This would use Row objects rather than dicts to return the results of queries. T
     Doe
     M
 
-Additionally, it is a good idea to provide a query function that combines
-getting the cursor, executing and fetching the results::
+Ngoài ra, nên cung cấp một hàm truy vấn kết hợp
+lấy con trỏ, thực thi và lấy kết quả::
 
     def query_db(query, args=(), one=False):
         cur = get_db().execute(query, args)
@@ -102,16 +102,16 @@ getting the cursor, executing and fetching the results::
         cur.close()
         return (rv[0] if rv else None) if one else rv
 
-This handy little function, in combination with a row factory, makes
-working with the database much more pleasant than it is by just using the
-raw cursor and connection objects.
+Hàm nhỏ tiện lợi này, kết hợp với một row factory, làm cho
+việc làm việc với cơ sở dữ liệu dễ chịu hơn nhiều so với chỉ sử dụng
+các đối tượng cursor và connection thô.
 
-Here is how you can use it::
+Đây là cách bạn có thể sử dụng nó::
 
     for user in query_db('select * from users'):
         print(user['username'], 'has the id', user['user_id'])
 
-Or if you just want a single result::
+Hoặc nếu bạn chỉ muốn một kết quả duy nhất::
 
     user = query_db('select * from users where username = ?',
                     [the_username], one=True)
@@ -120,19 +120,19 @@ Or if you just want a single result::
     else:
         print(the_username, 'has the id', user['user_id'])
 
-To pass variable parts to the SQL statement, use a question mark in the
-statement and pass in the arguments as a list.  Never directly add them to
-the SQL statement with string formatting because this makes it possible
-to attack the application using `SQL Injections
+Để truyền các phần biến đổi cho câu lệnh SQL, sử dụng dấu chấm hỏi trong
+câu lệnh và truyền vào các đối số dưới dạng danh sách. Không bao giờ thêm chúng trực tiếp vào
+câu lệnh SQL với định dạng chuỗi vì điều này làm cho nó có thể
+tấn công ứng dụng bằng cách sử dụng `SQL Injections
 <https://en.wikipedia.org/wiki/SQL_injection>`_.
 
-Initial Schemas
----------------
+Schema Ban đầu
+--------------
 
-Relational databases need schemas, so applications often ship a
-`schema.sql` file that creates the database.  It's a good idea to provide
-a function that creates the database based on that schema.  This function
-can do that for you::
+Các cơ sở dữ liệu quan hệ cần schema, vì vậy các ứng dụng thường đi kèm với một
+file `schema.sql` tạo cơ sở dữ liệu. Nên cung cấp
+một hàm tạo cơ sở dữ liệu dựa trên schema đó. Hàm này
+có thể làm điều đó cho bạn::
 
     def init_db():
         with app.app_context():
@@ -141,7 +141,7 @@ can do that for you::
                 db.cursor().executescript(f.read())
             db.commit()
 
-You can then create such a database from the Python shell:
+Sau đó bạn có thể tạo một cơ sở dữ liệu như vậy từ Python shell:
 
 >>> from yourapplication import init_db
 >>> init_db()

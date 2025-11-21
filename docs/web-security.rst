@@ -1,183 +1,100 @@
-Security Considerations
-=======================
+Bảo mật Web
+===================
 
-Web applications face many types of potential security problems, and it can be
-hard to get everything right, or even to know what "right" is in general. Flask
-tries to solve a few of these things by default, but there are other parts you
-may have to take care of yourself. Many of these solutions are tradeoffs, and
-will depend on each application's specific needs and threat model. Many hosting
-platforms may take care of certain types of problems without the need for the
-Flask application to handle them.
+Các ứng dụng web phải đối mặt với nhiều loại vấn đề bảo mật tiềm ẩn, và việc đảm bảo mọi thứ đều đúng có thể rất khó khăn, hoặc thậm chí không biết "đúng" là gì. Flask cố gắng giải quyết một số vấn đề này theo mặc định, nhưng còn có những phần bạn cần tự xử lý. Nhiều giải pháp này là sự đánh đổi, và sẽ phụ thuộc vào nhu cầu và mô hình đe dọa cụ thể của từng ứng dụng. Nhiều nền tảng lưu trữ có thể giải quyết một số vấn đề mà Flask không cần phải xử lý.
 
-Resource Use
-------------
+Sử dụng tài nguyên
+-------------------
 
-A common category of attacks is "Denial of Service" (DoS or DDoS). This is a
-very broad category, and different variants target different layers in a
-deployed application. In general, something is done to increase how much
-processing time or memory is used to handle each request, to the point where
-there are not enough resources to handle legitimate requests.
+Một loại tấn công phổ biến là "Từ chối dịch vụ" (DoS hoặc DDoS). Đây là một loại rất rộng, và các biến thể khác nhau nhắm vào các lớp khác nhau của một ứng dụng đã triển khai. Nói chung, một thứ gì đó được thực hiện để tăng thời gian xử lý hoặc bộ nhớ sử dụng cho mỗi yêu cầu, đến mức không còn đủ tài nguyên để xử lý các yêu cầu hợp lệ.
 
-Flask provides a few configuration options to handle resource use. They can
-also be set on individual requests to customize only that request. The
-documentation for each goes into more detail.
+Flask cung cấp một vài tùy chọn cấu hình để xử lý việc sử dụng tài nguyên. Chúng có thể được đặt cho toàn bộ ứng dụng hoặc cho từng yêu cầu riêng lẻ. Tài liệu cho mỗi tùy chọn sẽ có chi tiết hơn.
 
--   :data:`MAX_CONTENT_LENGTH` or :attr:`.Request.max_content_length` controls
-    how much data will be read from a request. It is not set by default,
-    although it will still block truly unlimited streams unless the WSGI server
-    indicates support.
--   :data:`MAX_FORM_MEMORY_SIZE` or :attr:`.Request.max_form_memory_size`
-    controls how large any non-file ``multipart/form-data`` field can be. It is
-    set to 500kB by default.
--   :data:`MAX_FORM_PARTS` or :attr:`.Request.max_form_parts` controls how many
-    ``multipart/form-data`` fields can be parsed. It is set to 1000 by default.
-    Combined with the default `max_form_memory_size`, this means that a form
-    will occupy at most 500MB of memory.
+-   :data:`MAX_CONTENT_LENGTH` hoặc :attr:`.Request.max_content_length` kiểm soát lượng dữ liệu sẽ được đọc từ một yêu cầu. Mặc định không được đặt, mặc dù nó vẫn sẽ chặn các luồng không giới hạn trừ khi máy chủ WSGI chỉ ra hỗ trợ.
+-   :data:`MAX_FORM_MEMORY_SIZE` hoặc :attr:`.Request.max_form_memory_size` kiểm soát kích thước tối đa của bất kỳ trường ``multipart/form-data`` không phải là tệp. Mặc định là 500kB.
+-   :data:`MAX_FORM_PARTS` hoặc :attr:`.Request.max_form_parts` kiểm soát số lượng trường ``multipart/form-data`` có thể được phân tích. Mặc định là 1000. Kết hợp với ``max_form_memory_size`` mặc định, điều này có nghĩa một biểu mẫu sẽ chiếm tối đa 500MB bộ nhớ.
 
-Regardless of these settings, you should also review what settings are available
-from your operating system, container deployment (Docker etc), WSGI server, HTTP
-server, and hosting platform. They typically have ways to set process resource
-limits, timeouts, and other checks regardless of how Flask is configured.
+Bất kể các thiết lập này, bạn cũng nên xem xét các thiết lập có sẵn từ hệ điều hành, môi trường container (Docker, v.v.), máy chủ WSGI, máy chủ HTTP và nền tảng lưu trữ. Chúng thường có cách để đặt giới hạn tài nguyên, thời gian chờ và các kiểm tra khác bất kể Flask được cấu hình như thế nào.
 
 .. _security-xss:
 
 Cross-Site Scripting (XSS)
 --------------------------
 
-Cross site scripting is the concept of injecting arbitrary HTML (and with
-it JavaScript) into the context of a website.  To remedy this, developers
-have to properly escape text so that it cannot include arbitrary HTML
-tags.  For more information on that have a look at the Wikipedia article
-on `Cross-Site Scripting
-<https://en.wikipedia.org/wiki/Cross-site_scripting>`_.
+Cross site scripting là khái niệm chèn HTML tùy ý (và JavaScript) vào ngữ cảnh của một trang web. Để khắc phục, các nhà phát triển phải escape (thoát) đúng văn bản để không cho phép chèn HTML tùy ý. Để biết thêm thông tin, xem bài Wikipedia về `Cross-Site Scripting <https://en.wikipedia.org/wiki/Cross-site_scripting>`_.
 
-Flask configures Jinja to automatically escape all values unless
-explicitly told otherwise.  This should rule out all XSS problems caused
-in templates, but there are still other places where you have to be
-careful:
+Flask cấu hình Jinja để tự động escape tất cả các giá trị trừ khi được chỉ định ngược lại. Điều này nên loại bỏ mọi vấn đề XSS gây ra trong mẫu, nhưng vẫn còn những nơi khác mà bạn cần cẩn thận:
 
--   generating HTML without the help of Jinja
--   calling :class:`~markupsafe.Markup` on data submitted by users
--   sending out HTML from uploaded files, never do that, use the
-    ``Content-Disposition: attachment`` header to prevent that problem.
--   sending out textfiles from uploaded files.  Some browsers are using
-    content-type guessing based on the first few bytes so users could
-    trick a browser to execute HTML.
+-   tạo HTML mà không có sự trợ giúp của Jinja
+-   gọi :class:`~markupsafe.Markup` trên dữ liệu do người dùng cung cấp
+-   gửi HTML từ các tệp tải lên, không làm như vậy, hãy sử dụng header ``Content-Disposition: attachment`` để ngăn vấn đề này.
+-   gửi tệp văn bản từ các tệp tải lên. Một số trình duyệt sẽ đoán loại nội dung dựa trên vài byte đầu tiên, vì vậy người dùng có thể lừa trình duyệt thực thi HTML.
 
-Another thing that is very important are unquoted attributes.  While
-Jinja can protect you from XSS issues by escaping HTML, there is one
-thing it cannot protect you from: XSS by attribute injection.  To counter
-this possible attack vector, be sure to always quote your attributes with
-either double or single quotes when using Jinja expressions in them:
+Một điều rất quan trọng khác là các thuộc tính không có dấu ngoặc kép. Mặc dù Jinja có thể bảo vệ bạn khỏi các vấn đề XSS bằng cách escape HTML, có một thứ mà nó không thể bảo vệ: XSS qua việc chèn thuộc tính. Để chống lại vector tấn công này, luôn luôn đặt dấu ngoặc kép hoặc đơn cho các thuộc tính khi sử dụng biểu thức Jinja trong chúng:
 
 .. sourcecode:: html+jinja
 
     <input value="{{ value }}">
 
-Why is this necessary?  Because if you would not be doing that, an
-attacker could easily inject custom JavaScript handlers.  For example an
-attacker could inject this piece of HTML+JavaScript:
+Tại sao cần làm như vậy? Vì nếu không, kẻ tấn công có thể dễ dàng chèn các trình xử lý JavaScript tùy ý. Ví dụ, kẻ tấn công có thể chèn đoạn HTML+JavaScript sau:
 
 .. sourcecode:: html
 
     onmouseover=alert(document.cookie)
 
-When the user would then move with the mouse over the input, the cookie
-would be presented to the user in an alert window.  But instead of showing
-the cookie to the user, a good attacker might also execute any other
-JavaScript code.  In combination with CSS injections the attacker might
-even make the element fill out the entire page so that the user would
-just have to have the mouse anywhere on the page to trigger the attack.
+Khi người dùng di chuột qua ô nhập, cookie sẽ được hiện ra trong một cửa sổ cảnh báo. Thay vì chỉ hiển thị cookie, kẻ tấn công có thể thực thi bất kỳ mã JavaScript nào khác. Kết hợp với việc tiêm CSS, kẻ tấn công thậm chí có thể làm cho phần tử chiếm toàn bộ trang, khiến người dùng chỉ cần di chuột bất kỳ nơi nào trên trang để kích hoạt tấn công.
 
-There is one class of XSS issues that Jinja's escaping does not protect
-against. The ``a`` tag's ``href`` attribute can contain a `javascript:` URI,
-which the browser will execute when clicked if not secured properly.
+Có một loại vấn đề XSS mà việc escape của Jinja không bảo vệ: thuộc tính ``href`` của thẻ ``a`` có thể chứa URI ``javascript:``, trình duyệt sẽ thực thi khi người dùng nhấp vào nếu không được bảo vệ đúng cách.
 
 .. sourcecode:: html
 
     <a href="{{ value }}">click here</a>
     <a href="javascript:alert('unsafe');">click here</a>
 
-To prevent this, you'll need to set the :ref:`security-csp` response header.
+Để ngăn điều này, bạn cần đặt header phản hồi :ref:`security-csp`.
 
 Cross-Site Request Forgery (CSRF)
 ---------------------------------
 
-Another big problem is CSRF.  This is a very complex topic and I won't
-outline it here in detail just mention what it is and how to theoretically
-prevent it.
+Một vấn đề lớn khác là CSRF. Đây là một chủ đề rất phức tạp và tôi sẽ không đi sâu vào chi tiết ở đây, chỉ đề cập tới nó là gì và cách ngăn ngừa một cách lý thuyết.
 
-If your authentication information is stored in cookies, you have implicit
-state management.  The state of "being logged in" is controlled by a
-cookie, and that cookie is sent with each request to a page.
-Unfortunately that includes requests triggered by 3rd party sites.  If you
-don't keep that in mind, some people might be able to trick your
-application's users with social engineering to do stupid things without
-them knowing.
+Nếu thông tin xác thực của bạn được lưu trong cookie, bạn có trạng thái ngầm định "đã đăng nhập". Cookie này được gửi cùng mỗi yêu cầu tới một trang. Thật không may, điều này bao gồm các yêu cầu được kích hoạt bởi các trang bên thứ ba. Nếu bạn không lưu ý, một số người có thể lừa người dùng của bạn thực hiện các hành động ngu ngốc mà họ không biết.
 
-Say you have a specific URL that, when you sent ``POST`` requests to will
-delete a user's profile (say ``http://example.com/user/delete``).  If an
-attacker now creates a page that sends a post request to that page with
-some JavaScript they just have to trick some users to load that page and
-their profiles will end up being deleted.
+Giả sử bạn có một URL cụ thể, khi bạn gửi yêu cầu ``POST`` tới sẽ xóa hồ sơ người dùng (ví dụ ``http://example.com/user/delete``). Nếu kẻ tấn công tạo một trang mà gửi yêu cầu POST tới URL đó với một chút JavaScript, họ chỉ cần lừa một số người dùng tải trang đó và hồ sơ của họ sẽ bị xóa.
 
-Imagine you were to run Facebook with millions of concurrent users and
-someone would send out links to images of little kittens.  When users
-would go to that page, their profiles would get deleted while they are
-looking at images of fluffy cats.
+Hãy tưởng tượng bạn chạy Facebook với hàng triệu người dùng đồng thời và ai đó gửi liên kết tới hình ảnh mèo con. Khi người dùng truy cập trang đó, hồ sơ của họ sẽ bị xóa trong khi họ đang xem hình ảnh mèo bông.
 
-How can you prevent that?  Basically for each request that modifies
-content on the server you would have to either use a one-time token and
-store that in the cookie **and** also transmit it with the form data.
-After receiving the data on the server again, you would then have to
-compare the two tokens and ensure they are equal.
+Làm sao để ngăn? Cơ bản là với mỗi yêu cầu thay đổi nội dung trên máy chủ, bạn cần một token một lần dùng duy nhất, lưu trong cookie **và** truyền cùng dữ liệu biểu mẫu. Khi nhận dữ liệu trên máy chủ, bạn so sánh hai token và đảm bảo chúng bằng nhau.
 
-Why does Flask not do that for you?  The ideal place for this to happen is
-the form validation framework, which does not exist in Flask.
+Tại sao Flask không làm điều này cho bạn? Vị trí lý tưởng để thực hiện việc này là trong khung xác thực biểu mẫu, mà Flask không có.
 
 .. _security-json:
 
 JSON Security
 -------------
 
-In Flask 0.10 and lower, :func:`~flask.jsonify` did not serialize top-level
-arrays to JSON. This was because of a security vulnerability in ECMAScript 4.
+Trong Flask 0.10 và thấp hơn, :func:`~flask.jsonify` không tuần tự hoá các mảng cấp cao. Điều này là do một lỗ hổng bảo mật trong ECMAScript 4. ECMAScript 5 đã khắc phục lỗ hổng này, vì vậy chỉ các trình duyệt rất cũ mới còn bị ảnh hưởng. Tất cả các trình duyệt này đều có các lỗ hổng nghiêm trọng khác, vì vậy hành vi này đã được thay đổi và :func:`~flask.jsonify` hiện hỗ trợ tuần tự hoá các mảng.
 
-ECMAScript 5 closed this vulnerability, so only extremely old browsers are
-still vulnerable. All of these browsers have `other more serious
-vulnerabilities
-<https://github.com/pallets/flask/issues/248#issuecomment-59934857>`_, so
-this behavior was changed and :func:`~flask.jsonify` now supports serializing
-arrays.
-
-Security Headers
+Tiêu đề bảo mật
 ----------------
 
-Browsers recognize various response headers in order to control security. We
-recommend reviewing each of the headers below for use in your application.
-The `Flask-Talisman`_ extension can be used to manage HTTPS and the security
-headers for you.
+Các trình duyệt nhận ra các tiêu đề phản hồi để kiểm soát bảo mật. Chúng tôi khuyến nghị xem xét từng tiêu đề dưới đây để sử dụng trong ứng dụng của bạn. Tiện ích mở rộng `Flask-Talisman`_ có thể được dùng để quản lý HTTPS và các tiêu đề bảo mật cho bạn.
 
 .. _Flask-Talisman: https://github.com/wntrblm/flask-talisman
 
 HTTP Strict Transport Security (HSTS)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Tells the browser to convert all HTTP requests to HTTPS, preventing
-man-in-the-middle (MITM) attacks. ::
+Buộc trình duyệt chuyển tất cả các yêu cầu HTTP sang HTTPS, ngăn chặn các cuộc tấn công man-in-the-middle (MITM). ::
 
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
 
 - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 
-.. _security-csp:
-
 Content Security Policy (CSP)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Tell the browser where it can load various types of resource from. This header
-should be used whenever possible, but requires some work to define the correct
-policy for your site. A very strict policy would be::
+Cho trình duyệt biết nơi nó có thể tải các loại tài nguyên. Tiêu đề này nên được sử dụng khi có thể, nhưng cần định nghĩa chính sách phù hợp cho trang của bạn. Một chính sách rất nghiêm ngặt sẽ là::
 
     response.headers['Content-Security-Policy'] = "default-src 'self'"
 
@@ -187,130 +104,92 @@ policy for your site. A very strict policy would be::
 X-Content-Type-Options
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Forces the browser to honor the response content type instead of trying to
-detect it, which can be abused to generate a cross-site scripting (XSS)
-attack. ::
+Buộc trình duyệt tuân thủ loại nội dung phản hồi thay vì cố gắng đoán, có thể bị lợi dụng để tạo tấn công XSS. ::
 
     response.headers['X-Content-Type-Options'] = 'nosniff'
 
 - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
 
 X-Frame-Options
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
-Prevents external sites from embedding your site in an ``iframe``. This
-prevents a class of attacks where clicks in the outer frame can be translated
-invisibly to clicks on your page's elements. This is also known as
-"clickjacking". ::
+Ngăn các trang bên ngoài nhúng trang của bạn trong một ``iframe``. Điều này ngăn các cuộc tấn công "clickjacking". ::
 
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
 
 - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
 
-.. _security-cookie:
-
 Set-Cookie options
 ~~~~~~~~~~~~~~~~~~
 
-These options can be added to a ``Set-Cookie`` header to improve their
-security. Flask has configuration options to set these on the session cookie.
-They can be set on other cookies too.
+Các tùy chọn này có thể được thêm vào tiêu đề ``Set-Cookie`` để cải thiện bảo mật. Flask có các tùy chọn cấu hình để đặt chúng trên cookie phiên. Chúng cũng có thể được đặt trên các cookie khác.
 
-- ``Secure`` limits cookies to HTTPS traffic only.
-- ``HttpOnly`` protects the contents of cookies from being read with
-  JavaScript.
-- ``SameSite`` restricts how cookies are sent with requests from
-  external sites. Can be set to ``'Lax'`` (recommended) or ``'Strict'``.
-  ``Lax`` prevents sending cookies with CSRF-prone requests from
-  external sites, such as submitting a form. ``Strict`` prevents sending
-  cookies with all external requests, including following regular links.
+- ``Secure`` giới hạn cookie chỉ truyền qua lưu lượng HTTPS.
+- ``HttpOnly`` bảo vệ nội dung cookie khỏi việc đọc bằng JavaScript.
+- ``SameSite`` hạn chế cách cookie được gửi với các yêu cầu từ các trang bên ngoài. Có thể đặt là ``'Lax'`` (được khuyến nghị) hoặc ``'Strict'``.
 
-::
+```python
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+)
 
-    app.config.update(
-        SESSION_COOKIE_SECURE=True,
-        SESSION_COOKIE_HTTPONLY=True,
-        SESSION_COOKIE_SAMESITE='Lax',
-    )
+response.set_cookie('username', 'flask', secure=True, httponly=True, samesite='Lax')
+```
 
-    response.set_cookie('username', 'flask', secure=True, httponly=True, samesite='Lax')
+Xác định ``Expires`` hoặc ``Max-Age`` sẽ làm cookie hết hạn sau thời gian cho trước, hoặc sau thời gian hiện tại cộng với tuổi thọ. Nếu không đặt, cookie sẽ bị xóa khi trình duyệt đóng.
 
-Specifying ``Expires`` or ``Max-Age`` options, will remove the cookie after
-the given time, or the current time plus the age, respectively. If neither
-option is set, the cookie will be removed when the browser is closed. ::
+```python
+# cookie hết hạn sau 10 phút
+response.set_cookie('snakes', '3', max_age=600)
+```
 
-    # cookie expires after 10 minutes
-    response.set_cookie('snakes', '3', max_age=600)
+Đối với cookie phiên, nếu :attr:`session.permanent <flask.session.permanent>` được đặt, thì :data:`PERMANENT_SESSION_LIFETIME` được dùng để đặt thời gian hết hạn. Flask mặc định kiểm tra chữ ký mật mã không cũ hơn giá trị này. Giảm giá trị này có thể giúp giảm thiểu các cuộc tấn công replay, nơi cookie bị chặn và gửi lại sau.
 
-For the session cookie, if :attr:`session.permanent <flask.session.permanent>`
-is set, then :data:`PERMANENT_SESSION_LIFETIME` is used to set the expiration.
-Flask's default cookie implementation validates that the cryptographic
-signature is not older than this value. Lowering this value may help mitigate
-replay attacks, where intercepted cookies can be sent at a later time. ::
+```python
+app.config.update(
+    PERMANENT_SESSION_LIFETIME=600
+)
 
-    app.config.update(
-        PERMANENT_SESSION_LIFETIME=600
-    )
+@app.route('/login', methods=['POST'])
+def login():
+    ...
+    session.clear()
+    session['user_id'] = user.id
+    session.permanent = True
+    ...
+```
 
-    @app.route('/login', methods=['POST'])
-    def login():
-        ...
-        session.clear()
-        session['user_id'] = user.id
-        session.permanent = True
-        ...
-
-Use :class:`itsdangerous.TimedSerializer` to sign and validate other cookie
-values (or any values that need secure signatures).
+Sử dụng :class:`itsdangerous.TimedSerializer` để ký và xác thực các giá trị cookie khác (hoặc bất kỳ giá trị nào cần chữ ký bảo mật).
 
 - https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
 - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
 
 .. _samesite_support: https://caniuse.com/#feat=same-site-cookie-attribute
 
+Header xác thực Host
+--------------------
 
-Host Header Validation
-----------------------
+Header ``Host`` được client sử dụng để chỉ định tên máy chủ mà yêu cầu được thực hiện. Điều này được dùng, ví dụ, bởi ``url_for(..., _external=True)`` để tạo URL đầy đủ, dùng trong email hoặc các tin nhắn ngoài trình duyệt.
 
-The ``Host`` header is used by the client to indicate what host name the request
-was made to. This is used, for example, by ``url_for(..., _external=True)`` to
-generate full URLs, for use in email or other messages outside the browser
-window.
+Mặc định ứng dụng không biết host nào được phép truy cập và cho phép bất kỳ host nào. Mặc dù trình duyệt không cho phép đặt header ``Host``, các yêu cầu do kẻ tấn công trong các kịch bản khác có thể đặt header ``Host`` theo ý muốn.
 
-By default the app doesn't know what host(s) it is allowed to be accessed
-through, and assumes any host is valid. Although browsers do not allow setting
-the ``Host`` header, requests made by attackers in other scenarios could set
-the ``Host`` header to a value they want.
+Khi triển khai ứng dụng, đặt :data:`TRUSTED_HOSTS` để giới hạn các giá trị header ``Host`` có thể nhận.
 
-When deploying your application, set :data:`TRUSTED_HOSTS` to restrict what
-values the ``Host`` header may be.
+Header ``Host`` có thể được proxy thay đổi bởi các proxy giữa client và ứng dụng. Xem :doc:`deploying/proxy_fix` để chỉ cho ứng dụng biết các giá trị proxy nào đáng tin cậy.
 
-The ``Host`` header may be modified by proxies in between the client and your
-application. See :doc:`deploying/proxy_fix` to tell your app which proxy values
-to trust.
+Sao chép/Dán vào Terminal
+--------------------------
 
+Các ký tự ẩn như ký tự backspace (``\b``, ``^H``) có thể khiến văn bản hiển thị khác trong HTML so với khi nó được giải thích nếu ``dán vào terminal https://security.stackexchange.com/q/39118``__.
 
-Copy/Paste to Terminal
-----------------------
+Ví dụ, ``import y\bose\bm\bi\bt\be`` hiển thị là ``import yosemite`` trong HTML, nhưng các backspace được áp dụng khi dán vào terminal, và nó trở thành ``import os``.
 
-Hidden characters such as the backspace character (``\b``, ``^H``) can
-cause text to render differently in HTML than how it is interpreted if
-`pasted into a terminal <https://security.stackexchange.com/q/39118>`__.
-
-For example, ``import y\bose\bm\bi\bt\be\b`` renders as
-``import yosemite`` in HTML, but the backspaces are applied when pasted
-into a terminal, and it becomes ``import os``.
-
-If you expect users to copy and paste untrusted code from your site,
-such as from comments posted by users on a technical blog, consider
-applying extra filtering, such as replacing all ``\b`` characters.
+Nếu bạn mong đợi người dùng sao chép và dán mã không tin cậy từ trang của bạn, ví dụ từ các bình luận trên blog kỹ thuật, hãy cân nhắc lọc thêm, như thay thế tất cả ký tự ``\b``.
 
 .. code-block:: python
 
     body = body.replace("\b", "")
 
-Most modern terminals will warn about and remove hidden characters when
-pasting, so this isn't strictly necessary. It's also possible to craft
-dangerous commands in other ways that aren't possible to filter.
-Depending on your site's use case, it may be good to show a warning
-about copying code in general.
+Hầu hết các terminal hiện đại sẽ cảnh báo và loại bỏ các ký tự ẩn khi dán, vì vậy không cần thiết phải làm như vậy. Tuy nhiên, vẫn có cách tạo lệnh nguy hiểm mà không thể lọc được. Tùy thuộc vào trường hợp sử dụng của trang, có thể hiển thị cảnh báo về việc sao chép mã nói chung.

@@ -1,32 +1,32 @@
-Deploying to Production
+Triển khai lên Sản xuất
 =======================
 
-After developing your application, you'll want to make it available
-publicly to other users. When you're developing locally, you're probably
-using the built-in development server, debugger, and reloader. These
-should not be used in production. Instead, you should use a dedicated
-WSGI server or hosting platform, some of which will be described here.
+Sau khi phát triển ứng dụng của bạn, bạn sẽ muốn làm cho nó có sẵn
+công khai cho những người dùng khác. Khi bạn đang phát triển cục bộ, bạn có thể đang
+sử dụng máy chủ phát triển tích hợp, trình gỡ lỗi, và trình tải lại. Những thứ này
+không nên được sử dụng trong sản xuất. Thay vào đó, bạn nên sử dụng một
+máy chủ WSGI chuyên dụng hoặc nền tảng lưu trữ, một số trong đó sẽ được mô tả ở đây.
 
-"Production" means "not development", which applies whether you're
-serving your application publicly to millions of users or privately /
-locally to a single user. **Do not use the development server when
-deploying to production. It is intended for use only during local
-development. It is not designed to be particularly secure, stable, or
-efficient.**
+"Sản xuất" có nghĩa là "không phải phát triển", điều này áp dụng cho dù bạn đang
+phục vụ ứng dụng của mình công khai cho hàng triệu người dùng hay riêng tư /
+cục bộ cho một người dùng duy nhất. **Không sử dụng máy chủ phát triển khi
+triển khai lên sản xuất. Nó chỉ dành cho mục đích sử dụng trong quá trình phát triển
+cục bộ. Nó không được thiết kế để đặc biệt an toàn, ổn định, hoặc
+hiệu quả.**
 
-Self-Hosted Options
--------------------
+Các Tùy chọn Tự Lưu trữ (Self-Hosted)
+-------------------------------------
 
-Flask is a WSGI *application*. A WSGI *server* is used to run the
-application, converting incoming HTTP requests to the standard WSGI
-environ, and converting outgoing WSGI responses to HTTP responses.
+Flask là một *ứng dụng* WSGI. Một *máy chủ* WSGI được sử dụng để chạy
+ứng dụng, chuyển đổi các request HTTP đến thành môi trường WSGI
+tiêu chuẩn, và chuyển đổi các phản hồi WSGI thành các phản hồi HTTP.
 
-The primary goal of these docs is to familiarize you with the concepts
-involved in running a WSGI application using a production WSGI server
-and HTTP server. There are many WSGI servers and HTTP servers, with many
-configuration possibilities. The pages below discuss the most common
-servers, and show the basics of running each one. The next section
-discusses platforms that can manage this for you.
+Mục tiêu chính của các tài liệu này là làm quen cho bạn với các khái niệm
+liên quan đến việc chạy một ứng dụng WSGI sử dụng một máy chủ WSGI sản xuất
+và máy chủ HTTP. Có nhiều máy chủ WSGI và máy chủ HTTP, với nhiều
+khả năng cấu hình. Các trang dưới đây thảo luận về các máy chủ phổ biến nhất,
+và chỉ ra những điều cơ bản về việc chạy từng cái. Phần tiếp theo
+thảo luận về các nền tảng có thể quản lý điều này cho bạn.
 
 .. toctree::
     :maxdepth: 1
@@ -39,9 +39,9 @@ discusses platforms that can manage this for you.
     eventlet
     asgi
 
-WSGI servers have HTTP servers built-in. However, a dedicated HTTP
-server may be safer, more efficient, or more capable. Putting an HTTP
-server in front of the WSGI server is called a "reverse proxy."
+Các máy chủ WSGI có tích hợp sẵn các máy chủ HTTP. Tuy nhiên, một máy chủ HTTP
+chuyên dụng có thể an toàn hơn, hiệu quả hơn, hoặc có khả năng hơn. Đặt một máy chủ
+HTTP phía trước máy chủ WSGI được gọi là một "reverse proxy."
 
 .. toctree::
     :maxdepth: 1
@@ -50,20 +50,20 @@ server in front of the WSGI server is called a "reverse proxy."
     nginx
     apache-httpd
 
-This list is not exhaustive, and you should evaluate these and other
-servers based on your application's needs. Different servers will have
-different capabilities, configuration, and support.
+Danh sách này không đầy đủ, và bạn nên đánh giá những cái này và các máy chủ
+khác dựa trên nhu cầu của ứng dụng của bạn. Các máy chủ khác nhau sẽ có
+các khả năng, cấu hình, và hỗ trợ khác nhau.
 
 
-Hosting Platforms
------------------
+Các Nền tảng Lưu trữ
+--------------------
 
-There are many services available for hosting web applications without
-needing to maintain your own server, networking, domain, etc. Some
-services may have a free tier up to a certain time or bandwidth. Many of
-these services use one of the WSGI servers described above, or a similar
-interface. The links below are for some of the most common platforms,
-which have instructions for Flask, WSGI, or Python.
+Có nhiều dịch vụ có sẵn để lưu trữ các ứng dụng web mà không
+cần phải duy trì máy chủ, mạng, tên miền, v.v. của riêng bạn. Một số
+dịch vụ có thể có gói miễn phí lên đến một thời gian hoặc băng thông nhất định. Nhiều trong số
+các dịch vụ này sử dụng một trong các máy chủ WSGI được mô tả ở trên, hoặc một giao diện
+tương tự. Các liên kết dưới đây dành cho một số nền tảng phổ biến nhất,
+có hướng dẫn cho Flask, WSGI, hoặc Python.
 
 - `PythonAnywhere <https://help.pythonanywhere.com/pages/Flask/>`_
 - `Google App Engine <https://cloud.google.com/appengine/docs/standard/python3/building-app>`_
@@ -71,9 +71,9 @@ which have instructions for Flask, WSGI, or Python.
 - `AWS Elastic Beanstalk <https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create-deploy-python-flask.html>`_
 - `Microsoft Azure <https://docs.microsoft.com/en-us/azure/app-service/quickstart-python>`_
 
-This list is not exhaustive, and you should evaluate these and other
-services based on your application's needs. Different services will have
-different capabilities, configuration, pricing, and support.
+Danh sách này không đầy đủ, và bạn nên đánh giá những cái này và các dịch vụ
+khác dựa trên nhu cầu của ứng dụng của bạn. Các dịch vụ khác nhau sẽ có
+các khả năng, cấu hình, giá cả, và hỗ trợ khác nhau.
 
-You'll probably need to :doc:`proxy_fix` when using most hosting
-platforms.
+Bạn có thể sẽ cần :doc:`proxy_fix` khi sử dụng hầu hết các nền tảng
+lưu trữ.

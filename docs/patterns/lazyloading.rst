@@ -1,25 +1,25 @@
-Lazily Loading Views
-====================
+Lazy Loading Views
+==================
 
-Flask is usually used with the decorators.  Decorators are simple and you
-have the URL right next to the function that is called for that specific
-URL.  However there is a downside to this approach: it means all your code
-that uses decorators has to be imported upfront or Flask will never
-actually find your function.
+Flask thường được sử dụng với các decorator. Decorator rất đơn giản và bạn
+có URL ngay bên cạnh hàm được gọi cho URL cụ thể đó. Tuy nhiên có một
+nhược điểm đối với cách tiếp cận này: nó có nghĩa là tất cả mã của bạn
+sử dụng decorator phải được import trước hoặc Flask sẽ không bao giờ
+thực sự tìm thấy hàm của bạn.
 
-This can be a problem if your application has to import quick.  It might
-have to do that on systems like Google's App Engine or other systems.  So
-if you suddenly notice that your application outgrows this approach you
-can fall back to a centralized URL mapping.
+Điều này có thể là một vấn đề nếu ứng dụng của bạn phải import nhanh. Nó có thể
+phải làm điều đó trên các hệ thống như Google App Engine hoặc các hệ thống khác. Vì vậy
+nếu bạn đột nhiên nhận thấy rằng ứng dụng của bạn vượt quá cách tiếp cận này, bạn
+có thể quay lại với một URL mapping tập trung.
 
-The system that enables having a central URL map is the
-:meth:`~flask.Flask.add_url_rule` function.  Instead of using decorators,
-you have a file that sets up the application with all URLs.
+Hệ thống cho phép có một URL map trung tâm là hàm
+:meth:`~flask.Flask.add_url_rule`. Thay vì sử dụng decorator,
+bạn có một file thiết lập ứng dụng với tất cả các URL.
 
-Converting to Centralized URL Map
+Chuyển đổi sang URL Map Tập trung
 ---------------------------------
 
-Imagine the current application looks somewhat like this::
+Hãy tưởng tượng ứng dụng hiện tại trông giống như thế này::
 
     from flask import Flask
     app = Flask(__name__)
@@ -32,8 +32,8 @@ Imagine the current application looks somewhat like this::
     def user(username):
         pass
 
-Then, with the centralized approach you would have one file with the views
-(:file:`views.py`) but without any decorator::
+Sau đó, với cách tiếp cận tập trung, bạn sẽ có một file với các view
+(:file:`views.py`) nhưng không có bất kỳ decorator nào::
 
     def index():
         pass
@@ -41,8 +41,8 @@ Then, with the centralized approach you would have one file with the views
     def user(username):
         pass
 
-And then a file that sets up an application which maps the functions to
-URLs::
+Và sau đó một file thiết lập một ứng dụng ánh xạ các hàm đến
+URL::
 
     from flask import Flask
     from yourapplication import views
@@ -50,13 +50,13 @@ URLs::
     app.add_url_rule('/', view_func=views.index)
     app.add_url_rule('/user/<username>', view_func=views.user)
 
-Loading Late
+Loading Muộn
 ------------
 
-So far we only split up the views and the routing, but the module is still
-loaded upfront.  The trick is to actually load the view function as needed.
-This can be accomplished with a helper class that behaves just like a
-function but internally imports the real function on first use::
+Cho đến nay chúng ta chỉ tách các view và routing, nhưng module vẫn
+được load trước. Mẹo là thực sự load view function khi cần thiết.
+Điều này có thể được thực hiện với một helper class hoạt động giống như một
+hàm nhưng bên trong import hàm thực sự khi sử dụng lần đầu tiên::
 
     from werkzeug.utils import import_string, cached_property
 
@@ -73,11 +73,11 @@ function but internally imports the real function on first use::
         def __call__(self, *args, **kwargs):
             return self.view(*args, **kwargs)
 
-What's important here is is that `__module__` and `__name__` are properly
-set.  This is used by Flask internally to figure out how to name the
-URL rules in case you don't provide a name for the rule yourself.
+Điều quan trọng ở đây là `__module__` và `__name__` được đặt đúng cách.
+Điều này được Flask sử dụng nội bộ để tìm ra cách đặt tên cho
+các URL rule trong trường hợp bạn không cung cấp tên cho rule.
 
-Then you can define your central place to combine the views like this::
+Sau đó bạn có thể định nghĩa nơi trung tâm của mình để kết hợp các view như thế này::
 
     from flask import Flask
     from yourapplication.helpers import LazyView
@@ -87,23 +87,23 @@ Then you can define your central place to combine the views like this::
     app.add_url_rule('/user/<username>',
                      view_func=LazyView('yourapplication.views.user'))
 
-You can further optimize this in terms of amount of keystrokes needed to
-write this by having a function that calls into
-:meth:`~flask.Flask.add_url_rule` by prefixing a string with the project
-name and a dot, and by wrapping `view_func` in a `LazyView` as needed.  ::
+Bạn có thể tối ưu hóa thêm điều này về số lượng phím cần
+viết bằng cách có một hàm gọi vào
+:meth:`~flask.Flask.add_url_rule` bằng cách thêm tiền tố một chuỗi với tên dự án
+và một dấu chấm, và bằng cách bao bọc `view_func` trong một `LazyView` khi cần thiết. ::
 
     def url(import_name, url_rules=[], **options):
         view = LazyView(f"yourapplication.{import_name}")
         for url_rule in url_rules:
             app.add_url_rule(url_rule, view_func=view, **options)
 
-    # add a single route to the index view
+    # thêm một route duy nhất vào index view
     url('views.index', ['/'])
 
-    # add two routes to a single function endpoint
+    # thêm hai route vào một function endpoint duy nhất
     url_rules = ['/user/','/user/<username>']
     url('views.user', url_rules)
 
-One thing to keep in mind is that before and after request handlers have
-to be in a file that is imported upfront to work properly on the first
-request.  The same goes for any kind of remaining decorator.
+Một điều cần lưu ý là các trình xử lý before và after request phải
+ở trong một file được import trước để hoạt động đúng trên request
+đầu tiên. Điều tương tự cũng áp dụng cho bất kỳ loại decorator còn lại nào.

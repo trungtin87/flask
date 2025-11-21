@@ -1,7 +1,7 @@
-Large Applications as Packages
+Ứng dụng Lớn dưới dạng Package
 ==============================
 
-Imagine a simple flask application structure that looks like this::
+Hãy tưởng tượng một cấu trúc ứng dụng flask đơn giản trông như thế này::
 
     /yourapplication
         yourapplication.py
@@ -13,20 +13,20 @@ Imagine a simple flask application structure that looks like this::
             login.html
             ...
 
-While this is fine for small applications, for larger applications
-it's a good idea to use a package instead of a module.
-The :doc:`/tutorial/index` is structured to use the package pattern,
-see the :gh:`example code <examples/tutorial>`.
+Mặc dù điều này tốt cho các ứng dụng nhỏ, đối với các ứng dụng lớn hơn
+nên sử dụng một package thay vì một module.
+:doc:`/tutorial/index` được cấu trúc để sử dụng mẫu package,
+xem :gh:`mã ví dụ <examples/tutorial>`.
 
-Simple Packages
----------------
+Package Đơn giản
+----------------
 
-To convert that into a larger one, just create a new folder
-:file:`yourapplication` inside the existing one and move everything below it.
-Then rename :file:`yourapplication.py` to :file:`__init__.py`.  (Make sure to delete
-all ``.pyc`` files first, otherwise things would most likely break)
+Để chuyển đổi điều đó thành một cái lớn hơn, chỉ cần tạo một thư mục mới
+:file:`yourapplication` bên trong thư mục hiện có và di chuyển mọi thứ vào bên dưới nó.
+Sau đó đổi tên :file:`yourapplication.py` thành :file:`__init__.py`. (Hãy chắc chắn xóa
+tất cả các file ``.pyc`` trước, nếu không mọi thứ rất có thể sẽ bị hỏng)
 
-You should then end up with something like that::
+Sau đó bạn sẽ có một cái gì đó như thế này::
 
     /yourapplication
         /yourapplication
@@ -39,11 +39,11 @@ You should then end up with something like that::
                 login.html
                 ...
 
-But how do you run your application now?  The naive ``python
-yourapplication/__init__.py`` will not work.  Let's just say that Python
-does not want modules in packages to be the startup file.  But that is not
-a big problem, just add a new file called :file:`pyproject.toml` next to the inner
-:file:`yourapplication` folder with the following contents:
+Nhưng làm thế nào để bạn chạy ứng dụng của mình bây giờ? Lệnh ngây thơ ``python
+yourapplication/__init__.py`` sẽ không hoạt động. Hãy chỉ nói rằng Python
+không muốn các module trong package là file khởi động. Nhưng đó không phải là
+một vấn đề lớn, chỉ cần thêm một file mới có tên :file:`pyproject.toml` bên cạnh
+thư mục :file:`yourapplication` bên trong với nội dung sau:
 
 .. code-block:: toml
 
@@ -57,40 +57,39 @@ a big problem, just add a new file called :file:`pyproject.toml` next to the inn
     requires = ["flit_core<4"]
     build-backend = "flit_core.buildapi"
 
-Install your application so it is importable:
+Cài đặt ứng dụng của bạn để nó có thể import được:
 
 .. code-block:: text
 
     $ pip install -e .
 
-To use the ``flask`` command and run your application you need to set
-the ``--app`` option that tells Flask where to find the application
-instance:
+Để sử dụng lệnh ``flask`` và chạy ứng dụng của bạn, bạn cần đặt
+tùy chọn ``--app`` cho Flask biết nơi tìm instance ứng dụng:
 
 .. code-block:: text
 
     $ flask --app yourapplication run
 
-What did we gain from this?  Now we can restructure the application a bit
-into multiple modules.  The only thing you have to remember is the
-following quick checklist:
+Chúng ta đã đạt được gì từ điều này? Bây giờ chúng ta có thể tái cấu trúc ứng dụng một chút
+thành nhiều module. Điều duy nhất bạn phải nhớ là
+danh sách kiểm tra nhanh sau:
 
-1. the `Flask` application object creation has to be in the
-   :file:`__init__.py` file.  That way each module can import it safely and the
-   `__name__` variable will resolve to the correct package.
-2. all the view functions (the ones with a :meth:`~flask.Flask.route`
-   decorator on top) have to be imported in the :file:`__init__.py` file.
-   Not the object itself, but the module it is in. Import the view module
-   **after the application object is created**.
+1. việc tạo đối tượng ứng dụng `Flask` phải ở trong
+   file :file:`__init__.py`. Bằng cách đó mỗi module có thể import nó một cách an toàn và
+   biến `__name__` sẽ phân giải thành package chính xác.
+2. tất cả các view function (những cái có decorator :meth:`~flask.Flask.route`
+   ở trên) phải được import trong file :file:`__init__.py`.
+   Không phải chính đối tượng, mà là module mà nó ở trong. Import module view
+   **sau khi đối tượng ứng dụng được tạo**.
 
-Here's an example :file:`__init__.py`::
+Đây là một ví dụ :file:`__init__.py`::
 
     from flask import Flask
     app = Flask(__name__)
 
     import yourapplication.views
 
-And this is what :file:`views.py` would look like::
+Và đây là những gì :file:`views.py` sẽ trông như thế nào::
 
     from yourapplication import app
 
@@ -98,7 +97,7 @@ And this is what :file:`views.py` would look like::
     def index():
         return 'Hello World!'
 
-You should then end up with something like that::
+Sau đó bạn sẽ có một cái gì đó như thế này::
 
     /yourapplication
         pyproject.toml
@@ -113,21 +112,21 @@ You should then end up with something like that::
                 login.html
                 ...
 
-.. admonition:: Circular Imports
+.. admonition:: Import Vòng (Circular Imports)
 
-   Every Python programmer hates them, and yet we just added some:
-   circular imports (That's when two modules depend on each other.  In this
-   case :file:`views.py` depends on :file:`__init__.py`).  Be advised that this is a
-   bad idea in general but here it is actually fine.  The reason for this is
-   that we are not actually using the views in :file:`__init__.py` and just
-   ensuring the module is imported and we are doing that at the bottom of
-   the file.
+   Mọi lập trình viên Python đều ghét chúng, nhưng chúng ta vừa thêm một số:
+   import vòng (Đó là khi hai module phụ thuộc vào nhau. Trong trường hợp
+   này :file:`views.py` phụ thuộc vào :file:`__init__.py`). Hãy lưu ý rằng đây là một
+   ý tưởng tồi nói chung nhưng ở đây nó thực sự ổn. Lý do cho điều này là
+   chúng ta không thực sự sử dụng các view trong :file:`__init__.py` và chỉ
+   đảm bảo module được import và chúng ta đang làm điều đó ở cuối
+   file.
 
 
-Working with Blueprints
------------------------
+Làm việc với Blueprint
+----------------------
 
-If you have larger applications it's recommended to divide them into
-smaller groups where each group is implemented with the help of a
-blueprint.  For a gentle introduction into this topic refer to the
-:doc:`/blueprints` chapter of the documentation.
+Nếu bạn có các ứng dụng lớn hơn, nên chia chúng thành
+các nhóm nhỏ hơn trong đó mỗi nhóm được triển khai với sự trợ giúp của một
+blueprint. Để giới thiệu nhẹ nhàng về chủ đề này, hãy tham khảo
+chương :doc:`/blueprints` của tài liệu.

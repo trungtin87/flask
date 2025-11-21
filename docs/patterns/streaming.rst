@@ -1,19 +1,19 @@
 Streaming Contents
 ==================
 
-Sometimes you want to send an enormous amount of data to the client, much
-more than you want to keep in memory.  When you are generating the data on
-the fly though, how do you send that back to the client without the
-roundtrip to the filesystem?
+Đôi khi bạn muốn gửi một lượng dữ liệu khổng lồ đến client, nhiều hơn
+nhiều so với những gì bạn muốn giữ trong bộ nhớ. Khi bạn đang tạo dữ liệu ngay lập tức
+, làm thế nào để bạn gửi lại cho client mà không cần
+vòng quay đến hệ thống tệp?
 
-The answer is by using generators and direct responses.
+Câu trả lời là bằng cách sử dụng generator và phản hồi trực tiếp.
 
-Basic Usage
------------
+Sử dụng Cơ bản
+--------------
 
-This is a basic view function that generates a lot of CSV data on the fly.
-The trick is to have an inner function that uses a generator to generate
-data and to then invoke that function and pass it to a response object::
+Đây là một view function cơ bản tạo ra rất nhiều dữ liệu CSV ngay lập tức.
+Mẹo là có một hàm bên trong sử dụng một generator để tạo
+dữ liệu và sau đó gọi hàm đó và truyền nó cho một đối tượng phản hồi::
 
     @app.route('/large.csv')
     def generate_large_csv():
@@ -22,17 +22,17 @@ data and to then invoke that function and pass it to a response object::
                 yield f"{','.join(row)}\n"
         return generate(), {"Content-Type": "text/csv"}
 
-Each ``yield`` expression is directly sent to the browser.  Note though
-that some WSGI middlewares might break streaming, so be careful there in
-debug environments with profilers and other things you might have enabled.
+Mỗi biểu thức ``yield`` được gửi trực tiếp đến trình duyệt. Tuy nhiên lưu ý
+rằng một số WSGI middleware có thể phá vỡ streaming, vì vậy hãy cẩn thận ở đó trong
+các môi trường debug với profiler và những thứ khác bạn có thể đã bật.
 
-Streaming from Templates
-------------------------
+Streaming từ Template
+---------------------
 
-The Jinja template engine supports rendering a template piece by
-piece, returning an iterator of strings. Flask provides the
-:func:`~flask.stream_template` and :func:`~flask.stream_template_string`
-functions to make this easier to use.
+Engine template Jinja hỗ trợ render một template từng
+phần, trả về một iterator của các chuỗi. Flask cung cấp các hàm
+:func:`~flask.stream_template` và :func:`~flask.stream_template_string`
+để làm cho điều này dễ sử dụng hơn.
 
 .. code-block:: python
 
@@ -42,20 +42,20 @@ functions to make this easier to use.
     def timeline():
         return stream_template("timeline.html")
 
-The parts yielded by the render stream tend to match statement blocks in
-the template.
+Các phần được yield bởi render stream có xu hướng khớp với các khối câu lệnh trong
+template.
 
 
-Streaming with Context
-----------------------
+Streaming với Context
+---------------------
 
-The :data:`.request` proxy will not be active while the generator is
-running, because the app has already returned control to the WSGI server at that
-point. If you try to access ``request``, you'll get a ``RuntimeError``.
+Proxy :data:`.request` sẽ không hoạt động trong khi generator đang
+chạy, vì ứng dụng đã trả lại quyền kiểm soát cho máy chủ WSGI tại thời điểm đó.
+Nếu bạn cố gắng truy cập ``request``, bạn sẽ nhận được một ``RuntimeError``.
 
-If your generator function relies on data in ``request``, use the
-:func:`.stream_with_context` wrapper. This will keep the request context active
-during the generator.
+Nếu hàm generator của bạn dựa vào dữ liệu trong ``request``, hãy sử dụng
+wrapper :func:`.stream_with_context`. Điều này sẽ giữ ngữ cảnh request hoạt động
+trong suốt generator.
 
 .. code-block:: python
 
@@ -70,7 +70,7 @@ during the generator.
             yield '!</p>'
         return stream_with_context(generate())
 
-It can also be used as a decorator.
+Nó cũng có thể được sử dụng như một decorator.
 
 .. code-block:: python
 
@@ -80,6 +80,6 @@ It can also be used as a decorator.
 
     return generate()
 
-The :func:`~flask.stream_template` and
-:func:`~flask.stream_template_string` functions automatically
-use :func:`~flask.stream_with_context` if a request is active.
+Các hàm :func:`~flask.stream_template` và
+:func:`~flask.stream_template_string` tự động
+sử dụng :func:`~flask.stream_with_context` nếu một request đang hoạt động.

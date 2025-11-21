@@ -1,29 +1,29 @@
-Installation
-============
+Cài đặt
+=======
 
 
-Python Version
---------------
+Phiên bản Python
+----------------
 
-We recommend using the latest version of Python. Flask supports Python 3.10 and newer.
+Chúng tôi khuyên bạn nên sử dụng phiên bản Python mới nhất. Flask hỗ trợ Python 3.10 trở lên.
 
 
-Dependencies
-------------
+Các phụ thuộc
+-------------
 
-These distributions will be installed automatically when installing Flask.
+Các bản phân phối này sẽ được cài đặt tự động khi cài đặt Flask.
 
-* `Werkzeug`_ implements WSGI, the standard Python interface between
-  applications and servers.
-* `Jinja`_ is a template language that renders the pages your application
-  serves.
-* `MarkupSafe`_ comes with Jinja. It escapes untrusted input when rendering
-  templates to avoid injection attacks.
-* `ItsDangerous`_ securely signs data to ensure its integrity. This is used
-  to protect Flask's session cookie.
-* `Click`_ is a framework for writing command line applications. It provides
-  the ``flask`` command and allows adding custom management commands.
-* `Blinker`_ provides support for :doc:`signals`.
+* `Werkzeug`_ triển khai WSGI, giao diện Python tiêu chuẩn giữa
+  các ứng dụng và máy chủ.
+* `Jinja`_ là một ngôn ngữ template dùng để render các trang mà ứng dụng của bạn
+  phục vụ.
+* `MarkupSafe`_ đi kèm với Jinja. Nó escape đầu vào không tin cậy khi render
+  template để tránh các cuộc tấn công injection.
+* `ItsDangerous`_ ký dữ liệu một cách an toàn để đảm bảo tính toàn vẹn của nó. Điều này được sử dụng
+  để bảo vệ cookie phiên của Flask.
+* `Click`_ là một framework để viết các ứng dụng dòng lệnh. Nó cung cấp
+  lệnh ``flask`` và cho phép thêm các lệnh quản lý tùy chỉnh.
+* `Blinker`_ cung cấp hỗ trợ cho :doc:`signals`.
 
 .. _Werkzeug: https://palletsprojects.com/p/werkzeug/
 .. _Jinja: https://palletsprojects.com/p/jinja/
@@ -33,16 +33,16 @@ These distributions will be installed automatically when installing Flask.
 .. _Blinker: https://blinker.readthedocs.io/
 
 
-Optional dependencies
-~~~~~~~~~~~~~~~~~~~~~
+Các phụ thuộc tùy chọn
+~~~~~~~~~~~~~~~~~~~~~~
 
-These distributions will not be installed automatically. Flask will detect and
-use them if you install them.
+Các bản phân phối này sẽ không được cài đặt tự động. Flask sẽ phát hiện và
+sử dụng chúng nếu bạn cài đặt chúng.
 
-* `python-dotenv`_ enables support for :ref:`dotenv` when running ``flask``
-  commands.
-* `Watchdog`_ provides a faster, more efficient reloader for the development
-  server.
+* `python-dotenv`_ kích hoạt hỗ trợ cho :ref:`dotenv` khi chạy các lệnh
+  ``flask``.
+* `Watchdog`_ cung cấp trình tải lại nhanh hơn, hiệu quả hơn cho máy chủ
+  phát triển.
 
 .. _python-dotenv: https://github.com/theskumar/python-dotenv#readme
 .. _watchdog: https://pythonhosted.org/watchdog/
@@ -51,40 +51,40 @@ use them if you install them.
 greenlet
 ~~~~~~~~
 
-You may choose to use gevent or eventlet with your application. In this
-case, greenlet>=1.0 is required. When using PyPy, PyPy>=7.3.7 is
-required.
+Bạn có thể chọn sử dụng gevent hoặc eventlet với ứng dụng của mình. Trong trường hợp
+này, greenlet>=1.0 là bắt buộc. Khi sử dụng PyPy, PyPy>=7.3.7 là
+bắt buộc.
 
-These are not minimum supported versions, they only indicate the first
-versions that added necessary features. You should use the latest
-versions of each.
+Đây không phải là các phiên bản được hỗ trợ tối thiểu, chúng chỉ chỉ ra các phiên bản
+đầu tiên đã thêm các tính năng cần thiết. Bạn nên sử dụng các phiên bản
+mới nhất của mỗi loại.
 
 
-Virtual environments
---------------------
+Môi trường ảo
+-------------
 
-Use a virtual environment to manage the dependencies for your project, both in
-development and in production.
+Sử dụng môi trường ảo để quản lý các phụ thuộc cho dự án của bạn, cả trong
+phát triển và trong sản xuất.
 
-What problem does a virtual environment solve? The more Python projects you
-have, the more likely it is that you need to work with different versions of
-Python libraries, or even Python itself. Newer versions of libraries for one
-project can break compatibility in another project.
+Môi trường ảo giải quyết vấn đề gì? Càng có nhiều dự án Python,
+bạn càng có nhiều khả năng cần làm việc với các phiên bản khác nhau của
+các thư viện Python, hoặc thậm chí chính Python. Các phiên bản mới hơn của thư viện cho một
+dự án có thể phá vỡ khả năng tương thích trong một dự án khác.
 
-Virtual environments are independent groups of Python libraries, one for each
-project. Packages installed for one project will not affect other projects or
-the operating system's packages.
+Môi trường ảo là các nhóm thư viện Python độc lập, một cho mỗi
+dự án. Các gói được cài đặt cho một dự án sẽ không ảnh hưởng đến các dự án khác hoặc
+các gói của hệ điều hành.
 
-Python comes bundled with the :mod:`venv` module to create virtual
-environments.
+Python đi kèm với module :mod:`venv` để tạo các môi trường
+ảo.
 
 
 .. _install-create-env:
 
-Create an environment
-~~~~~~~~~~~~~~~~~~~~~
+Tạo một môi trường
+~~~~~~~~~~~~~~~~~~
 
-Create a project folder and a :file:`.venv` folder within:
+Tạo một thư mục dự án và một thư mục :file:`.venv` bên trong:
 
 .. tabs::
 
@@ -107,10 +107,10 @@ Create a project folder and a :file:`.venv` folder within:
 
 .. _install-activate-env:
 
-Activate the environment
-~~~~~~~~~~~~~~~~~~~~~~~~
+Kích hoạt môi trường
+~~~~~~~~~~~~~~~~~~~~
 
-Before you work on your project, activate the corresponding environment:
+Trước khi bạn làm việc trên dự án của mình, hãy kích hoạt môi trường tương ứng:
 
 .. tabs::
 
@@ -126,19 +126,19 @@ Before you work on your project, activate the corresponding environment:
 
          > .venv\Scripts\activate
 
-Your shell prompt will change to show the name of the activated
-environment.
+Dấu nhắc shell của bạn sẽ thay đổi để hiển thị tên của môi trường
+đã kích hoạt.
 
 
-Install Flask
+Cài đặt Flask
 -------------
 
-Within the activated environment, use the following command to install
+Trong môi trường đã kích hoạt, sử dụng lệnh sau để cài đặt
 Flask:
 
 .. code-block:: sh
 
     $ pip install Flask
 
-Flask is now installed. Check out the :doc:`/quickstart` or go to the
-:doc:`Documentation Overview </index>`.
+Flask hiện đã được cài đặt. Xem :doc:`/quickstart` hoặc đi đến
+:doc:`Tổng quan Tài liệu </index>`.

@@ -1,37 +1,37 @@
 .. currentmodule:: flask
 
-Define and Access the Database
-==============================
+Định nghĩa và Truy cập Cơ sở dữ liệu
+====================================
 
-The application will use a `SQLite`_ database to store users and posts.
-Python comes with built-in support for SQLite in the :mod:`sqlite3`
-module.
+Ứng dụng sẽ sử dụng cơ sở dữ liệu `SQLite`_ để lưu trữ người dùng và bài viết.
+Python đi kèm với hỗ trợ tích hợp sẵn cho SQLite trong module :mod:`sqlite3`
+.
 
-SQLite is convenient because it doesn't require setting up a separate
-database server and is built-in to Python. However, if concurrent
-requests try to write to the database at the same time, they will slow
-down as each write happens sequentially. Small applications won't notice
-this. Once you become big, you may want to switch to a different
-database.
+SQLite rất tiện lợi vì nó không yêu cầu thiết lập một máy chủ
+cơ sở dữ liệu riêng biệt và được tích hợp sẵn vào Python. Tuy nhiên, nếu các
+request đồng thời cố gắng ghi vào cơ sở dữ liệu cùng một lúc, chúng sẽ chậm
+lại vì mỗi lần ghi xảy ra tuần tự. Các ứng dụng nhỏ sẽ không nhận thấy
+điều này. Khi bạn trở nên lớn, bạn có thể muốn chuyển sang một cơ sở dữ liệu
+khác.
 
-The tutorial doesn't go into detail about SQL. If you are not familiar
-with it, the SQLite docs describe the `language`_.
+Tutorial không đi vào chi tiết về SQL. Nếu bạn không quen thuộc
+với nó, tài liệu SQLite mô tả `ngôn ngữ`_.
 
 .. _SQLite: https://sqlite.org/about.html
 .. _language: https://sqlite.org/lang.html
 
 
-Connect to the Database
------------------------
+Kết nối với Cơ sở dữ liệu
+--------------------------
 
-The first thing to do when working with a SQLite database (and most
-other Python database libraries) is to create a connection to it. Any
-queries and operations are performed using the connection, which is
-closed after the work is finished.
+Điều đầu tiên cần làm khi làm việc với cơ sở dữ liệu SQLite (và hầu hết
+các thư viện cơ sở dữ liệu Python khác) là tạo một kết nối đến nó. Bất kỳ
+truy vấn và thao tác nào đều được thực hiện bằng cách sử dụng kết nối, được
+đóng sau khi công việc hoàn thành.
 
-In web applications this connection is typically tied to the request. It
-is created at some point when handling a request, and closed before the
-response is sent.
+Trong các ứng dụng web, kết nối này thường được gắn với request. Nó
+được tạo tại một thời điểm nào đó khi xử lý một request, và đóng trước khi
+phản hồi được gửi.
 
 .. code-block:: python
     :caption: ``flaskr/db.py``
@@ -60,38 +60,38 @@ response is sent.
         if db is not None:
             db.close()
 
-:data:`.g` is a special object that is unique for each request. It is
-used to store data that might be accessed by multiple functions during
-the request. The connection is stored and reused instead of creating a
-new connection if ``get_db`` is called a second time in the same
+:data:`.g` là một đối tượng đặc biệt duy nhất cho mỗi request. Nó được
+sử dụng để lưu trữ dữ liệu có thể được truy cập bởi nhiều hàm trong
+request. Kết nối được lưu trữ và sử dụng lại thay vì tạo một
+kết nối mới nếu ``get_db`` được gọi lần thứ hai trong cùng một
 request.
 
-:data:`.current_app` is another special object that points to the Flask
-application handling the request. Since you used an application factory,
-there is no application object when writing the rest of your code.
-``get_db`` will be called when the application has been created and is
-handling a request, so :data:`.current_app` can be used.
+:data:`.current_app` là một đối tượng đặc biệt khác trỏ đến ứng dụng Flask
+đang xử lý request. Vì bạn đã sử dụng một application factory,
+không có đối tượng ứng dụng khi viết phần còn lại của mã.
+``get_db`` sẽ được gọi khi ứng dụng đã được tạo và đang
+xử lý một request, vì vậy :data:`.current_app` có thể được sử dụng.
 
-:func:`sqlite3.connect` establishes a connection to the file pointed at
-by the ``DATABASE`` configuration key. This file doesn't have to exist
-yet, and won't until you initialize the database later.
+:func:`sqlite3.connect` thiết lập một kết nối đến file được trỏ đến
+bởi khóa cấu hình ``DATABASE``. File này không cần tồn tại
+ngay bây giờ, và sẽ không tồn tại cho đến khi bạn khởi tạo cơ sở dữ liệu sau.
 
-:class:`sqlite3.Row` tells the connection to return rows that behave
-like dicts. This allows accessing the columns by name.
+:class:`sqlite3.Row` cho kết nối biết trả về các hàng hoạt động
+như dict. Điều này cho phép truy cập các cột theo tên.
 
-``close_db`` checks if a connection was created by checking if ``g.db``
-was set. If the connection exists, it is closed. Further down you will
-tell your application about the ``close_db`` function in the application
-factory so that it is called after each request.
+``close_db`` kiểm tra xem một kết nối đã được tạo bằng cách kiểm tra xem ``g.db``
+đã được đặt chưa. Nếu kết nối tồn tại, nó sẽ bị đóng. Xa hơn nữa bạn sẽ
+cho ứng dụng của mình biết về hàm ``close_db`` trong application
+factory để nó được gọi sau mỗi request.
 
 
-Create the Tables
------------------
+Tạo Bảng
+--------
 
-In SQLite, data is stored in *tables* and *columns*. These need to be
-created before you can store and retrieve data. Flaskr will store users
-in the ``user`` table, and posts in the ``post`` table. Create a file
-with the SQL commands needed to create empty tables:
+Trong SQLite, dữ liệu được lưu trữ trong *bảng* và *cột*. Chúng cần được
+tạo trước khi bạn có thể lưu trữ và truy xuất dữ liệu. Flaskr sẽ lưu trữ người dùng
+trong bảng ``user``, và bài viết trong bảng ``post``. Tạo một file
+với các lệnh SQL cần thiết để tạo các bảng trống:
 
 .. code-block:: sql
     :caption: ``flaskr/schema.sql``
@@ -114,8 +114,8 @@ with the SQL commands needed to create empty tables:
       FOREIGN KEY (author_id) REFERENCES user (id)
     );
 
-Add the Python functions that will run these SQL commands to the
-``db.py`` file:
+Thêm các hàm Python sẽ chạy các lệnh SQL này vào file
+``db.py``:
 
 .. code-block:: python
     :caption: ``flaskr/db.py``
@@ -138,29 +138,29 @@ Add the Python functions that will run these SQL commands to the
         "timestamp", lambda v: datetime.fromisoformat(v.decode())
     )
 
-:meth:`open_resource() <Flask.open_resource>` opens a file relative to
-the ``flaskr`` package, which is useful since you won't necessarily know
-where that location is when deploying the application later. ``get_db``
-returns a database connection, which is used to execute the commands
-read from the file.
+:meth:`open_resource() <Flask.open_resource>` mở một file tương đối với
+package ``flaskr``, điều này hữu ích vì bạn sẽ không nhất thiết biết
+vị trí đó ở đâu khi triển khai ứng dụng sau này. ``get_db``
+trả về một kết nối cơ sở dữ liệu, được sử dụng để thực thi các lệnh
+đọc từ file.
 
-:func:`click.command` defines a command line command called ``init-db``
-that calls the ``init_db`` function and shows a success message to the
-user. You can read :doc:`/cli` to learn more about writing commands.
+:func:`click.command` định nghĩa một lệnh dòng lệnh có tên ``init-db``
+gọi hàm ``init_db`` và hiển thị thông báo thành công cho
+người dùng. Bạn có thể đọc :doc:`/cli` để tìm hiểu thêm về viết lệnh.
 
-The call to :func:`sqlite3.register_converter` tells Python how to
-interpret timestamp values in the database. We convert the value to a
+Cuộc gọi đến :func:`sqlite3.register_converter` cho Python biết cách
+diễn giải các giá trị timestamp trong cơ sở dữ liệu. Chúng ta chuyển đổi giá trị thành một
 :class:`datetime.datetime`.
 
 
-Register with the Application
------------------------------
+Đăng ký với Ứng dụng
+--------------------
 
-The ``close_db`` and ``init_db_command`` functions need to be registered
-with the application instance; otherwise, they won't be used by the
-application. However, since you're using a factory function, that
-instance isn't available when writing the functions. Instead, write a
-function that takes an application and does the registration.
+Các hàm ``close_db`` và ``init_db_command`` cần được đăng ký
+với instance ứng dụng; nếu không, chúng sẽ không được ứng dụng sử dụng
+. Tuy nhiên, vì bạn đang sử dụng một factory function, instance
+đó không có sẵn khi viết các hàm. Thay vào đó, hãy viết một
+hàm nhận một ứng dụng và thực hiện đăng ký.
 
 .. code-block:: python
     :caption: ``flaskr/db.py``
@@ -169,15 +169,15 @@ function that takes an application and does the registration.
         app.teardown_appcontext(close_db)
         app.cli.add_command(init_db_command)
 
-:meth:`app.teardown_appcontext() <Flask.teardown_appcontext>` tells
-Flask to call that function when cleaning up after returning the
-response.
+:meth:`app.teardown_appcontext() <Flask.teardown_appcontext>` cho
+Flask biết gọi hàm đó khi dọn dẹp sau khi trả về
+phản hồi.
 
-:meth:`app.cli.add_command() <click.Group.add_command>` adds a new
-command that can be called with the ``flask`` command.
+:meth:`app.cli.add_command() <click.Group.add_command>` thêm một
+lệnh mới có thể được gọi bằng lệnh ``flask``.
 
-Import and call this function from the factory. Place the new code at
-the end of the factory function before returning the app.
+Import và gọi hàm này từ factory. Đặt mã mới ở
+cuối hàm factory trước khi trả về ứng dụng.
 
 .. code-block:: python
     :caption: ``flaskr/__init__.py``
@@ -192,28 +192,28 @@ the end of the factory function before returning the app.
         return app
 
 
-Initialize the Database File
-----------------------------
+Khởi tạo File Cơ sở dữ liệu
+---------------------------
 
-Now that ``init-db`` has been registered with the app, it can be called
-using the ``flask`` command, similar to the ``run`` command from the
-previous page.
+Bây giờ ``init-db`` đã được đăng ký với ứng dụng, nó có thể được gọi
+bằng lệnh ``flask``, tương tự như lệnh ``run`` từ
+trang trước.
 
 .. note::
 
-    If you're still running the server from the previous page, you can
-    either stop the server, or run this command in a new terminal. If
-    you use a new terminal, remember to change to your project directory
-    and activate the env as described in :doc:`/installation`.
+    Nếu bạn vẫn đang chạy máy chủ từ trang trước, bạn có thể
+    dừng máy chủ, hoặc chạy lệnh này trong một terminal mới. Nếu
+    bạn sử dụng một terminal mới, hãy nhớ chuyển đến thư mục dự án của bạn
+    và kích hoạt env như được mô tả trong :doc:`/installation`.
 
-Run the ``init-db`` command:
+Chạy lệnh ``init-db``:
 
 .. code-block:: none
 
     $ flask --app flaskr init-db
     Initialized the database.
 
-There will now be a ``flaskr.sqlite`` file in the ``instance`` folder in
-your project.
+Bây giờ sẽ có một file ``flaskr.sqlite`` trong thư mục ``instance`` trong
+dự án của bạn.
 
-Continue to :doc:`views`.
+Tiếp tục đến :doc:`views`.

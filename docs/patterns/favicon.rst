@@ -1,28 +1,28 @@
-Adding a favicon
+Thêm một favicon
 ================
 
-A "favicon" is an icon used by browsers for tabs and bookmarks. This helps
-to distinguish your website and to give it a unique brand.
+Một "favicon" là một biểu tượng được sử dụng bởi các trình duyệt cho các tab và bookmark. Điều này giúp
+phân biệt trang web của bạn và cung cấp cho nó một thương hiệu độc đáo.
 
-A common question is how to add a favicon to a Flask application. First, of
-course, you need an icon. It should be 16 × 16 pixels and in the ICO file
-format. This is not a requirement but a de-facto standard supported by all
-relevant browsers. Put the icon in your static directory as
+Một câu hỏi phổ biến là làm thế nào để thêm một favicon vào một ứng dụng Flask. Đầu tiên, tất
+nhiên, bạn cần một biểu tượng. Nó nên là 16 × 16 pixel và ở định dạng file ICO.
+Đây không phải là một yêu cầu nhưng là một tiêu chuẩn thực tế được hỗ trợ bởi tất cả
+các trình duyệt liên quan. Đặt biểu tượng trong thư mục static của bạn dưới dạng
 :file:`favicon.ico`.
 
-Now, to get browsers to find your icon, the correct way is to add a link
-tag in your HTML. So, for example:
+Bây giờ, để các trình duyệt tìm thấy biểu tượng của bạn, cách chính xác là thêm một thẻ link
+trong HTML của bạn. Vì vậy, ví dụ:
 
 .. sourcecode:: html+jinja
 
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
-That's all you need for most browsers, however some really old ones do not
-support this standard. The old de-facto standard is to serve this file,
-with this name, at the website root. If your application is not mounted at
-the root path of the domain you either need to configure the web server to
-serve the icon at the root or if you can't do that you're out of luck. If
-however your application is the root you can simply route a redirect::
+Đó là tất cả những gì bạn cần cho hầu hết các trình duyệt, tuy nhiên một số trình duyệt thực sự cũ không
+hỗ trợ tiêu chuẩn này. Tiêu chuẩn thực tế cũ là phục vụ file này,
+với tên này, tại thư mục gốc của trang web. Nếu ứng dụng của bạn không được gắn tại
+đường dẫn gốc của tên miền, bạn cần cấu hình máy chủ web để
+phục vụ biểu tượng tại thư mục gốc hoặc nếu bạn không thể làm điều đó thì bạn không may mắn. Tuy nhiên, nếu
+ứng dụng của bạn là thư mục gốc, bạn có thể chỉ cần định tuyến một chuyển hướng::
 
     app.add_url_rule(
         "/favicon.ico",
@@ -30,8 +30,8 @@ however your application is the root you can simply route a redirect::
         redirect_to=url_for("static", filename="favicon.ico"),
     )
 
-If you want to save the extra redirect request you can also write a view
-using :func:`~flask.send_from_directory`::
+Nếu bạn muốn tiết kiệm request chuyển hướng bổ sung, bạn cũng có thể viết một view
+sử dụng :func:`~flask.send_from_directory`::
 
     import os
     from flask import send_from_directory
@@ -41,16 +41,16 @@ using :func:`~flask.send_from_directory`::
         return send_from_directory(os.path.join(app.root_path, 'static'),
                                    'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-We can leave out the explicit mimetype and it will be guessed, but we may
-as well specify it to avoid the extra guessing, as it will always be the
-same.
+Chúng ta có thể bỏ qua mimetype rõ ràng và nó sẽ được đoán, nhưng chúng ta cũng có thể
+chỉ định nó để tránh việc đoán thêm, vì nó sẽ luôn luôn
+giống nhau.
 
-The above will serve the icon via your application and if possible it's
-better to configure your dedicated web server to serve it; refer to the
-web server's documentation.
+Ở trên sẽ phục vụ biểu tượng thông qua ứng dụng của bạn và nếu có thể thì
+tốt hơn là cấu hình máy chủ web chuyên dụng của bạn để phục vụ nó; tham khảo
+tài liệu của máy chủ web.
 
-See also
+Xem thêm
 --------
 
-* The `Favicon <https://en.wikipedia.org/wiki/Favicon>`_ article on
+* Bài viết `Favicon <https://en.wikipedia.org/wiki/Favicon>`_ trên
   Wikipedia

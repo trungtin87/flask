@@ -1,40 +1,39 @@
-Configuration Handling
-======================
+Xử lý Cấu hình
+================
 
-Applications need some kind of configuration.  There are different settings
-you might want to change depending on the application environment like
-toggling the debug mode, setting the secret key, and other such
-environment-specific things.
+Các ứng dụng cần một loại cấu hình nào đó. Có các cài đặt khác nhau
+bạn có thể muốn thay đổi tùy thuộc vào môi trường ứng dụng như
+bật tắt chế độ debug, đặt khóa bí mật, và các thứ
+cụ thể theo môi trường khác.
 
-The way Flask is designed usually requires the configuration to be
-available when the application starts up.  You can hard code the
-configuration in the code, which for many small applications is not
-actually that bad, but there are better ways.
+Cách Flask được thiết kế thường yêu cầu cấu hình phải
+có sẵn khi ứng dụng khởi động. Bạn có thể mã hóa cứng
+cấu hình trong mã, điều này đối với nhiều ứng dụng nhỏ không
+thực sự tệ lắm, nhưng có những cách tốt hơn.
 
-Independent of how you load your config, there is a config object
-available which holds the loaded configuration values:
-The :attr:`~flask.Flask.config` attribute of the :class:`~flask.Flask`
-object.  This is the place where Flask itself puts certain configuration
-values and also where extensions can put their configuration values.  But
-this is also where you can have your own configuration.
+Độc lập với cách bạn tải cấu hình của mình, có một đối tượng config
+có sẵn giữ các giá trị cấu hình đã tải:
+Thuộc tính :attr:`~flask.Flask.config` của đối tượng :class:`~flask.Flask`.
+Đây là nơi Flask tự đặt các giá trị cấu hình nhất định
+và cũng là nơi các tiện ích mở rộng có thể đặt các giá trị cấu hình của chúng. Nhưng
+đây cũng là nơi bạn có thể có cấu hình riêng của mình.
 
 
-Configuration Basics
---------------------
+Cơ bản về Cấu hình
+------------------
 
-The :attr:`~flask.Flask.config` is actually a subclass of a dictionary and
-can be modified just like any dictionary::
+:attr:`~flask.Flask.config` thực sự là một lớp con của từ điển (dictionary) và
+có thể được sửa đổi giống như bất kỳ từ điển nào::
 
     app = Flask(__name__)
     app.config['TESTING'] = True
 
-Certain configuration values are also forwarded to the
-:attr:`~flask.Flask` object so you can read and write them from there::
+Các giá trị cấu hình nhất định cũng được chuyển tiếp đến
+đối tượng :attr:`~flask.Flask` để bạn có thể đọc và ghi chúng từ đó::
 
     app.testing = True
 
-To update multiple keys at once you can use the :meth:`dict.update`
-method::
+Để cập nhật nhiều khóa cùng một lúc bạn có thể sử dụng phương thức :meth:`dict.update`::
 
     app.config.update(
         TESTING=True,
@@ -42,357 +41,354 @@ method::
     )
 
 
-Debug Mode
-----------
+Chế độ Debug
+------------
 
-The :data:`DEBUG` config value is special because it may behave inconsistently if
-changed after the app has begun setting up. In order to set debug mode reliably, use the
-``--debug`` option on the ``flask`` or ``flask run`` command. ``flask run`` will use the
-interactive debugger and reloader by default in debug mode.
+Giá trị cấu hình :data:`DEBUG` là đặc biệt bởi vì nó có thể hoạt động không nhất quán nếu
+thay đổi sau khi ứng dụng đã bắt đầu thiết lập. Để đặt chế độ debug một cách đáng tin cậy, sử dụng
+tùy chọn ``--debug`` trên lệnh ``flask`` hoặc ``flask run``. ``flask run`` sẽ sử dụng
+trình gỡ lỗi tương tác và trình tải lại theo mặc định trong chế độ debug.
 
 .. code-block:: text
 
     $ flask --app hello run --debug
 
-Using the option is recommended. While it is possible to set :data:`DEBUG` in your
-config or code, this is strongly discouraged. It can't be read early by the
-``flask run`` command, and some systems or extensions may have already configured
-themselves based on a previous value.
+Sử dụng tùy chọn này được khuyến nghị. Mặc dù có thể đặt :data:`DEBUG` trong
+cấu hình hoặc mã của bạn, điều này không được khuyến khích. Nó không thể được đọc sớm bởi
+lệnh ``flask run``, và một số hệ thống hoặc tiện ích mở rộng có thể đã tự cấu hình
+dựa trên giá trị trước đó.
 
 
-Builtin Configuration Values
-----------------------------
+Các Giá trị Cấu hình Tích hợp
+-----------------------------
 
-The following configuration values are used internally by Flask:
+Các giá trị cấu hình sau được sử dụng nội bộ bởi Flask:
 
 .. py:data:: DEBUG
 
-    Whether debug mode is enabled. When using ``flask run`` to start the development
-    server, an interactive debugger will be shown for unhandled exceptions, and the
-    server will be reloaded when code changes. The :attr:`~flask.Flask.debug` attribute
-    maps to this config key. This is set with the ``FLASK_DEBUG`` environment variable.
-    It may not behave as expected if set in code.
+    Liệu chế độ debug có được bật hay không. Khi sử dụng ``flask run`` để khởi động máy chủ phát triển,
+    một trình gỡ lỗi tương tác sẽ được hiển thị cho các ngoại lệ không được xử lý, và
+    máy chủ sẽ được tải lại khi mã thay đổi. Thuộc tính :attr:`~flask.Flask.debug`
+    ánh xạ tới khóa cấu hình này. Điều này được đặt bằng biến môi trường ``FLASK_DEBUG``.
+    Nó có thể không hoạt động như mong đợi nếu được đặt trong mã.
 
-    **Do not enable debug mode when deploying in production.**
+    **Không bật chế độ debug khi triển khai trong sản xuất.**
 
-    Default: ``False``
+    Mặc định: ``False``
 
 .. py:data:: TESTING
 
-    Enable testing mode. Exceptions are propagated rather than handled by the
-    the app's error handlers. Extensions may also change their behavior to
-    facilitate easier testing. You should enable this in your own tests.
+    Bật chế độ kiểm thử (testing). Các ngoại lệ được lan truyền thay vì được xử lý bởi
+    các trình xử lý lỗi của ứng dụng. Các tiện ích mở rộng cũng có thể thay đổi hành vi của chúng để
+    tạo điều kiện kiểm thử dễ dàng hơn. Bạn nên bật cái này trong các bài kiểm thử của riêng bạn.
 
-    Default: ``False``
+    Mặc định: ``False``
 
 .. py:data:: PROPAGATE_EXCEPTIONS
 
-    Exceptions are re-raised rather than being handled by the app's error
-    handlers. If not set, this is implicitly true if ``TESTING`` or ``DEBUG``
-    is enabled.
+    Các ngoại lệ được ném lại thay vì được xử lý bởi các trình xử lý lỗi của
+    ứng dụng. Nếu không được đặt, cái này ngầm định là đúng nếu ``TESTING`` hoặc ``DEBUG``
+    được bật.
 
-    Default: ``None``
+    Mặc định: ``None``
 
 .. py:data:: TRAP_HTTP_EXCEPTIONS
 
-    If there is no handler for an ``HTTPException``-type exception, re-raise it
-    to be handled by the interactive debugger instead of returning it as a
-    simple error response.
+    Nếu không có trình xử lý cho một ngoại lệ loại ``HTTPException``, ném lại nó
+    để được xử lý bởi trình gỡ lỗi tương tác thay vì trả về nó như một
+    phản hồi lỗi đơn giản.
 
-    Default: ``False``
+    Mặc định: ``False``
 
 .. py:data:: TRAP_BAD_REQUEST_ERRORS
 
-    Trying to access a key that doesn't exist from request dicts like ``args``
-    and ``form`` will return a 400 Bad Request error page. Enable this to treat
-    the error as an unhandled exception instead so that you get the interactive
-    debugger. This is a more specific version of ``TRAP_HTTP_EXCEPTIONS``. If
-    unset, it is enabled in debug mode.
+    Cố gắng truy cập một khóa không tồn tại từ các dict request như ``args``
+    và ``form`` sẽ trả về một trang lỗi 400 Bad Request. Bật cái này để coi
+    lỗi như một ngoại lệ không được xử lý thay vào đó để bạn nhận được trình gỡ lỗi
+    tương tác. Đây là một phiên bản cụ thể hơn của ``TRAP_HTTP_EXCEPTIONS``. Nếu
+    không được đặt, nó được bật trong chế độ debug.
 
-    Default: ``None``
+    Mặc định: ``None``
 
 .. py:data:: SECRET_KEY
 
-    A secret key that will be used for securely signing the session cookie
-    and can be used for any other security related needs by extensions or your
-    application. It should be a long random ``bytes`` or ``str``. For
-    example, copy the output of this to your config::
+    Một khóa bí mật sẽ được sử dụng để ký cookie session một cách an toàn
+    và có thể được sử dụng cho bất kỳ nhu cầu liên quan đến bảo mật nào khác bởi các tiện ích mở rộng hoặc
+    ứng dụng của bạn. Nó nên là một ``bytes`` hoặc ``str`` ngẫu nhiên dài. Ví dụ,
+    sao chép đầu ra của cái này vào cấu hình của bạn::
 
         $ python -c 'import secrets; print(secrets.token_hex())'
         '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
 
-    **Do not reveal the secret key when posting questions or committing code.**
+    **Không tiết lộ khóa bí mật khi đăng câu hỏi hoặc commit mã.**
 
-    Default: ``None``
+    Mặc định: ``None``
 
 .. py:data:: SECRET_KEY_FALLBACKS
 
-    A list of old secret keys that can still be used for unsigning. This allows
-    a project to implement key rotation without invalidating active sessions or
-    other recently-signed secrets.
+    Một danh sách các khóa bí mật cũ vẫn có thể được sử dụng để hủy ký (unsigning). Điều này cho phép
+    một dự án thực hiện xoay vòng khóa mà không làm mất hiệu lực các session đang hoạt động hoặc
+    các bí mật được ký gần đây khác.
 
-    Keys should be removed after an appropriate period of time, as checking each
-    additional key adds some overhead.
+    Các khóa nên được xóa sau một khoảng thời gian thích hợp, vì kiểm tra mỗi
+    khóa bổ sung thêm một chút chi phí.
 
-    Order should not matter, but the default implementation will test the last
-    key in the list first, so it might make sense to order oldest to newest.
+    Thứ tự không quan trọng, nhưng việc triển khai mặc định sẽ kiểm tra khóa cuối cùng
+    trong danh sách trước, vì vậy có thể hợp lý khi sắp xếp từ cũ nhất đến mới nhất.
 
-    Flask's built-in secure cookie session supports this. Extensions that use
-    :data:`SECRET_KEY` may not support this yet.
+    Session cookie an toàn tích hợp của Flask hỗ trợ điều này. Các tiện ích mở rộng sử dụng
+    :data:`SECRET_KEY` có thể chưa hỗ trợ điều này.
 
-    Default: ``None``
+    Mặc định: ``None``
 
     .. versionadded:: 3.1
 
 .. py:data:: SESSION_COOKIE_NAME
 
-    The name of the session cookie. Can be changed in case you already have a
-    cookie with the same name.
+    Tên của cookie session. Có thể thay đổi trong trường hợp bạn đã có một
+    cookie với cùng tên.
 
-    Default: ``'session'``
+    Mặc định: ``'session'``
 
 .. py:data:: SESSION_COOKIE_DOMAIN
 
-    The value of the ``Domain`` parameter on the session cookie. If not set, browsers
-    will only send the cookie to the exact domain it was set from. Otherwise, they
-    will send it to any subdomain of the given value as well.
+    Giá trị của tham số ``Domain`` trên cookie session. Nếu không được đặt, các trình duyệt
+    sẽ chỉ gửi cookie đến tên miền chính xác mà nó được đặt từ đó. Ngược lại, chúng
+    sẽ gửi nó đến bất kỳ tên miền phụ nào của giá trị đã cho.
 
-    Not setting this value is more restricted and secure than setting it.
+    Không đặt giá trị này hạn chế và an toàn hơn là đặt nó.
 
-    Default: ``None``
+    Mặc định: ``None``
 
     .. warning::
-        If this is changed after the browser created a cookie is created with
-        one setting, it may result in another being created. Browsers may send
-        send both in an undefined order. In that case, you may want to change
-        :data:`SESSION_COOKIE_NAME` as well or otherwise invalidate old sessions.
+        Nếu cái này bị thay đổi sau khi trình duyệt tạo một cookie được tạo với
+        một cài đặt, nó có thể dẫn đến một cái khác được tạo ra. Các trình duyệt có thể gửi
+        cả hai theo một thứ tự không xác định. Trong trường hợp đó, bạn có thể muốn thay đổi
+        :data:`SESSION_COOKIE_NAME` cũng như hoặc nếu không thì làm mất hiệu lực các session cũ.
 
     .. versionchanged:: 2.3
-        Not set by default, does not fall back to ``SERVER_NAME``.
+        Không được đặt theo mặc định, không quay lại ``SERVER_NAME``.
 
 .. py:data:: SESSION_COOKIE_PATH
 
-    The path that the session cookie will be valid for. If not set, the cookie
-    will be valid underneath ``APPLICATION_ROOT`` or ``/`` if that is not set.
+    Đường dẫn mà cookie session sẽ hợp lệ. Nếu không được đặt, cookie
+    sẽ hợp lệ bên dưới ``APPLICATION_ROOT`` hoặc ``/`` nếu cái đó không được đặt.
 
-    Default: ``None``
+    Mặc định: ``None``
 
 .. py:data:: SESSION_COOKIE_HTTPONLY
 
-    Browsers will not allow JavaScript access to cookies marked as "HTTP only"
-    for security.
+    Các trình duyệt sẽ không cho phép JavaScript truy cập vào các cookie được đánh dấu là "HTTP only"
+    để bảo mật.
 
-    Default: ``True``
+    Mặc định: ``True``
 
 .. py:data:: SESSION_COOKIE_SECURE
 
-    Browsers will only send cookies with requests over HTTPS if the cookie is
-    marked "secure". The application must be served over HTTPS for this to make
-    sense.
+    Các trình duyệt sẽ chỉ gửi cookie với các request qua HTTPS nếu cookie được
+    đánh dấu "secure". Ứng dụng phải được phục vụ qua HTTPS để điều này có
+    ý nghĩa.
 
-    Default: ``False``
+    Mặc định: ``False``
 
 .. py:data:: SESSION_COOKIE_PARTITIONED
 
-    Browsers will send cookies based on the top-level document's domain, rather
-    than only the domain of the document setting the cookie. This prevents third
-    party cookies set in iframes from "leaking" between separate sites.
+    Các trình duyệt sẽ gửi cookie dựa trên tên miền của tài liệu cấp cao nhất, thay vì
+    chỉ tên miền của tài liệu đặt cookie. Điều này ngăn chặn các cookie của bên thứ ba
+    được đặt trong iframe khỏi việc "rò rỉ" giữa các trang web riêng biệt.
 
-    Browsers are beginning to disallow non-partitioned third party cookies, so
-    you need to mark your cookies partitioned if you expect them to work in such
-    embedded situations.
+    Các trình duyệt đang bắt đầu không cho phép các cookie của bên thứ ba không được phân vùng, vì vậy
+    bạn cần đánh dấu cookie của mình là được phân vùng nếu bạn mong đợi chúng hoạt động trong các tình huống
+    nhúng như vậy.
 
-    Enabling this implicitly enables :data:`SESSION_COOKIE_SECURE` as well, as
-    it is only valid when served over HTTPS.
+    Bật cái này ngầm định bật :data:`SESSION_COOKIE_SECURE` cũng như, vì
+    nó chỉ hợp lệ khi được phục vụ qua HTTPS.
 
-    Default: ``False``
+    Mặc định: ``False``
 
     .. versionadded:: 3.1
 
 .. py:data:: SESSION_COOKIE_SAMESITE
 
-    Restrict how cookies are sent with requests from external sites. Can
-    be set to ``'Lax'`` (recommended) or ``'Strict'``.
-    See :ref:`security-cookie`.
+    Hạn chế cách cookie được gửi với các request từ các trang web bên ngoài. Có thể
+    được đặt thành ``'Lax'`` (khuyến nghị) hoặc ``'Strict'``.
+    Xem :ref:`security-cookie`.
 
-    Default: ``None``
+    Mặc định: ``None``
 
     .. versionadded:: 1.0
 
 .. py:data:: PERMANENT_SESSION_LIFETIME
 
-    If ``session.permanent`` is true, the cookie's expiration will be set this
-    number of seconds in the future. Can either be a
-    :class:`datetime.timedelta` or an ``int``.
+    Nếu ``session.permanent`` là đúng, thời gian hết hạn của cookie sẽ được đặt số
+    giây này trong tương lai. Có thể là một
+    :class:`datetime.timedelta` hoặc một ``int``.
 
-    Flask's default cookie implementation validates that the cryptographic
-    signature is not older than this value.
+    Việc triển khai cookie mặc định của Flask xác nhận rằng chữ ký mật mã
+    không cũ hơn giá trị này.
 
-    Default: ``timedelta(days=31)`` (``2678400`` seconds)
+    Mặc định: ``timedelta(days=31)`` (``2678400`` giây)
 
 .. py:data:: SESSION_REFRESH_EACH_REQUEST
 
-    Control whether the cookie is sent with every response when
-    ``session.permanent`` is true. Sending the cookie every time (the default)
-    can more reliably keep the session from expiring, but uses more bandwidth.
-    Non-permanent sessions are not affected.
+    Kiểm soát xem cookie có được gửi với mỗi phản hồi khi
+    ``session.permanent`` là đúng hay không. Gửi cookie mỗi lần (mặc định)
+    có thể giữ cho session không bị hết hạn một cách đáng tin cậy hơn, nhưng sử dụng nhiều băng thông hơn.
+    Các session không vĩnh viễn không bị ảnh hưởng.
 
-    Default: ``True``
+    Mặc định: ``True``
 
 .. py:data:: USE_X_SENDFILE
 
-    When serving files, set the ``X-Sendfile`` header instead of serving the
-    data with Flask. Some web servers, such as Apache, recognize this and serve
-    the data more efficiently. This only makes sense when using such a server.
+    Khi phục vụ các file, đặt header ``X-Sendfile`` thay vì phục vụ
+    dữ liệu với Flask. Một số máy chủ web, chẳng hạn như Apache, nhận ra điều này và phục vụ
+    dữ liệu hiệu quả hơn. Điều này chỉ có ý nghĩa khi sử dụng một máy chủ như vậy.
 
-    Default: ``False``
+    Mặc định: ``False``
 
 .. py:data:: SEND_FILE_MAX_AGE_DEFAULT
 
-    When serving files, set the cache control max age to this number of
-    seconds. Can be a :class:`datetime.timedelta` or an ``int``.
-    Override this value on a per-file basis using
-    :meth:`~flask.Flask.get_send_file_max_age` on the application or
+    Khi phục vụ các file, đặt tuổi thọ tối đa kiểm soát bộ nhớ cache thành số
+    giây này. Có thể là một :class:`datetime.timedelta` hoặc một ``int``.
+    Ghi đè giá trị này trên cơ sở từng file bằng cách sử dụng
+    :meth:`~flask.Flask.get_send_file_max_age` trên ứng dụng hoặc
     blueprint.
 
-    If ``None``, ``send_file`` tells the browser to use conditional
-    requests will be used instead of a timed cache, which is usually
-    preferable.
+    Nếu ``None``, ``send_file`` bảo trình duyệt sử dụng các request
+    có điều kiện sẽ được sử dụng thay vì bộ nhớ cache theo thời gian, điều này thường
+    được ưu tiên hơn.
 
-    Default: ``None``
+    Mặc định: ``None``
 
 .. py:data:: TRUSTED_HOSTS
 
-    Validate :attr:`.Request.host` and other attributes that use it against
-    these trusted values. Raise a :exc:`~werkzeug.exceptions.SecurityError` if
-    the host is invalid, which results in a 400 error. If it is ``None``, all
-    hosts are valid. Each value is either an exact match, or can start with
-    a dot ``.`` to match any subdomain.
+    Xác thực :attr:`.Request.host` và các thuộc tính khác sử dụng nó so với
+    các giá trị tin cậy này. Ném ra một :exc:`~werkzeug.exceptions.SecurityError` nếu
+    host không hợp lệ, dẫn đến lỗi 400. Nếu nó là ``None``, tất cả
+    các host đều hợp lệ. Mỗi giá trị là một kết quả khớp chính xác, hoặc có thể bắt đầu bằng
+    một dấu chấm ``.`` để khớp với bất kỳ tên miền phụ nào.
 
-    Validation is done during routing against this value. ``before_request`` and
-    ``after_request`` callbacks will still be called.
+    Xác thực được thực hiện trong quá trình định tuyến so với giá trị này. Các callback ``before_request`` và
+    ``after_request`` vẫn sẽ được gọi.
 
-    Default: ``None``
+    Mặc định: ``None``
 
     .. versionadded:: 3.1
 
 .. py:data:: SERVER_NAME
 
-    Inform the application what host and port it is bound to.
+    Thông báo cho ứng dụng biết host và port nào nó được liên kết.
 
-    Must be set if ``subdomain_matching`` is enabled, to be able to extract the
-    subdomain from the request.
+    Phải được đặt nếu ``subdomain_matching`` được bật, để có thể trích xuất
+    tên miền phụ từ request.
 
-    Must be set for ``url_for`` to generate external URLs outside of a
+    Phải được đặt cho ``url_for`` để tạo các URL bên ngoài bên ngoài một
     request context.
 
-    Default: ``None``
+    Mặc định: ``None``
 
     .. versionchanged:: 3.1
-        Does not restrict requests to only this domain, for both
-        ``subdomain_matching`` and ``host_matching``.
+        Không hạn chế các request chỉ đến tên miền này, cho cả
+        ``subdomain_matching`` và ``host_matching``.
 
     .. versionchanged:: 1.0
-        Does not implicitly enable ``subdomain_matching``.
+        Không ngầm định bật ``subdomain_matching``.
 
     .. versionchanged:: 2.3
-        Does not affect ``SESSION_COOKIE_DOMAIN``.
+        Không ảnh hưởng đến ``SESSION_COOKIE_DOMAIN``.
 
 .. py:data:: APPLICATION_ROOT
 
-    Inform the application what path it is mounted under by the application /
-    web server.  This is used for generating URLs outside the context of a
-    request (inside a request, the dispatcher is responsible for setting
-    ``SCRIPT_NAME`` instead; see :doc:`/patterns/appdispatch`
-    for examples of dispatch configuration).
+    Thông báo cho ứng dụng biết đường dẫn nào nó được gắn dưới bởi ứng dụng /
+    máy chủ web. Điều này được sử dụng để tạo URL bên ngoài ngữ cảnh của một
+    request (bên trong một request, bộ điều phối chịu trách nhiệm thiết lập
+    ``SCRIPT_NAME`` thay vào đó; xem :doc:`/patterns/appdispatch`
+    để biết các ví dụ về cấu hình điều phối).
 
-    Will be used for the session cookie path if ``SESSION_COOKIE_PATH`` is not
-    set.
+    Sẽ được sử dụng cho đường dẫn cookie session nếu ``SESSION_COOKIE_PATH`` không được
+    đặt.
 
-    Default: ``'/'``
+    Mặc định: ``'/'``
 
 .. py:data:: PREFERRED_URL_SCHEME
 
-    Use this scheme for generating external URLs when not in a request context.
+    Sử dụng lược đồ này để tạo các URL bên ngoài khi không ở trong một request context.
 
-    Default: ``'http'``
+    Mặc định: ``'http'``
 
 .. py:data:: MAX_CONTENT_LENGTH
 
-    The maximum number of bytes that will be read during this request. If
-    this limit is exceeded, a 413 :exc:`~werkzeug.exceptions.RequestEntityTooLarge`
-    error is raised. If it is set to ``None``, no limit is enforced at the
-    Flask application level. However, if it is ``None`` and the request has no
-    ``Content-Length`` header and the WSGI server does not indicate that it
-    terminates the stream, then no data is read to avoid an infinite stream.
+    Số byte tối đa sẽ được đọc trong request này. Nếu
+    giới hạn này bị vượt quá, một lỗi 413 :exc:`~werkzeug.exceptions.RequestEntityTooLarge`
+    được ném ra. Nếu nó được đặt thành ``None``, không có giới hạn nào được thực thi ở cấp độ
+    ứng dụng Flask. Tuy nhiên, nếu nó là ``None`` và request không có
+    header ``Content-Length`` và máy chủ WSGI không chỉ ra rằng nó
+    chấm dứt luồng, thì không có dữ liệu nào được đọc để tránh một luồng vô hạn.
 
-    Each request defaults to this config. It can be set on a specific
-    :attr:`.Request.max_content_length` to apply the limit to that specific
-    view. This should be set appropriately based on an application's or view's
-    specific needs.
+    Mỗi request mặc định theo cấu hình này. Nó có thể được đặt trên một
+    :attr:`.Request.max_content_length` cụ thể để áp dụng giới hạn cho view
+    cụ thể đó. Điều này nên được đặt một cách thích hợp dựa trên nhu cầu cụ thể của ứng dụng hoặc view.
 
-    Default: ``None``
+    Mặc định: ``None``
 
     .. versionadded:: 0.6
 
 .. py:data:: MAX_FORM_MEMORY_SIZE
 
-    The maximum size in bytes any non-file form field may be in a
-    ``multipart/form-data`` body. If this limit is exceeded, a 413
-    :exc:`~werkzeug.exceptions.RequestEntityTooLarge` error is raised. If it is
-    set to ``None``, no limit is enforced at the Flask application level.
+    Kích thước tối đa tính bằng byte mà bất kỳ trường form không phải file nào có thể có trong một
+    body ``multipart/form-data``. Nếu giới hạn này bị vượt quá, một lỗi 413
+    :exc:`~werkzeug.exceptions.RequestEntityTooLarge` được ném ra. Nếu nó
+    được đặt thành ``None``, không có giới hạn nào được thực thi ở cấp độ ứng dụng Flask.
 
-    Each request defaults to this config. It can be set on a specific
-    :attr:`.Request.max_form_memory_parts` to apply the limit to that specific
-    view. This should be set appropriately based on an application's or view's
-    specific needs.
+    Mỗi request mặc định theo cấu hình này. Nó có thể được đặt trên một
+    :attr:`.Request.max_form_memory_parts` cụ thể để áp dụng giới hạn cho view
+    cụ thể đó. Điều này nên được đặt một cách thích hợp dựa trên nhu cầu cụ thể của ứng dụng hoặc view.
 
-    Default: ``500_000``
+    Mặc định: ``500_000``
 
     .. versionadded:: 3.1
 
 .. py:data:: MAX_FORM_PARTS
 
-    The maximum number of fields that may be present in a
-    ``multipart/form-data`` body. If this limit is exceeded, a 413
-    :exc:`~werkzeug.exceptions.RequestEntityTooLarge` error is raised. If it
-    is set to ``None``, no limit is enforced at the Flask application level.
+    Số lượng trường tối đa có thể có trong một
+    body ``multipart/form-data``. Nếu giới hạn này bị vượt quá, một lỗi 413
+    :exc:`~werkzeug.exceptions.RequestEntityTooLarge` được ném ra. Nếu nó
+    được đặt thành ``None``, không có giới hạn nào được thực thi ở cấp độ ứng dụng Flask.
 
-    Each request defaults to this config. It can be set on a specific
-    :attr:`.Request.max_form_parts` to apply the limit to that specific view.
-    This should be set appropriately based on an application's or view's
-    specific needs.
+    Mỗi request mặc định theo cấu hình này. Nó có thể được đặt trên một
+    :attr:`.Request.max_form_parts` cụ thể để áp dụng giới hạn cho view cụ thể đó.
+    Điều này nên được đặt một cách thích hợp dựa trên nhu cầu cụ thể của ứng dụng hoặc view.
 
-    Default: ``1_000``
+    Mặc định: ``1_000``
 
     .. versionadded:: 3.1
 
 .. py:data:: TEMPLATES_AUTO_RELOAD
 
-    Reload templates when they are changed. If not set, it will be enabled in
-    debug mode.
+    Tải lại các template khi chúng thay đổi. Nếu không được đặt, nó sẽ được bật trong
+    chế độ debug.
 
-    Default: ``None``
+    Mặc định: ``None``
 
 .. py:data:: EXPLAIN_TEMPLATE_LOADING
 
-    Log debugging information tracing how a template file was loaded. This can
-    be useful to figure out why a template was not loaded or the wrong file
-    appears to be loaded.
+    Ghi log thông tin gỡ lỗi theo dõi cách một file template được tải. Điều này có thể
+    hữu ích để tìm ra lý do tại sao một template không được tải hoặc file sai
+    dường như được tải.
 
-    Default: ``False``
+    Mặc định: ``False``
 
 .. py:data:: MAX_COOKIE_SIZE
 
-    Warn if cookie headers are larger than this many bytes. Defaults to
-    ``4093``. Larger cookies may be silently ignored by browsers. Set to
-    ``0`` to disable the warning.
+    Cảnh báo nếu các header cookie lớn hơn số byte này. Mặc định là
+    ``4093``. Các cookie lớn hơn có thể bị các trình duyệt bỏ qua một cách âm thầm. Đặt thành
+    ``0`` để tắt cảnh báo.
 
 .. py:data:: PROVIDE_AUTOMATIC_OPTIONS
 
-    Set to ``False`` to disable the automatic addition of OPTIONS
-    responses. This can be overridden per route by altering the
-    ``provide_automatic_options`` attribute.
+    Đặt thành ``False`` để tắt việc tự động thêm các phản hồi OPTIONS.
+    Điều này có thể được ghi đè trên mỗi route bằng cách thay đổi thuộc tính
+    ``provide_automatic_options``.
 
 .. versionadded:: 0.4
    ``LOGGER_NAME``
@@ -423,51 +419,50 @@ The following configuration values are used internally by Flask:
    ``LOGGER_HANDLER_POLICY``, ``EXPLAIN_TEMPLATE_LOADING``
 
 .. versionchanged:: 1.0
-    ``LOGGER_NAME`` and ``LOGGER_HANDLER_POLICY`` were removed. See
-    :doc:`/logging` for information about configuration.
+    ``LOGGER_NAME`` và ``LOGGER_HANDLER_POLICY`` đã bị xóa. Xem
+    :doc:`/logging` để biết thông tin về cấu hình.
 
-    Added :data:`ENV` to reflect the :envvar:`FLASK_ENV` environment
-    variable.
+    Đã thêm :data:`ENV` để phản ánh biến môi trường :envvar:`FLASK_ENV`.
 
-    Added :data:`SESSION_COOKIE_SAMESITE` to control the session
-    cookie's ``SameSite`` option.
+    Đã thêm :data:`SESSION_COOKIE_SAMESITE` để kiểm soát tùy chọn
+    ``SameSite`` của cookie session.
 
-    Added :data:`MAX_COOKIE_SIZE` to control a warning from Werkzeug.
+    Đã thêm :data:`MAX_COOKIE_SIZE` để kiểm soát cảnh báo từ Werkzeug.
 
 .. versionchanged:: 2.2
-    Removed ``PRESERVE_CONTEXT_ON_EXCEPTION``.
+    Đã xóa ``PRESERVE_CONTEXT_ON_EXCEPTION``.
 
 .. versionchanged:: 2.3
-    ``JSON_AS_ASCII``, ``JSON_SORT_KEYS``, ``JSONIFY_MIMETYPE``, and
-    ``JSONIFY_PRETTYPRINT_REGULAR`` were removed. The default ``app.json`` provider has
-    equivalent attributes instead.
+    ``JSON_AS_ASCII``, ``JSON_SORT_KEYS``, ``JSONIFY_MIMETYPE``, và
+    ``JSONIFY_PRETTYPRINT_REGULAR`` đã bị xóa. Nhà cung cấp ``app.json`` mặc định có
+    các thuộc tính tương đương thay thế.
 
 .. versionchanged:: 2.3
-    ``ENV`` was removed.
+    ``ENV`` đã bị xóa.
 
 .. versionadded:: 3.10
-    Added :data:`PROVIDE_AUTOMATIC_OPTIONS` to control the default
-    addition of autogenerated OPTIONS responses.
+    Đã thêm :data:`PROVIDE_AUTOMATIC_OPTIONS` để kiểm soát việc mặc định
+    thêm các phản hồi OPTIONS được tạo tự động.
 
 
-Configuring from Python Files
------------------------------
+Cấu hình từ File Python
+-----------------------
 
-Configuration becomes more useful if you can store it in a separate file, ideally
-located outside the actual application package. You can deploy your application, then
-separately configure it for the specific deployment.
+Cấu hình trở nên hữu ích hơn nếu bạn có thể lưu trữ nó trong một file riêng biệt, lý tưởng nhất là
+nằm bên ngoài package ứng dụng thực tế. Bạn có thể triển khai ứng dụng của mình, sau đó
+cấu hình riêng cho việc triển khai cụ thể.
 
-A common pattern is this::
+Một mẫu phổ biến là thế này::
 
     app = Flask(__name__)
     app.config.from_object('yourapplication.default_settings')
     app.config.from_envvar('YOURAPPLICATION_SETTINGS')
 
-This first loads the configuration from the
-`yourapplication.default_settings` module and then overrides the values
-with the contents of the file the :envvar:`YOURAPPLICATION_SETTINGS`
-environment variable points to.  This environment variable can be set
-in the shell before starting the server:
+Đầu tiên tải cấu hình từ module
+`yourapplication.default_settings` và sau đó ghi đè các giá trị
+với nội dung của file mà biến môi trường :envvar:`YOURAPPLICATION_SETTINGS`
+trỏ tới. Biến môi trường này có thể được đặt
+trong shell trước khi khởi động máy chủ:
 
 .. tabs::
 
@@ -503,35 +498,34 @@ in the shell before starting the server:
          > flask run
           * Running on http://127.0.0.1:5000/
 
-The configuration files themselves are actual Python files.  Only values
-in uppercase are actually stored in the config object later on.  So make
-sure to use uppercase letters for your config keys.
+Bản thân các file cấu hình là các file Python thực tế. Chỉ các giá trị
+viết hoa mới thực sự được lưu trữ trong đối tượng config sau này. Vì vậy hãy chắc chắn
+sử dụng các chữ cái viết hoa cho các khóa cấu hình của bạn.
 
-Here is an example of a configuration file::
+Dưới đây là một ví dụ về file cấu hình::
 
-    # Example configuration
+    # Cấu hình ví dụ
     SECRET_KEY = '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
 
-Make sure to load the configuration very early on, so that extensions have
-the ability to access the configuration when starting up.  There are other
-methods on the config object as well to load from individual files.  For a
-complete reference, read the :class:`~flask.Config` object's
-documentation.
+Hãy chắc chắn tải cấu hình từ rất sớm, để các tiện ích mở rộng có
+khả năng truy cập cấu hình khi khởi động. Cũng có các phương thức khác
+trên đối tượng config để tải từ các file riêng lẻ. Để có một
+tham khảo đầy đủ, hãy đọc tài liệu của đối tượng :class:`~flask.Config`.
 
 
-Configuring from Data Files
----------------------------
+Cấu hình từ File Dữ liệu
+------------------------
 
-It is also possible to load configuration from a file in a format of
-your choice using :meth:`~flask.Config.from_file`. For example to load
-from a TOML file:
+Cũng có thể tải cấu hình từ một file ở định dạng
+bạn chọn bằng cách sử dụng :meth:`~flask.Config.from_file`. Ví dụ để tải
+từ một file TOML:
 
 .. code-block:: python
 
     import tomllib
     app.config.from_file("config.toml", load=tomllib.load, text=False)
 
-Or from a JSON file:
+Hoặc từ một file JSON:
 
 .. code-block:: python
 
@@ -539,17 +533,17 @@ Or from a JSON file:
     app.config.from_file("config.json", load=json.load)
 
 
-Configuring from Environment Variables
---------------------------------------
+Cấu hình từ Biến Môi trường
+---------------------------
 
-In addition to pointing to configuration files using environment
-variables, you may find it useful (or necessary) to control your
-configuration values directly from the environment. Flask can be
-instructed to load all environment variables starting with a specific
-prefix into the config using :meth:`~flask.Config.from_prefixed_env`.
+Ngoài việc trỏ đến các file cấu hình bằng cách sử dụng các biến
+môi trường, bạn có thể thấy hữu ích (hoặc cần thiết) để kiểm soát các
+giá trị cấu hình của mình trực tiếp từ môi trường. Flask có thể được
+hướng dẫn tải tất cả các biến môi trường bắt đầu bằng một tiền tố
+cụ thể vào config bằng cách sử dụng :meth:`~flask.Config.from_prefixed_env`.
 
-Environment variables can be set in the shell before starting the
-server:
+Các biến môi trường có thể được đặt trong shell trước khi khởi động
+máy chủ:
 
 .. tabs::
 
@@ -589,29 +583,29 @@ server:
          > flask run
           * Running on http://127.0.0.1:5000/
 
-The variables can then be loaded and accessed via the config with a key
-equal to the environment variable name without the prefix i.e.
+Các biến sau đó có thể được tải và truy cập thông qua config với một khóa
+bằng tên biến môi trường không có tiền tố, tức là
 
 .. code-block:: python
 
     app.config.from_prefixed_env()
-    app.config["SECRET_KEY"]  # Is "5f352379324c22463451387a0aec5d2f"
+    app.config["SECRET_KEY"]  # Là "5f352379324c22463451387a0aec5d2f"
 
-The prefix is ``FLASK_`` by default. This is configurable via the
-``prefix`` argument of :meth:`~flask.Config.from_prefixed_env`.
+Tiền tố là ``FLASK_`` theo mặc định. Điều này có thể cấu hình được thông qua
+đối số ``prefix`` của :meth:`~flask.Config.from_prefixed_env`.
 
-Values will be parsed to attempt to convert them to a more specific type
-than strings. By default :func:`json.loads` is used, so any valid JSON
-value is possible, including lists and dicts. This is configurable via
-the ``loads`` argument of :meth:`~flask.Config.from_prefixed_env`.
+Các giá trị sẽ được phân tích cú pháp để cố gắng chuyển đổi chúng thành một loại cụ thể hơn
+là chuỗi. Theo mặc định :func:`json.loads` được sử dụng, vì vậy bất kỳ giá trị JSON hợp lệ nào
+đều có thể, bao gồm danh sách và dict. Điều này có thể cấu hình được thông qua
+đối số ``loads`` của :meth:`~flask.Config.from_prefixed_env`.
 
-When adding a boolean value with the default JSON parsing, only "true"
-and "false", lowercase, are valid values. Keep in mind that any
-non-empty string is considered ``True`` by Python.
+Khi thêm một giá trị boolean với phân tích cú pháp JSON mặc định, chỉ "true"
+và "false", chữ thường, là các giá trị hợp lệ. Hãy nhớ rằng bất kỳ
+chuỗi không rỗng nào đều được coi là ``True`` bởi Python.
 
-It is possible to set keys in nested dictionaries by separating the
-keys with double underscore (``__``). Any intermediate keys that don't
-exist on the parent dict will be initialized to an empty dict.
+Có thể đặt các khóa trong các từ điển lồng nhau bằng cách tách các
+khóa bằng dấu gạch dưới kép (``__``). Bất kỳ khóa trung gian nào không
+tồn tại trên dict cha sẽ được khởi tạo thành một dict rỗng.
 
 .. code-block:: text
 
@@ -619,69 +613,69 @@ exist on the parent dict will be initialized to an empty dict.
 
 .. code-block:: python
 
-    app.config["MYAPI"]["credentials"]["username"]  # Is "user123"
+    app.config["MYAPI"]["credentials"]["username"]  # Là "user123"
 
-On Windows, environment variable keys are always uppercase, therefore
-the above example would end up as ``MYAPI__CREDENTIALS__USERNAME``.
+Trên Windows, các khóa biến môi trường luôn viết hoa, do đó
+ví dụ trên sẽ kết thúc là ``MYAPI__CREDENTIALS__USERNAME``.
 
-For even more config loading features, including merging and
-case-insensitive Windows support, try a dedicated library such as
-Dynaconf_, which includes integration with Flask.
+Để có thêm nhiều tính năng tải cấu hình hơn, bao gồm hợp nhất và
+hỗ trợ Windows không phân biệt chữ hoa chữ thường, hãy thử một thư viện chuyên dụng như
+Dynaconf_, bao gồm tích hợp với Flask.
 
 .. _Dynaconf: https://www.dynaconf.com/
 
 
-Configuration Best Practices
-----------------------------
+Các Thực hành Tốt nhất về Cấu hình
+----------------------------------
 
-The downside with the approach mentioned earlier is that it makes testing
-a little harder.  There is no single 100% solution for this problem in
-general, but there are a couple of things you can keep in mind to improve
-that experience:
+Nhược điểm với cách tiếp cận được đề cập trước đó là nó làm cho việc kiểm thử
+khó hơn một chút. Không có giải pháp 100% duy nhất cho vấn đề này nói
+chung, nhưng có một vài điều bạn có thể ghi nhớ để cải thiện
+trải nghiệm đó:
 
-1.  Create your application in a function and register blueprints on it.
-    That way you can create multiple instances of your application with
-    different configurations attached which makes unit testing a lot
-    easier.  You can use this to pass in configuration as needed.
+1.  Tạo ứng dụng của bạn trong một hàm và đăng ký blueprints trên đó.
+    Bằng cách đó bạn có thể tạo nhiều thể hiện của ứng dụng của mình với
+    các cấu hình khác nhau được đính kèm giúp việc kiểm thử đơn vị dễ dàng hơn
+    nhiều. Bạn có thể sử dụng điều này để truyền vào cấu hình khi cần thiết.
 
-2.  Do not write code that needs the configuration at import time.  If you
-    limit yourself to request-only accesses to the configuration you can
-    reconfigure the object later on as needed.
+2.  Không viết mã cần cấu hình tại thời điểm import. Nếu bạn
+    tự giới hạn mình chỉ truy cập cấu hình trong request bạn có thể
+    cấu hình lại đối tượng sau đó khi cần thiết.
 
-3.  Make sure to load the configuration very early on, so that
-    extensions can access the configuration when calling ``init_app``.
+3.  Hãy chắc chắn tải cấu hình từ rất sớm, để
+    các tiện ích mở rộng có thể truy cập cấu hình khi gọi ``init_app``.
 
 
 .. _config-dev-prod:
 
-Development / Production
-------------------------
+Phát triển / Sản xuất
+---------------------
 
-Most applications need more than one configuration.  There should be at
-least separate configurations for the production server and the one used
-during development.  The easiest way to handle this is to use a default
-configuration that is always loaded and part of the version control, and a
-separate configuration that overrides the values as necessary as mentioned
-in the example above::
+Hầu hết các ứng dụng cần nhiều hơn một cấu hình. Nên có ít nhất
+các cấu hình riêng biệt cho máy chủ sản xuất và cái được sử dụng
+trong quá trình phát triển. Cách dễ nhất để xử lý điều này là sử dụng một cấu hình
+mặc định luôn được tải và là một phần của kiểm soát phiên bản, và một
+cấu hình riêng biệt ghi đè các giá trị khi cần thiết như đã đề cập
+trong ví dụ trên::
 
     app = Flask(__name__)
     app.config.from_object('yourapplication.default_settings')
     app.config.from_envvar('YOURAPPLICATION_SETTINGS')
 
-Then you just have to add a separate :file:`config.py` file and export
-``YOURAPPLICATION_SETTINGS=/path/to/config.py`` and you are done.  However
-there are alternative ways as well.  For example you could use imports or
+Sau đó bạn chỉ cần thêm một file :file:`config.py` riêng biệt và export
+``YOURAPPLICATION_SETTINGS=/path/to/config.py`` và bạn đã hoàn tất. Tuy nhiên
+cũng có những cách thay thế. Ví dụ bạn có thể sử dụng imports hoặc
 subclassing.
 
-What is very popular in the Django world is to make the import explicit in
-the config file by adding ``from yourapplication.default_settings
-import *`` to the top of the file and then overriding the changes by hand.
-You could also inspect an environment variable like
-``YOURAPPLICATION_MODE`` and set that to `production`, `development` etc
-and import different hard-coded files based on that.
+Điều rất phổ biến trong thế giới Django là làm cho việc import rõ ràng trong
+file config bằng cách thêm ``from yourapplication.default_settings
+import *`` vào đầu file và sau đó ghi đè các thay đổi bằng tay.
+Bạn cũng có thể kiểm tra một biến môi trường như
+``YOURAPPLICATION_MODE`` và đặt nó thành `production`, `development` v.v.
+và import các file được mã hóa cứng khác nhau dựa trên đó.
 
-An interesting pattern is also to use classes and inheritance for
-configuration::
+Một mẫu thú vị cũng là sử dụng các lớp và kế thừa cho
+cấu hình::
 
     class Config(object):
         TESTING = False
@@ -696,37 +690,37 @@ configuration::
         DATABASE_URI = 'sqlite:///:memory:'
         TESTING = True
 
-To enable such a config you just have to call into
+Để kích hoạt một cấu hình như vậy bạn chỉ cần gọi vào
 :meth:`~flask.Config.from_object`::
 
     app.config.from_object('configmodule.ProductionConfig')
 
-Note that :meth:`~flask.Config.from_object` does not instantiate the class
-object. If you need to instantiate the class, such as to access a property,
-then you must do so before calling :meth:`~flask.Config.from_object`::
+Lưu ý rằng :meth:`~flask.Config.from_object` không khởi tạo đối tượng
+lớp. Nếu bạn cần khởi tạo lớp, chẳng hạn như để truy cập một thuộc tính,
+thì bạn phải làm như vậy trước khi gọi :meth:`~flask.Config.from_object`::
 
     from configmodule import ProductionConfig
     app.config.from_object(ProductionConfig())
 
-    # Alternatively, import via string:
+    # Ngoài ra, import qua chuỗi:
     from werkzeug.utils import import_string
     cfg = import_string('configmodule.ProductionConfig')()
     app.config.from_object(cfg)
 
-Instantiating the configuration object allows you to use ``@property`` in
-your configuration classes::
+Khởi tạo đối tượng cấu hình cho phép bạn sử dụng ``@property`` trong
+các lớp cấu hình của bạn::
 
     class Config(object):
-        """Base config, uses staging database server."""
+        """Cấu hình cơ sở, sử dụng máy chủ cơ sở dữ liệu staging."""
         TESTING = False
         DB_SERVER = '192.168.1.56'
 
         @property
-        def DATABASE_URI(self):  # Note: all caps
+        def DATABASE_URI(self):  # Lưu ý: viết hoa toàn bộ
             return f"mysql://user@{self.DB_SERVER}/foo"
 
     class ProductionConfig(Config):
-        """Uses production database server."""
+        """Sử dụng máy chủ cơ sở dữ liệu sản xuất."""
         DB_SERVER = '192.168.19.32'
 
     class DevelopmentConfig(Config):
@@ -736,104 +730,104 @@ your configuration classes::
         DB_SERVER = 'localhost'
         DATABASE_URI = 'sqlite:///:memory:'
 
-There are many different ways and it's up to you how you want to manage
-your configuration files.  However here a list of good recommendations:
+Có nhiều cách khác nhau và tùy thuộc vào bạn cách bạn muốn quản lý
+các file cấu hình của mình. Tuy nhiên đây là một danh sách các khuyến nghị tốt:
 
--   Keep a default configuration in version control.  Either populate the
-    config with this default configuration or import it in your own
-    configuration files before overriding values.
--   Use an environment variable to switch between the configurations.
-    This can be done from outside the Python interpreter and makes
-    development and deployment much easier because you can quickly and
-    easily switch between different configs without having to touch the
-    code at all.  If you are working often on different projects you can
-    even create your own script for sourcing that activates a virtualenv
-    and exports the development configuration for you.
--   Use a tool like `fabric`_ to push code and configuration separately
-    to the production server(s).
+-   Giữ một cấu hình mặc định trong kiểm soát phiên bản. Hoặc điền vào
+    config với cấu hình mặc định này hoặc import nó trong các file
+    cấu hình của riêng bạn trước khi ghi đè các giá trị.
+-   Sử dụng một biến môi trường để chuyển đổi giữa các cấu hình.
+    Điều này có thể được thực hiện từ bên ngoài trình thông dịch Python và làm cho
+    việc phát triển và triển khai dễ dàng hơn nhiều vì bạn có thể nhanh chóng và
+    dễ dàng chuyển đổi giữa các cấu hình khác nhau mà không cần phải chạm vào
+    mã chút nào. Nếu bạn thường xuyên làm việc trên các dự án khác nhau bạn có thể
+    thậm chí tạo script của riêng bạn để sourcing kích hoạt một virtualenv
+    và export cấu hình phát triển cho bạn.
+-   Sử dụng một công cụ như `fabric`_ để đẩy mã và cấu hình riêng biệt
+    đến (các) máy chủ sản xuất.
 
 .. _fabric: https://www.fabfile.org/
 
 
 .. _instance-folders:
 
-Instance Folders
+Thư mục Instance
 ----------------
 
 .. versionadded:: 0.8
 
-Flask 0.8 introduces instance folders.  Flask for a long time made it
-possible to refer to paths relative to the application's folder directly
-(via :attr:`Flask.root_path`).  This was also how many developers loaded
-configurations stored next to the application.  Unfortunately however this
-only works well if applications are not packages in which case the root
-path refers to the contents of the package.
+Flask 0.8 giới thiệu các thư mục instance. Flask trong một thời gian dài đã làm cho nó
+có thể tham chiếu đến các đường dẫn tương đối đến thư mục của ứng dụng trực tiếp
+(thông qua :attr:`Flask.root_path`). Đây cũng là cách nhiều nhà phát triển tải
+các cấu hình được lưu trữ bên cạnh ứng dụng. Tuy nhiên thật không may điều này
+chỉ hoạt động tốt nếu các ứng dụng không phải là các package trong trường hợp đó đường dẫn gốc
+tham chiếu đến nội dung của package.
 
-With Flask 0.8 a new attribute was introduced:
-:attr:`Flask.instance_path`.  It refers to a new concept called the
-“instance folder”.  The instance folder is designed to not be under
-version control and be deployment specific.  It's the perfect place to
-drop things that either change at runtime or configuration files.
+Với Flask 0.8 một thuộc tính mới được giới thiệu:
+:attr:`Flask.instance_path`. Nó tham chiếu đến một khái niệm mới gọi là
+“thư mục instance”. Thư mục instance được thiết kế để không nằm dưới
+kiểm soát phiên bản và cụ thể cho việc triển khai. Đó là nơi hoàn hảo để
+thả những thứ thay đổi khi chạy hoặc các file cấu hình.
 
-You can either explicitly provide the path of the instance folder when
-creating the Flask application or you can let Flask autodetect the
-instance folder.  For explicit configuration use the `instance_path`
-parameter::
+Bạn có thể cung cấp rõ ràng đường dẫn của thư mục instance khi
+tạo ứng dụng Flask hoặc bạn có thể để Flask tự động phát hiện
+thư mục instance. Để cấu hình rõ ràng sử dụng tham số `instance_path`::
 
     app = Flask(__name__, instance_path='/path/to/instance/folder')
 
-Please keep in mind that this path *must* be absolute when provided.
+Vui lòng ghi nhớ rằng đường dẫn này *phải* là tuyệt đối khi được cung cấp.
 
-If the `instance_path` parameter is not provided the following default
-locations are used:
+Nếu tham số `instance_path` không được cung cấp các vị trí mặc định sau
+được sử dụng:
 
--   Uninstalled module::
+-   Module chưa cài đặt::
 
         /myapp.py
         /instance
 
--   Uninstalled package::
+-   Package chưa cài đặt::
 
         /myapp
             /__init__.py
         /instance
 
--   Installed module or package::
+-   Module hoặc package đã cài đặt::
 
         $PREFIX/lib/pythonX.Y/site-packages/myapp
         $PREFIX/var/myapp-instance
 
-    ``$PREFIX`` is the prefix of your Python installation.  This can be
-    ``/usr`` or the path to your virtualenv.  You can print the value of
-    ``sys.prefix`` to see what the prefix is set to.
+    ``$PREFIX`` là tiền tố cài đặt Python của bạn. Đây có thể là
+    ``/usr`` hoặc đường dẫn đến virtualenv của bạn. Bạn có thể in giá trị của
+    ``sys.prefix`` để xem tiền tố được đặt thành gì.
 
-Since the config object provided loading of configuration files from
-relative filenames we made it possible to change the loading via filenames
-to be relative to the instance path if wanted.  The behavior of relative
-paths in config files can be flipped between “relative to the application
-root” (the default) to “relative to instance folder” via the
-`instance_relative_config` switch to the application constructor::
+Vì đối tượng config cung cấp khả năng tải các file cấu hình từ
+tên file tương đối, chúng tôi đã làm cho nó có thể thay đổi việc tải qua tên file
+thành tương đối với đường dẫn instance nếu muốn. Hành vi của các đường dẫn
+tương đối trong các file cấu hình có thể được chuyển đổi giữa “tương đối với thư mục gốc
+ứng dụng” (mặc định) sang “tương đối với thư mục instance” thông qua
+công tắc `instance_relative_config` cho hàm tạo ứng dụng::
 
     app = Flask(__name__, instance_relative_config=True)
 
-Here is a full example of how to configure Flask to preload the config
-from a module and then override the config from a file in the instance
-folder if it exists::
+Dưới đây là một ví dụ đầy đủ về cách cấu hình Flask để tải trước cấu hình
+từ một module và sau đó ghi đè cấu hình từ một file trong thư mục
+instance nếu nó tồn tại::
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object('yourapplication.default_settings')
     app.config.from_pyfile('application.cfg', silent=True)
 
-The path to the instance folder can be found via the
-:attr:`Flask.instance_path`.  Flask also provides a shortcut to open a
-file from the instance folder with :meth:`Flask.open_instance_resource`.
+Đường dẫn đến thư mục instance có thể được tìm thấy thông qua
+:attr:`Flask.instance_path`. Flask cũng cung cấp một lối tắt để mở một
+file từ thư mục instance với :meth:`Flask.open_instance_resource`.
 
-Example usage for both::
+Ví dụ sử dụng cho cả hai::
 
     filename = os.path.join(app.instance_path, 'application.cfg')
     with open(filename) as f:
         config = f.read()
 
-    # or via open_instance_resource:
+    # hoặc qua open_instance_resource:
     with app.open_instance_resource('application.cfg') as f:
         config = f.read()
+

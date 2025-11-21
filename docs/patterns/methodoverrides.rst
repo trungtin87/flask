@@ -1,15 +1,15 @@
-Adding HTTP Method Overrides
-============================
+Thêm HTTP Method Overrides
+==========================
 
-Some HTTP proxies do not support arbitrary HTTP methods or newer HTTP
-methods (such as PATCH). In that case it's possible to "proxy" HTTP
-methods through another HTTP method in total violation of the protocol.
+Một số HTTP proxy không hỗ trợ các phương thức HTTP tùy ý hoặc các phương thức HTTP
+mới hơn (chẳng hạn như PATCH). Trong trường hợp đó, có thể "proxy" các phương thức
+HTTP thông qua một phương thức HTTP khác vi phạm hoàn toàn giao thức.
 
-The way this works is by letting the client do an HTTP POST request and
-set the ``X-HTTP-Method-Override`` header. Then the method is replaced
-with the header value before being passed to Flask.
+Cách thức hoạt động là để client thực hiện một HTTP POST request và
+đặt header ``X-HTTP-Method-Override``. Sau đó phương thức được thay thế
+bằng giá trị header trước khi được truyền cho Flask.
 
-This can be accomplished with an HTTP middleware::
+Điều này có thể được thực hiện với một HTTP middleware::
 
     class HTTPMethodOverrideMiddleware(object):
         allowed_methods = frozenset([
@@ -34,7 +34,7 @@ This can be accomplished with an HTTP middleware::
                 environ['CONTENT_LENGTH'] = '0'
             return self.app(environ, start_response)
 
-To use this with Flask, wrap the app object with the middleware::
+Để sử dụng điều này với Flask, hãy bao bọc đối tượng app với middleware::
 
     from flask import Flask
 

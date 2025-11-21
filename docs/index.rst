@@ -1,40 +1,39 @@
 .. rst-class:: hide-header
 
-Welcome to Flask
-================
+Chào mừng đến với Flask
+=======================
 
 .. image:: _static/flask-name.svg
     :align: center
     :height: 200px
 
-Welcome to Flask's documentation. Flask is a lightweight WSGI web application framework.
-It is designed to make getting started quick and easy, with the ability to scale up to
-complex applications.
+Chào mừng đến với tài liệu của Flask. Flask là một framework ứng dụng web WSGI nhẹ.
+Nó được thiết kế để giúp việc bắt đầu nhanh chóng và dễ dàng, với khả năng mở rộng lên
+các ứng dụng phức tạp.
 
-Get started with :doc:`installation`
-and then get an overview with the :doc:`quickstart`. There is also a
-more detailed :doc:`tutorial/index` that shows how to create a small but
-complete application with Flask. Common patterns are described in the
-:doc:`patterns/index` section. The rest of the docs describe each
-component of Flask in detail, with a full reference in the :doc:`api`
-section.
+Bắt đầu với :doc:`installation`
+và sau đó xem tổng quan với :doc:`quickstart`. Ngoài ra còn có một
+:doc:`tutorial/index` chi tiết hơn chỉ ra cách tạo một ứng dụng nhỏ nhưng
+hoàn chỉnh với Flask. Các mẫu phổ biến được mô tả trong phần
+:doc:`patterns/index`. Phần còn lại của tài liệu mô tả chi tiết từng
+thành phần của Flask, với tham chiếu đầy đủ trong phần :doc:`api`.
 
-Flask depends on the `Werkzeug`_ WSGI toolkit, the `Jinja`_ template engine, and the
-`Click`_ CLI toolkit. Be sure to check their documentation as well as Flask's when
-looking for information.
+Flask phụ thuộc vào bộ công cụ WSGI `Werkzeug`_, công cụ template `Jinja`_, và
+bộ công cụ CLI `Click`_. Hãy chắc chắn kiểm tra tài liệu của chúng cũng như của Flask khi
+tìm kiếm thông tin.
 
 .. _Werkzeug: https://werkzeug.palletsprojects.com
 .. _Jinja: https://jinja.palletsprojects.com
 .. _Click: https://click.palletsprojects.com
 
 
-User's Guide
-------------
+Hướng dẫn Người dùng
+--------------------
 
-Flask provides configuration and conventions, with sensible defaults, to get started.
-This section of the documentation explains the different parts of the Flask framework
-and how they can be used, customized, and extended. Beyond Flask itself, look for
-community-maintained extensions to add even more functionality.
+Flask cung cấp cấu hình và quy ước, với các mặc định hợp lý, để bắt đầu.
+Phần này của tài liệu giải thích các phần khác nhau của framework Flask
+và cách chúng có thể được sử dụng, tùy chỉnh và mở rộng. Ngoài bản thân Flask, hãy tìm kiếm
+các tiện ích mở rộng do cộng đồng duy trì để thêm nhiều chức năng hơn nữa.
 
 .. toctree::
    :maxdepth: 2
@@ -63,11 +62,11 @@ community-maintained extensions to add even more functionality.
    async-await
 
 
-API Reference
--------------
+Tham chiếu API
+--------------
 
-If you are looking for information on a specific function, class or
-method, this part of the documentation is for you.
+Nếu bạn đang tìm kiếm thông tin về một hàm, lớp hoặc
+phương thức cụ thể, phần này của tài liệu là dành cho bạn.
 
 .. toctree::
    :maxdepth: 2
@@ -75,8 +74,8 @@ method, this part of the documentation is for you.
    api
 
 
-Additional Notes
-----------------
+Ghi chú Bổ sung
+---------------
 
 .. toctree::
    :maxdepth: 2

@@ -1,18 +1,18 @@
-Application Structure and Lifecycle
-===================================
+Cấu trúc và Vòng đời Ứng dụng
+==============================
 
-Flask makes it pretty easy to write a web application. But there are quite a few
-different parts to an application and to each request it handles. Knowing what happens
-during application setup, serving, and handling requests will help you know what's
-possible in Flask and how to structure your application.
+Flask làm cho việc viết một ứng dụng web khá dễ dàng. Nhưng có khá nhiều
+phần khác nhau trong một ứng dụng và cho mỗi request mà nó xử lý. Biết những gì xảy ra
+trong quá trình thiết lập ứng dụng, phục vụ, và xử lý request sẽ giúp bạn biết những gì
+có thể trong Flask và cách cấu trúc ứng dụng của bạn.
 
 
-Application Setup
------------------
+Thiết lập Ứng dụng
+------------------
 
-The first step in creating a Flask application is creating the application object. Each
-Flask application is an instance of the :class:`.Flask` class, which collects all
-configuration, extensions, and views.
+Bước đầu tiên trong việc tạo một ứng dụng Flask là tạo đối tượng ứng dụng. Mỗi
+ứng dụng Flask là một instance của class :class:`.Flask`, thu thập tất cả
+cấu hình, extension, và view.
 
 .. code-block:: python
 
@@ -28,144 +28,144 @@ configuration, extensions, and views.
     def index():
         return "Hello, World!"
 
-This is known as the "application setup phase", it's the code you write that's outside
-any view functions or other handlers. It can be split up between different modules and
-sub-packages, but all code that you want to be part of your application must be imported
-in order for it to be registered.
+Đây được gọi là "giai đoạn thiết lập ứng dụng", đó là mã bạn viết nằm ngoài
+bất kỳ view function hoặc handler nào khác. Nó có thể được chia thành các module và
+sub-package khác nhau, nhưng tất cả mã mà bạn muốn là một phần của ứng dụng của bạn phải được import
+để nó được đăng ký.
 
-All application setup must be completed before you start serving your application and
-handling requests. This is because WSGI servers divide work between multiple workers, or
-can be distributed across multiple machines. If the configuration changed in one worker,
-there's no way for Flask to ensure consistency between other workers.
+Tất cả thiết lập ứng dụng phải được hoàn thành trước khi bạn bắt đầu phục vụ ứng dụng của mình và
+xử lý request. Điều này là vì các máy chủ WSGI chia công việc giữa nhiều worker, hoặc
+có thể được phân phối trên nhiều máy. Nếu cấu hình thay đổi trong một worker,
+không có cách nào cho Flask đảm bảo tính nhất quán giữa các worker khác.
 
-Flask tries to help developers catch some of these setup ordering issues by showing an
-error if setup-related methods are called after requests are handled. In that case
-you'll see this error:
+Flask cố gắng giúp các nhà phát triển bắt một số vấn đề thứ tự thiết lập này bằng cách hiển thị một
+lỗi nếu các phương thức liên quan đến thiết lập được gọi sau khi các request được xử lý. Trong trường hợp đó
+bạn sẽ thấy lỗi này:
 
     The setup method 'route' can no longer be called on the application. It has already
     handled its first request, any changes will not be applied consistently.
     Make sure all imports, decorators, functions, etc. needed to set up the application
     are done before running it.
 
-However, it is not possible for Flask to detect all cases of out-of-order setup. In
-general, don't do anything to modify the ``Flask`` app object and ``Blueprint`` objects
-from within view functions that run during requests. This includes:
+Tuy nhiên, Flask không thể phát hiện tất cả các trường hợp thiết lập không đúng thứ tự. Nói chung
+, đừng làm bất cứ điều gì để sửa đổi đối tượng ``Flask`` app và đối tượng ``Blueprint``
+từ trong các view function chạy trong các request. Điều này bao gồm:
 
--   Adding routes, view functions, and other request handlers with ``@app.route``,
-    ``@app.errorhandler``, ``@app.before_request``, etc.
--   Registering blueprints.
--   Loading configuration with ``app.config``.
--   Setting up the Jinja template environment with ``app.jinja_env``.
--   Setting a session interface, instead of the default itsdangerous cookie.
--   Setting a JSON provider with ``app.json``, instead of the default provider.
--   Creating and initializing Flask extensions.
+-   Thêm route, view function, và các request handler khác với ``@app.route``,
+    ``@app.errorhandler``, ``@app.before_request``, v.v.
+-   Đăng ký blueprint.
+-   Tải cấu hình với ``app.config``.
+-   Thiết lập môi trường template Jinja với ``app.jinja_env``.
+-   Đặt một session interface, thay vì cookie itsdangerous mặc định.
+-   Đặt một JSON provider với ``app.json``, thay vì provider mặc định.
+-   Tạo và khởi tạo Flask extension.
 
 
-Serving the Application
------------------------
+Phục vụ Ứng dụng
+----------------
 
-Flask is a WSGI application framework. The other half of WSGI is the WSGI server. During
-development, Flask, through Werkzeug, provides a development WSGI server with the
-``flask run`` CLI command. When you are done with development, use a production server
-to serve your application, see :doc:`deploying/index`.
+Flask là một framework ứng dụng WSGI. Nửa còn lại của WSGI là máy chủ WSGI. Trong
+quá trình phát triển, Flask, thông qua Werkzeug, cung cấp một máy chủ WSGI phát triển với
+lệnh CLI ``flask run``. Khi bạn hoàn thành phát triển, hãy sử dụng một máy chủ production
+để phục vụ ứng dụng của bạn, xem :doc:`deploying/index`.
 
-Regardless of what server you're using, it will follow the :pep:`3333` WSGI spec. The
-WSGI server will be told how to access your Flask application object, which is the WSGI
-application. Then it will start listening for HTTP requests, translate the request data
-into a WSGI environ, and call the WSGI application with that data. The WSGI application
-will return data that is translated into an HTTP response.
+Bất kể bạn đang sử dụng máy chủ nào, nó sẽ tuân theo spec WSGI :pep:`3333`. Máy chủ
+WSGI sẽ được cho biết cách truy cập đối tượng ứng dụng Flask của bạn, là ứng dụng WSGI
+. Sau đó nó sẽ bắt đầu lắng nghe các HTTP request, dịch dữ liệu request
+thành một WSGI environ, và gọi ứng dụng WSGI với dữ liệu đó. Ứng dụng WSGI
+sẽ trả về dữ liệu được dịch thành một HTTP response.
 
-#.  Browser or other client makes HTTP request.
-#.  WSGI server receives request.
-#.  WSGI server converts HTTP data to WSGI ``environ`` dict.
-#.  WSGI server calls WSGI application with the ``environ``.
-#.  Flask, the WSGI application, does all its internal processing to route the request
-    to a view function, handle errors, etc.
-#.  Flask translates View function return into WSGI response data, passes it to WSGI
-    server.
-#.  WSGI server creates and send an HTTP response.
-#.  Client receives the HTTP response.
+#.  Trình duyệt hoặc client khác thực hiện HTTP request.
+#.  Máy chủ WSGI nhận request.
+#.  Máy chủ WSGI chuyển đổi dữ liệu HTTP thành dict WSGI ``environ``.
+#.  Máy chủ WSGI gọi ứng dụng WSGI với ``environ``.
+#.  Flask, ứng dụng WSGI, thực hiện tất cả xử lý nội bộ của nó để route request
+    đến một view function, xử lý lỗi, v.v.
+#.  Flask dịch giá trị trả về của View function thành dữ liệu phản hồi WSGI, truyền nó cho máy chủ WSGI
+    .
+#.  Máy chủ WSGI tạo và gửi một HTTP response.
+#.  Client nhận HTTP response.
 
 
 Middleware
 ~~~~~~~~~~
 
-The WSGI application above is a callable that behaves in a certain way. Middleware
-is a WSGI application that wraps another WSGI application. It's a similar concept to
-Python decorators. The outermost middleware will be called by the server. It can modify
-the data passed to it, then call the WSGI application (or further middleware) that it
-wraps, and so on. And it can take the return value of that call and modify it further.
+Ứng dụng WSGI ở trên là một callable hoạt động theo một cách nhất định. Middleware
+là một ứng dụng WSGI wrap một ứng dụng WSGI khác. Đó là một khái niệm tương tự như
+decorator Python. Middleware ngoài cùng sẽ được gọi bởi máy chủ. Nó có thể sửa đổi
+dữ liệu được truyền cho nó, sau đó gọi ứng dụng WSGI (hoặc middleware khác) mà nó
+wrap, và cứ thế. Và nó có thể lấy giá trị trả về của cuộc gọi đó và sửa đổi nó thêm.
 
-From the WSGI server's perspective, there is one WSGI application, the one it calls
-directly. Typically, Flask is the "real" application at the end of the chain of
-middleware. But even Flask can call further WSGI applications, although that's an
-advanced, uncommon use case.
+Từ quan điểm của máy chủ WSGI, có một ứng dụng WSGI, ứng dụng mà nó gọi
+trực tiếp. Thông thường, Flask là ứng dụng "thực" ở cuối chuỗi
+middleware. Nhưng ngay cả Flask cũng có thể gọi các ứng dụng WSGI khác, mặc dù đó là một
+trường hợp sử dụng nâng cao, không phổ biến.
 
-A common middleware you'll see used with Flask is Werkzeug's
-:class:`~werkzeug.middleware.proxy_fix.ProxyFix`, which modifies the request to look
-like it came directly from a client even if it passed through HTTP proxies on the way.
-There are other middleware that can handle serving static files, authentication, etc.
+Một middleware phổ biến mà bạn sẽ thấy được sử dụng với Flask là
+:class:`~werkzeug.middleware.proxy_fix.ProxyFix` của Werkzeug, sửa đổi request để trông
+như thể nó đến trực tiếp từ một client ngay cả khi nó đi qua các HTTP proxy trên đường đi.
+Có các middleware khác có thể xử lý phục vụ file tĩnh, xác thực, v.v.
 
 
-How a Request is Handled
-------------------------
+Cách một Request được Xử lý
+----------------------------
 
-For us, the interesting part of the steps above is when Flask gets called by the WSGI
-server (or middleware). At that point, it will do quite a lot to handle the request and
-generate the response. At the most basic, it will match the URL to a view function, call
-the view function, and pass the return value back to the server. But there are many more
-parts that you can use to customize its behavior.
+Đối với chúng ta, phần thú vị của các bước trên là khi Flask được gọi bởi máy chủ WSGI
+(hoặc middleware). Tại thời điểm đó, nó sẽ làm khá nhiều việc để xử lý request và
+tạo phản hồi. Ở mức cơ bản nhất, nó sẽ khớp URL với một view function, gọi
+view function, và truyền giá trị trả về trở lại máy chủ. Nhưng có nhiều
+phần hơn mà bạn có thể sử dụng để tùy chỉnh hành vi của nó.
 
-#.  WSGI server calls the Flask object, which calls :meth:`.Flask.wsgi_app`.
-#.  An :class:`.AppContext` object is created. This converts the WSGI ``environ``
-    dict into a :class:`.Request` object.
-#.  The :doc:`app context <appcontext>` is pushed, which makes
-    :data:`.current_app`, :data:`.g`, :data:`.request`, and :data:`.session`
-    available.
-#.  The :data:`.appcontext_pushed` signal is sent.
-#.  The URL is matched against the URL rules registered with the :meth:`~.Flask.route`
-    decorator during application setup. If there is no match, the error - usually a 404,
-    405, or redirect - is stored to be handled later.
-#.  The :data:`.request_started` signal is sent.
-#.  Any :meth:`~.Flask.url_value_preprocessor` decorated functions are called.
-#.  Any :meth:`~.Flask.before_request` decorated functions are called. If any of
-    these function returns a value it is treated as the response immediately.
-#.  If the URL didn't match a route a few steps ago, that error is raised now.
-#.  The :meth:`~.Flask.route` decorated view function associated with the matched URL
-    is called and returns a value to be used as the response.
-#.  If any step so far raised an exception, and there is an :meth:`~.Flask.errorhandler`
-    decorated function that matches the exception class or HTTP error code, it is
-    called to handle the error and return a response.
-#.  Whatever returned a response value - a before request function, the view, or an
-    error handler, that value is converted to a :class:`.Response` object.
-#.  Any :func:`~.after_this_request` decorated functions are called, which can modify
-    the response object. They are then cleared.
-#.  Any :meth:`~.Flask.after_request` decorated functions are called, which can modify
-    the response object.
-#.  The session is saved, persisting any modified session data using the app's
-    :attr:`~.Flask.session_interface`.
-#.  The :data:`.request_finished` signal is sent.
-#.  If any step so far raised an exception, and it was not handled by an error handler
-    function, it is handled now. HTTP exceptions are treated as responses with their
-    corresponding status code, other exceptions are converted to a generic 500 response.
-    The :data:`.got_request_exception` signal is sent.
-#.  The response object's status, headers, and body are returned to the WSGI server.
-#.  Any :meth:`~.Flask.teardown_request` decorated functions are called.
-#.  The :data:`.request_tearing_down` signal is sent.
-#.  Any :meth:`~.Flask.teardown_appcontext` decorated functions are called.
-#.  The :data:`.appcontext_tearing_down` signal is sent.
-#.  The app context is popped, :data:`.current_app`, :data:`.g`, :data:`.request`,
-    and :data:`.session` are no longer available.
-#.  The :data:`.appcontext_popped` signal is sent.
+#.  Máy chủ WSGI gọi đối tượng Flask, gọi :meth:`.Flask.wsgi_app`.
+#.  Một đối tượng :class:`.AppContext` được tạo. Điều này chuyển đổi dict WSGI ``environ``
+    thành một đối tượng :class:`.Request`.
+#.  :doc:`App context <appcontext>` được push, làm cho
+    :data:`.current_app`, :data:`.g`, :data:`.request`, và :data:`.session`
+    có sẵn.
+#.  Signal :data:`.appcontext_pushed` được gửi.
+#.  URL được khớp với các quy tắc URL được đăng ký với decorator :meth:`~.Flask.route`
+    trong quá trình thiết lập ứng dụng. Nếu không có kết quả khớp, lỗi - thường là 404,
+    405, hoặc redirect - được lưu trữ để xử lý sau.
+#.  Signal :data:`.request_started` được gửi.
+#.  Bất kỳ hàm nào được decorate với :meth:`~.Flask.url_value_preprocessor` được gọi.
+#.  Bất kỳ hàm nào được decorate với :meth:`~.Flask.before_request` được gọi. Nếu bất kỳ
+    hàm nào trong số này trả về một giá trị, nó được coi là phản hồi ngay lập tức.
+#.  Nếu URL không khớp với một route vài bước trước, lỗi đó được đưa ra bây giờ.
+#.  View function được decorate với :meth:`~.Flask.route` liên kết với URL khớp
+    được gọi và trả về một giá trị để sử dụng làm phản hồi.
+#.  Nếu bất kỳ bước nào cho đến nay đưa ra một exception, và có một hàm được decorate với :meth:`~.Flask.errorhandler`
+    khớp với class exception hoặc mã lỗi HTTP, nó được
+    gọi để xử lý lỗi và trả về một phản hồi.
+#.  Bất cứ điều gì trả về một giá trị phản hồi - một before request function, view, hoặc một
+    error handler, giá trị đó được chuyển đổi thành một đối tượng :class:`.Response`.
+#.  Bất kỳ hàm nào được decorate với :func:`~.after_this_request` được gọi, có thể sửa đổi
+    đối tượng phản hồi. Sau đó chúng được xóa.
+#.  Bất kỳ hàm nào được decorate với :meth:`~.Flask.after_request` được gọi, có thể sửa đổi
+    đối tượng phản hồi.
+#.  Session được lưu, duy trì bất kỳ dữ liệu session nào được sửa đổi bằng cách sử dụng
+    :attr:`~.Flask.session_interface` của ứng dụng.
+#.  Signal :data:`.request_finished` được gửi.
+#.  Nếu bất kỳ bước nào cho đến nay đưa ra một exception, và nó không được xử lý bởi một error handler
+    function, nó được xử lý bây giờ. Các HTTP exception được coi là phản hồi với
+    mã trạng thái tương ứng của chúng, các exception khác được chuyển đổi thành phản hồi 500 chung.
+    Signal :data:`.got_request_exception` được gửi.
+#.  Trạng thái, header, và body của đối tượng phản hồi được trả về cho máy chủ WSGI.
+#.  Bất kỳ hàm nào được decorate với :meth:`~.Flask.teardown_request` được gọi.
+#.  Signal :data:`.request_tearing_down` được gửi.
+#.  Bất kỳ hàm nào được decorate với :meth:`~.Flask.teardown_appcontext` được gọi.
+#.  Signal :data:`.appcontext_tearing_down` được gửi.
+#.  App context được popped, :data:`.current_app`, :data:`.g`, :data:`.request`,
+    và :data:`.session` không còn có sẵn nữa.
+#.  Signal :data:`.appcontext_popped` được gửi.
 
-When executing a CLI command or plain app context without request data, the same
-order of steps is followed, omitting the steps that refer to the request.
+Khi thực thi một lệnh CLI hoặc app context đơn giản không có dữ liệu request, cùng một
+thứ tự các bước được tuân theo, bỏ qua các bước tham chiếu đến request.
 
-A :class:`Blueprint` can add handlers for these events that are specific to the
-blueprint. The handlers for a blueprint will run if the blueprint
-owns the route that matches the request.
+Một :class:`Blueprint` có thể thêm handler cho các sự kiện này cụ thể cho
+blueprint. Các handler cho một blueprint sẽ chạy nếu blueprint
+sở hữu route khớp với request.
 
-There are even more decorators and customization points than this, but that aren't part
-of every request lifecycle. They're more specific to certain things you might use during
-a request, such as templates, building URLs, or handling JSON data. See the rest of this
-documentation, as well as the :doc:`api` to explore further.
+Có thậm chí nhiều decorator và điểm tùy chỉnh hơn thế này, nhưng không phải là một phần
+của mỗi vòng đời request. Chúng cụ thể hơn cho một số điều nhất định bạn có thể sử dụng trong
+một request, chẳng hạn như template, xây dựng URL, hoặc xử lý dữ liệu JSON. Xem phần còn lại của
+tài liệu này, cũng như :doc:`api` để khám phá thêm.

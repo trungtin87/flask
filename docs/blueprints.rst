@@ -1,63 +1,61 @@
-Modular Applications with Blueprints
-====================================
+Ứng dụng Mô-đun với Blueprints
+==============================
 
 .. currentmodule:: flask
 
 .. versionadded:: 0.7
 
-Flask uses a concept of *blueprints* for making application components and
-supporting common patterns within an application or across applications.
-Blueprints can greatly simplify how large applications work and provide a
-central means for Flask extensions to register operations on applications.
-A :class:`Blueprint` object works similarly to a :class:`Flask`
-application object, but it is not actually an application.  Rather it is a
-*blueprint* of how to construct or extend an application.
+Flask sử dụng khái niệm *blueprints* để tạo các thành phần ứng dụng và
+hỗ trợ các mẫu phổ biến trong một ứng dụng hoặc giữa các ứng dụng.
+Blueprints có thể đơn giản hóa đáng kể cách hoạt động của các ứng dụng lớn và cung cấp một
+phương tiện trung tâm cho các tiện ích mở rộng Flask đăng ký các hoạt động trên ứng dụng.
+Một đối tượng :class:`Blueprint` hoạt động tương tự như một đối tượng ứng dụng :class:`Flask`,
+nhưng nó không thực sự là một ứng dụng. Thay vào đó nó là một
+*bản thiết kế* (blueprint) về cách xây dựng hoặc mở rộng một ứng dụng.
 
-Why Blueprints?
----------------
+Tại sao lại là Blueprints?
+--------------------------
 
-Blueprints in Flask are intended for these cases:
+Blueprints trong Flask được dành cho các trường hợp sau:
 
-* Factor an application into a set of blueprints.  This is ideal for
-  larger applications; a project could instantiate an application object,
-  initialize several extensions, and register a collection of blueprints.
-* Register a blueprint on an application at a URL prefix and/or subdomain.
-  Parameters in the URL prefix/subdomain become common view arguments
-  (with defaults) across all view functions in the blueprint.
-* Register a blueprint multiple times on an application with different URL
-  rules.
-* Provide template filters, static files, templates, and other utilities
-  through blueprints.  A blueprint does not have to implement applications
-  or view functions.
-* Register a blueprint on an application for any of these cases when
-  initializing a Flask extension.
+* Phân tách một ứng dụng thành một tập hợp các blueprints. Điều này là lý tưởng cho
+  các ứng dụng lớn hơn; một dự án có thể khởi tạo một đối tượng ứng dụng,
+  khởi tạo một số tiện ích mở rộng, và đăng ký một tập hợp các blueprints.
+* Đăng ký một blueprint trên một ứng dụng tại một tiền tố URL và/hoặc tên miền phụ (subdomain).
+  Các tham số trong tiền tố URL/tên miền phụ trở thành các đối số view chung
+  (với các giá trị mặc định) trên tất cả các hàm view trong blueprint.
+* Đăng ký một blueprint nhiều lần trên một ứng dụng với các quy tắc URL khác nhau.
+* Cung cấp các bộ lọc template, file tĩnh, template, và các tiện ích khác
+  thông qua blueprints. Một blueprint không nhất thiết phải triển khai các ứng dụng
+  hoặc hàm view.
+* Đăng ký một blueprint trên một ứng dụng cho bất kỳ trường hợp nào trong số này khi
+  khởi tạo một tiện ích mở rộng Flask.
 
-A blueprint in Flask is not a pluggable app because it is not actually an
-application -- it's a set of operations which can be registered on an
-application, even multiple times.  Why not have multiple application
-objects?  You can do that (see :doc:`/patterns/appdispatch`), but your
-applications will have separate configs and will be managed at the WSGI
-layer.
+Một blueprint trong Flask không phải là một ứng dụng có thể cắm vào (pluggable app) vì nó không thực sự là một
+ứng dụng -- nó là một tập hợp các hoạt động có thể được đăng ký trên một
+ứng dụng, thậm chí nhiều lần. Tại sao không có nhiều đối tượng ứng dụng?
+Bạn có thể làm điều đó (xem :doc:`/patterns/appdispatch`), nhưng các
+ứng dụng của bạn sẽ có cấu hình riêng biệt và sẽ được quản lý ở lớp WSGI.
 
-Blueprints instead provide separation at the Flask level, share
-application config, and can change an application object as necessary with
-being registered. The downside is that you cannot unregister a blueprint
-once an application was created without having to destroy the whole
-application object.
+Blueprints thay vào đó cung cấp sự phân tách ở cấp độ Flask, chia sẻ
+cấu hình ứng dụng, và có thể thay đổi một đối tượng ứng dụng khi cần thiết với
+việc được đăng ký. Nhược điểm là bạn không thể hủy đăng ký một blueprint
+khi một ứng dụng đã được tạo mà không phải hủy toàn bộ
+đối tượng ứng dụng.
 
-The Concept of Blueprints
--------------------------
+Khái niệm về Blueprints
+-----------------------
 
-The basic concept of blueprints is that they record operations to execute
-when registered on an application.  Flask associates view functions with
-blueprints when dispatching requests and generating URLs from one endpoint
-to another.
+Khái niệm cơ bản của blueprints là chúng ghi lại các hoạt động để thực thi
+khi được đăng ký trên một ứng dụng. Flask liên kết các hàm view với
+blueprints khi điều phối các request và tạo URL từ một endpoint
+đến endpoint khác.
 
-My First Blueprint
-------------------
+Blueprint Đầu tiên của Tôi
+--------------------------
 
-This is what a very basic blueprint looks like.  In this case we want to
-implement a blueprint that does simple rendering of static templates::
+Đây là những gì một blueprint rất cơ bản trông như thế nào. Trong trường hợp này chúng ta muốn
+triển khai một blueprint thực hiện việc render đơn giản các template tĩnh::
 
     from flask import Blueprint, render_template, abort
     from jinja2 import TemplateNotFound
@@ -73,18 +71,17 @@ implement a blueprint that does simple rendering of static templates::
         except TemplateNotFound:
             abort(404)
 
-When you bind a function with the help of the ``@simple_page.route``
-decorator, the blueprint will record the intention of registering the
-function ``show`` on the application when it's later registered.
-Additionally it will prefix the endpoint of the function with the
-name of the blueprint which was given to the :class:`Blueprint`
-constructor (in this case also ``simple_page``). The blueprint's name
-does not modify the URL, only the endpoint.
+Khi bạn liên kết một hàm với sự trợ giúp của decorator ``@simple_page.route``,
+blueprint sẽ ghi lại ý định đăng ký hàm ``show`` trên ứng dụng khi nó được đăng ký sau này.
+Ngoài ra nó sẽ thêm tiền tố vào endpoint của hàm với
+tên của blueprint đã được đưa cho hàm tạo :class:`Blueprint`
+(trong trường hợp này cũng là ``simple_page``). Tên của blueprint
+không sửa đổi URL, chỉ endpoint.
 
-Registering Blueprints
-----------------------
+Đăng ký Blueprints
+------------------
 
-So how do you register that blueprint?  Like this::
+Vậy làm thế nào để bạn đăng ký blueprint đó? Như thế này::
 
     from flask import Flask
     from yourapplication.simple_page import simple_page
@@ -92,38 +89,38 @@ So how do you register that blueprint?  Like this::
     app = Flask(__name__)
     app.register_blueprint(simple_page)
 
-If you check the rules registered on the application, you will find
-these::
+Nếu bạn kiểm tra các quy tắc đã đăng ký trên ứng dụng, bạn sẽ tìm thấy
+những cái này::
 
     >>> app.url_map
     Map([<Rule '/static/<filename>' (HEAD, OPTIONS, GET) -> static>,
      <Rule '/<page>' (HEAD, OPTIONS, GET) -> simple_page.show>,
      <Rule '/' (HEAD, OPTIONS, GET) -> simple_page.show>])
 
-The first one is obviously from the application itself for the static
-files.  The other two are for the `show` function of the ``simple_page``
-blueprint.  As you can see, they are also prefixed with the name of the
-blueprint and separated by a dot (``.``).
+Cái đầu tiên rõ ràng là từ chính ứng dụng cho các file tĩnh.
+Hai cái còn lại là cho hàm `show` của blueprint ``simple_page``.
+Như bạn có thể thấy, chúng cũng được thêm tiền tố với tên của
+blueprint và được phân tách bằng một dấu chấm (``.``).
 
-Blueprints however can also be mounted at different locations::
+Tuy nhiên Blueprints cũng có thể được gắn tại các vị trí khác nhau::
 
     app.register_blueprint(simple_page, url_prefix='/pages')
 
-And sure enough, these are the generated rules::
+Và chắc chắn rồi, đây là các quy tắc được tạo ra::
 
     >>> app.url_map
     Map([<Rule '/static/<filename>' (HEAD, OPTIONS, GET) -> static>,
      <Rule '/pages/<page>' (HEAD, OPTIONS, GET) -> simple_page.show>,
      <Rule '/pages/' (HEAD, OPTIONS, GET) -> simple_page.show>])
 
-On top of that you can register blueprints multiple times though not every
-blueprint might respond properly to that.  In fact it depends on how the
-blueprint is implemented if it can be mounted more than once.
+Trên hết bạn có thể đăng ký blueprints nhiều lần mặc dù không phải mọi
+blueprint đều có thể phản hồi đúng cách với điều đó. Thực tế nó phụ thuộc vào cách
+blueprint được triển khai nếu nó có thể được gắn nhiều hơn một lần.
 
-Nesting Blueprints
-------------------
+Lồng Blueprints (Nesting Blueprints)
+------------------------------------
 
-It is possible to register a blueprint on another blueprint.
+Có thể đăng ký một blueprint trên một blueprint khác.
 
 .. code-block:: python
 
@@ -132,16 +129,16 @@ It is possible to register a blueprint on another blueprint.
     parent.register_blueprint(child)
     app.register_blueprint(parent)
 
-The child blueprint will gain the parent's name as a prefix to its
-name, and child URLs will be prefixed with the parent's URL prefix.
+Blueprint con sẽ nhận được tên của cha làm tiền tố cho tên của nó,
+và các URL con sẽ được thêm tiền tố với tiền tố URL của cha.
 
 .. code-block:: python
 
     url_for('parent.child.create')
     /parent/child/create
 
-In addition a child blueprint's will gain their parent's subdomain,
-with their subdomain as prefix if present i.e.
+Ngoài ra blueprint con sẽ nhận được tên miền phụ (subdomain) của cha,
+với tên miền phụ của chúng làm tiền tố nếu có, tức là
 
 .. code-block:: python
 
@@ -153,100 +150,98 @@ with their subdomain as prefix if present i.e.
     url_for('parent.child.create', _external=True)
     "child.parent.domain.tld"
 
-Blueprint-specific before request functions, etc. registered with the
-parent will trigger for the child. If a child does not have an error
-handler that can handle a given exception, the parent's will be tried.
+Các hàm trước request (before request), v.v. cụ thể cho blueprint được đăng ký với
+cha sẽ kích hoạt cho con. Nếu một con không có trình xử lý lỗi
+có thể xử lý một ngoại lệ nhất định, trình xử lý của cha sẽ được thử.
 
 
-Blueprint Resources
--------------------
+Tài nguyên Blueprint
+--------------------
 
-Blueprints can provide resources as well.  Sometimes you might want to
-introduce a blueprint only for the resources it provides.
+Blueprints cũng có thể cung cấp tài nguyên. Đôi khi bạn có thể muốn
+giới thiệu một blueprint chỉ cho các tài nguyên mà nó cung cấp.
 
-Blueprint Resource Folder
-`````````````````````````
+Thư mục Tài nguyên Blueprint
+````````````````````````````
 
-Like for regular applications, blueprints are considered to be contained
-in a folder.  While multiple blueprints can originate from the same folder,
-it does not have to be the case and it's usually not recommended.
+Giống như các ứng dụng thông thường, blueprints được coi là được chứa
+trong một thư mục. Mặc dù nhiều blueprints có thể bắt nguồn từ cùng một thư mục,
+điều đó không nhất thiết phải là trường hợp và thường không được khuyến nghị.
 
-The folder is inferred from the second argument to :class:`Blueprint` which
-is usually `__name__`.  This argument specifies what logical Python
-module or package corresponds to the blueprint.  If it points to an actual
-Python package that package (which is a folder on the filesystem) is the
-resource folder.  If it's a module, the package the module is contained in
-will be the resource folder.  You can access the
-:attr:`Blueprint.root_path` property to see what the resource folder is::
+Thư mục được suy ra từ đối số thứ hai đến :class:`Blueprint` thường
+là `__name__`. Đối số này chỉ định module hoặc package Python logic nào
+tương ứng với blueprint. Nếu nó trỏ đến một package Python thực tế
+thì package đó (là một thư mục trên hệ thống tệp) là
+thư mục tài nguyên. Nếu nó là một module, package mà module được chứa trong đó
+sẽ là thư mục tài nguyên. Bạn có thể truy cập thuộc tính
+:attr:`Blueprint.root_path` để xem thư mục tài nguyên là gì::
 
     >>> simple_page.root_path
     '/Users/username/TestProject/yourapplication'
 
-To quickly open sources from this folder you can use the
-:meth:`~Blueprint.open_resource` function::
+Để mở nhanh các nguồn từ thư mục này bạn có thể sử dụng hàm
+:meth:`~Blueprint.open_resource`::
 
     with simple_page.open_resource('static/style.css') as f:
         code = f.read()
 
-Static Files
-````````````
+File Tĩnh
+`````````
 
-A blueprint can expose a folder with static files by providing the path
-to the folder on the filesystem with the ``static_folder`` argument.
-It is either an absolute path or relative to the blueprint's location::
+Một blueprint có thể hiển thị một thư mục với các file tĩnh bằng cách cung cấp đường dẫn
+đến thư mục trên hệ thống tệp với đối số ``static_folder``.
+Nó là một đường dẫn tuyệt đối hoặc tương đối đến vị trí của blueprint::
 
     admin = Blueprint('admin', __name__, static_folder='static')
 
-By default the rightmost part of the path is where it is exposed on the
-web. This can be changed with the ``static_url_path`` argument. Because the
-folder is called ``static`` here it will be available at the
-``url_prefix`` of the blueprint + ``/static``. If the blueprint
-has the prefix ``/admin``, the static URL will be ``/admin/static``.
+Theo mặc định phần ngoài cùng bên phải của đường dẫn là nơi nó được hiển thị trên
+web. Điều này có thể được thay đổi với đối số ``static_url_path``. Bởi vì
+thư mục được gọi là ``static`` ở đây nó sẽ có sẵn tại
+``url_prefix`` của blueprint + ``/static``. Nếu blueprint
+có tiền tố ``/admin``, URL tĩnh sẽ là ``/admin/static``.
 
-The endpoint is named ``blueprint_name.static``. You can generate URLs
-to it with :func:`url_for` like you would with the static folder of the
-application::
+Endpoint được đặt tên là ``blueprint_name.static``. Bạn có thể tạo URL
+đến nó với :func:`url_for` giống như bạn làm với thư mục tĩnh của
+ứng dụng::
 
     url_for('admin.static', filename='style.css')
 
-However, if the blueprint does not have a ``url_prefix``, it is not
-possible to access the blueprint's static folder. This is because the
-URL would be ``/static`` in this case, and the application's ``/static``
-route takes precedence. Unlike template folders, blueprint static
-folders are not searched if the file does not exist in the application
-static folder.
+Tuy nhiên, nếu blueprint không có ``url_prefix``, thì không thể
+truy cập thư mục tĩnh của blueprint. Điều này là do
+URL sẽ là ``/static`` trong trường hợp này, và route ``/static`` của ứng dụng
+được ưu tiên. Không giống như các thư mục template, các thư mục tĩnh của blueprint
+không được tìm kiếm nếu file không tồn tại trong thư mục tĩnh của ứng dụng.
 
 Templates
 `````````
 
-If you want the blueprint to expose templates you can do that by providing
-the `template_folder` parameter to the :class:`Blueprint` constructor::
+Nếu bạn muốn blueprint hiển thị các template bạn có thể làm điều đó bằng cách cung cấp
+tham số `template_folder` cho hàm tạo :class:`Blueprint`::
 
     admin = Blueprint('admin', __name__, template_folder='templates')
 
-For static files, the path can be absolute or relative to the blueprint
-resource folder.
+Đối với các file tĩnh, đường dẫn có thể là tuyệt đối hoặc tương đối đến thư mục
+tài nguyên của blueprint.
 
-The template folder is added to the search path of templates but with a lower
-priority than the actual application's template folder. That way you can
-easily override templates that a blueprint provides in the actual application.
-This also means that if you don't want a blueprint template to be accidentally
-overridden, make sure that no other blueprint or actual application template
-has the same relative path. When multiple blueprints provide the same relative
-template path the first blueprint registered takes precedence over the others.
+Thư mục template được thêm vào đường dẫn tìm kiếm của các template nhưng với độ ưu tiên thấp hơn
+so với thư mục template của ứng dụng thực tế. Bằng cách đó bạn có thể
+dễ dàng ghi đè các template mà một blueprint cung cấp trong ứng dụng thực tế.
+Điều này cũng có nghĩa là nếu bạn không muốn một template blueprint bị vô tình
+ghi đè, hãy đảm bảo rằng không có template blueprint hoặc ứng dụng thực tế nào khác
+có cùng đường dẫn tương đối. Khi nhiều blueprints cung cấp cùng một đường dẫn template
+tương đối, blueprint đầu tiên được đăng ký sẽ được ưu tiên hơn các blueprint khác.
 
 
-So if you have a blueprint in the folder ``yourapplication/admin`` and you
-want to render the template ``'admin/index.html'`` and you have provided
-``templates`` as a `template_folder` you will have to create a file like
-this: :file:`yourapplication/admin/templates/admin/index.html`. The reason
-for the extra ``admin`` folder is to avoid getting our template overridden
-by a template named ``index.html`` in the actual application template
-folder.
+Vì vậy nếu bạn có một blueprint trong thư mục ``yourapplication/admin`` và bạn
+muốn render template ``'admin/index.html'`` và bạn đã cung cấp
+``templates`` làm `template_folder` bạn sẽ phải tạo một file như
+thế này: :file:`yourapplication/admin/templates/admin/index.html`. Lý do
+cho thư mục ``admin`` thêm là để tránh template của chúng ta bị ghi đè
+bởi một template có tên ``index.html`` trong thư mục template của ứng dụng thực tế.
 
-To further reiterate this: if you have a blueprint named ``admin`` and you
-want to render a template called :file:`index.html` which is specific to this
-blueprint, the best idea is to lay out your templates like this::
+Để nhắc lại điều này: nếu bạn có một blueprint tên là ``admin`` và bạn
+muốn render một template gọi là :file:`index.html` cụ thể cho blueprint này,
+ý tưởng tốt nhất là bố trí các template của bạn như thế này::
 
     yourpackage/
         blueprints/
@@ -256,53 +251,52 @@ blueprint, the best idea is to lay out your templates like this::
                         index.html
                 __init__.py
 
-And then when you want to render the template, use :file:`admin/index.html` as
-the name to look up the template by.  If you encounter problems loading
-the correct templates enable the ``EXPLAIN_TEMPLATE_LOADING`` config
-variable which will instruct Flask to print out the steps it goes through
-to locate templates on every ``render_template`` call.
+Và sau đó khi bạn muốn render template, sử dụng :file:`admin/index.html` làm
+tên để tra cứu template. Nếu bạn gặp vấn đề khi tải
+đúng template hãy bật biến cấu hình ``EXPLAIN_TEMPLATE_LOADING``
+sẽ hướng dẫn Flask in ra các bước nó trải qua
+để xác định vị trí các template trên mỗi cuộc gọi ``render_template``.
 
-Building URLs
--------------
+Xây dựng URL
+------------
 
-If you want to link from one page to another you can use the
-:func:`url_for` function just like you normally would do just that you
-prefix the URL endpoint with the name of the blueprint and a dot (``.``)::
+Nếu bạn muốn liên kết từ trang này sang trang khác bạn có thể sử dụng
+hàm :func:`url_for` giống như bạn thường làm chỉ là bạn
+thêm tiền tố vào endpoint URL với tên của blueprint và một dấu chấm (``.``)::
 
     url_for('admin.index')
 
-Additionally if you are in a view function of a blueprint or a rendered
-template and you want to link to another endpoint of the same blueprint,
-you can use relative redirects by prefixing the endpoint with a dot only::
+Ngoài ra nếu bạn đang ở trong một hàm view của một blueprint hoặc một template được render
+và bạn muốn liên kết đến một endpoint khác của cùng một blueprint,
+bạn có thể sử dụng các chuyển hướng tương đối bằng cách chỉ thêm tiền tố vào endpoint với một dấu chấm::
 
     url_for('.index')
 
-This will link to ``admin.index`` for instance in case the current request
-was dispatched to any other admin blueprint endpoint.
+Điều này sẽ liên kết đến ``admin.index`` chẳng hạn trong trường hợp request hiện tại
+được điều phối đến bất kỳ endpoint blueprint admin nào khác.
 
 
-Blueprint Error Handlers
-------------------------
+Trình xử lý Lỗi Blueprint
+-------------------------
 
-Blueprints support the ``errorhandler`` decorator just like the :class:`Flask`
-application object, so it is easy to make Blueprint-specific custom error
-pages.
+Blueprints hỗ trợ decorator ``errorhandler`` giống như đối tượng ứng dụng :class:`Flask`,
+vì vậy thật dễ dàng để tạo các trang lỗi tùy chỉnh cụ thể cho Blueprint.
 
-Here is an example for a "404 Page Not Found" exception::
+Dưới đây là một ví dụ cho ngoại lệ "404 Page Not Found"::
 
     @simple_page.errorhandler(404)
     def page_not_found(e):
         return render_template('pages/404.html')
 
-Most errorhandlers will simply work as expected; however, there is a caveat
-concerning handlers for 404 and 405 exceptions.  These errorhandlers are only
-invoked from an appropriate ``raise`` statement or a call to ``abort`` in another
-of the blueprint's view functions; they are not invoked by, e.g., an invalid URL
-access.  This is because the blueprint does not "own" a certain URL space, so
-the application instance has no way of knowing which blueprint error handler it
-should run if given an invalid URL.  If you would like to execute different
-handling strategies for these errors based on URL prefixes, they may be defined
-at the application level using the ``request`` proxy object::
+Hầu hết các trình xử lý lỗi sẽ chỉ hoạt động như mong đợi; tuy nhiên, có một lưu ý
+liên quan đến các trình xử lý cho các ngoại lệ 404 và 405. Các trình xử lý lỗi này chỉ được
+gọi từ một câu lệnh ``raise`` thích hợp hoặc một cuộc gọi đến ``abort`` trong một
+hàm view khác của blueprint; chúng không được gọi bởi, ví dụ, một truy cập URL không hợp lệ.
+Điều này là do blueprint không "sở hữu" một không gian URL nhất định, vì vậy
+thể hiện ứng dụng không có cách nào biết trình xử lý lỗi blueprint nào nó
+nên chạy nếu được cung cấp một URL không hợp lệ. Nếu bạn muốn thực thi các chiến lược
+xử lý khác nhau cho các lỗi này dựa trên tiền tố URL, chúng có thể được định nghĩa
+ở cấp ứng dụng bằng cách sử dụng đối tượng proxy ``request``::
 
     @app.errorhandler(404)
     @app.errorhandler(405)
@@ -312,4 +306,4 @@ at the application level using the ``request`` proxy object::
         else:
             return ex
 
-See :doc:`/errorhandling`.
+Xem :doc:`/errorhandling`.

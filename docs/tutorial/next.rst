@@ -1,36 +1,36 @@
-Keep Developing!
-================
+Tiếp tục Phát triển!
+====================
 
-You've learned about quite a few Flask and Python concepts throughout
-the tutorial. Go back and review the tutorial and compare your code with
-the steps you took to get there. Compare your project to the
-:gh:`example project <examples/tutorial>`, which might look a bit
-different due to the step-by-step nature of the tutorial.
+Bạn đã học về khá nhiều khái niệm Flask và Python trong suốt
+tutorial. Hãy quay lại và xem lại tutorial và so sánh mã của bạn với
+các bước bạn đã thực hiện để đến đó. So sánh dự án của bạn với
+:gh:`dự án ví dụ <examples/tutorial>`, có thể trông hơi
+khác một chút do tính chất từng bước của tutorial.
 
-There's a lot more to Flask than what you've seen so far. Even so,
-you're now equipped to start developing your own web applications. Check
-out the :doc:`/quickstart` for an overview of what Flask can do, then
-dive into the docs to keep learning. Flask uses `Jinja`_, `Click`_,
-`Werkzeug`_, and `ItsDangerous`_ behind the scenes, and they all have
-their own documentation too. You'll also be interested in
-:doc:`/extensions` which make tasks like working with the database or
-validating form data easier and more powerful.
+Có nhiều điều hơn nữa về Flask so với những gì bạn đã thấy cho đến nay. Tuy nhiên,
+bây giờ bạn đã được trang bị để bắt đầu phát triển các ứng dụng web của riêng mình. Hãy xem
+:doc:`/quickstart` để có cái nhìn tổng quan về những gì Flask có thể làm, sau đó
+đi sâu vào tài liệu để tiếp tục học. Flask sử dụng `Jinja`_, `Click`_,
+`Werkzeug`_, và `ItsDangerous`_ đằng sau hậu trường, và tất cả chúng đều có
+tài liệu riêng của chúng. Bạn cũng sẽ quan tâm đến
+:doc:`/extensions` giúp các tác vụ như làm việc với cơ sở dữ liệu hoặc
+xác thực dữ liệu form dễ dàng và mạnh mẽ hơn.
 
-If you want to keep developing your Flaskr project, here are some ideas
-for what to try next:
+Nếu bạn muốn tiếp tục phát triển dự án Flaskr của mình, đây là một số ý tưởng
+về những gì cần thử tiếp theo:
 
-*   A detail view to show a single post. Click a post's title to go to
-    its page.
-*   Like / unlike a post.
-*   Comments.
-*   Tags. Clicking a tag shows all the posts with that tag.
-*   A search box that filters the index page by name.
-*   Paged display. Only show 5 posts per page.
-*   Upload an image to go along with a post.
-*   Format posts using Markdown.
-*   An RSS feed of new posts.
+*   Một view chi tiết để hiển thị một bài viết duy nhất. Nhấp vào tiêu đề bài viết để đến
+    trang của nó.
+*   Thích / không thích một bài viết.
+*   Bình luận.
+*   Thẻ (Tags). Nhấp vào một thẻ hiển thị tất cả các bài viết với thẻ đó.
+*   Một hộp tìm kiếm lọc trang index theo tên.
+*   Hiển thị phân trang. Chỉ hiển thị 5 bài viết mỗi trang.
+*   Tải lên một hình ảnh để đi cùng với một bài viết.
+*   Định dạng bài viết bằng Markdown.
+*   Một nguồn cấp RSS của các bài viết mới.
 
-Have fun and make awesome applications!
+Chúc vui vẻ và tạo ra các ứng dụng tuyệt vời!
 
 .. _Jinja: https://palletsprojects.com/p/jinja/
 .. _Click: https://palletsprojects.com/p/click/

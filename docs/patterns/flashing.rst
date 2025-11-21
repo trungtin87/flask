@@ -1,20 +1,20 @@
 Message Flashing
 ================
 
-Good applications and user interfaces are all about feedback.  If the user
-does not get enough feedback they will probably end up hating the
-application.  Flask provides a really simple way to give feedback to a
-user with the flashing system.  The flashing system basically makes it
-possible to record a message at the end of a request and access it next
-request and only next request.  This is usually combined with a layout
-template that does this. Note that browsers and sometimes web servers enforce
-a limit on cookie sizes. This means that flashing messages that are too
-large for session cookies causes message flashing to fail silently.
+Các ứng dụng và giao diện người dùng tốt đều xoay quanh phản hồi. Nếu người dùng
+không nhận được đủ phản hồi, họ có thể sẽ ghét
+ứng dụng. Flask cung cấp một cách thực sự đơn giản để đưa ra phản hồi cho
+người dùng với hệ thống flashing. Hệ thống flashing về cơ bản làm cho nó
+có thể ghi lại một tin nhắn ở cuối một request và truy cập nó ở request
+tiếp theo và chỉ request tiếp theo. Điều này thường được kết hợp với một layout
+template thực hiện điều này. Lưu ý rằng các trình duyệt và đôi khi các máy chủ web thực thi
+giới hạn về kích thước cookie. Điều này có nghĩa là các tin nhắn flashing quá
+lớn cho session cookie sẽ khiến message flashing thất bại một cách âm thầm.
 
 Simple Flashing
 ---------------
 
-So here is a full example::
+Vì vậy, đây là một ví dụ đầy đủ::
 
     from flask import Flask, flash, redirect, render_template, \
          request, url_for
@@ -38,7 +38,7 @@ So here is a full example::
                 return redirect(url_for('index'))
         return render_template('login.html', error=error)
 
-And here is the :file:`layout.html` template which does the magic:
+Và đây là template :file:`layout.html` thực hiện phép thuật:
 
 .. sourcecode:: html+jinja
 
@@ -55,7 +55,7 @@ And here is the :file:`layout.html` template which does the magic:
    {% endwith %}
    {% block body %}{% endblock %}
 
-Here is the :file:`index.html` template which inherits from :file:`layout.html`:
+Đây là template :file:`index.html` kế thừa từ :file:`layout.html`:
 
 .. sourcecode:: html+jinja
 
@@ -65,7 +65,7 @@ Here is the :file:`index.html` template which inherits from :file:`layout.html`:
      <p>Do you want to <a href="{{ url_for('login') }}">log in?</a>
    {% endblock %}
 
-And here is the :file:`login.html` template which also inherits from
+Và đây là template :file:`login.html` cũng kế thừa từ
 :file:`layout.html`:
 
 .. sourcecode:: html+jinja
@@ -88,24 +88,24 @@ And here is the :file:`login.html` template which also inherits from
      </form>
    {% endblock %}
 
-Flashing With Categories
-------------------------
+Flashing Với Categories
+-----------------------
 
 .. versionadded:: 0.3
 
-It is also possible to provide categories when flashing a message.  The
-default category if nothing is provided is ``'message'``.  Alternative
-categories can be used to give the user better feedback.  For example
-error messages could be displayed with a red background.
+Cũng có thể cung cấp các category khi flash một tin nhắn.
+Category mặc định nếu không có gì được cung cấp là ``'message'``. Các category
+thay thế có thể được sử dụng để cung cấp cho người dùng phản hồi tốt hơn. Ví dụ
+các thông báo lỗi có thể được hiển thị với nền màu đỏ.
 
-To flash a message with a different category, just use the second argument
-to the :func:`~flask.flash` function::
+Để flash một tin nhắn với một category khác, chỉ cần sử dụng đối số thứ hai
+cho hàm :func:`~flask.flash`::
 
     flash('Invalid password provided', 'error')
 
-Inside the template you then have to tell the
-:func:`~flask.get_flashed_messages` function to also return the
-categories.  The loop looks slightly different in that situation then:
+Bên trong template, sau đó bạn phải bảo hàm
+:func:`~flask.get_flashed_messages` cũng trả về các
+category. Vòng lặp trông hơi khác trong tình huống đó:
 
 .. sourcecode:: html+jinja
 
@@ -119,18 +119,18 @@ categories.  The loop looks slightly different in that situation then:
      {% endif %}
    {% endwith %}
 
-This is just one example of how to render these flashed messages.  One
-might also use the category to add a prefix such as
-``<strong>Error:</strong>`` to the message.
+Đây chỉ là một ví dụ về cách render các tin nhắn flashed này. Một người
+cũng có thể sử dụng category để thêm một tiền tố chẳng hạn như
+``<strong>Error:</strong>`` vào tin nhắn.
 
-Filtering Flash Messages
-------------------------
+Lọc Flash Messages
+------------------
 
 .. versionadded:: 0.9
 
-Optionally you can pass a list of categories which filters the results of
-:func:`~flask.get_flashed_messages`.  This is useful if you wish to
-render each category in a separate block.
+Tùy chọn bạn có thể truyền một danh sách các category để lọc kết quả của
+:func:`~flask.get_flashed_messages`. Điều này hữu ích nếu bạn muốn
+render từng category trong một khối riêng biệt.
 
 .. sourcecode:: html+jinja
 

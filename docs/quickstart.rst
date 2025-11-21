@@ -1,14 +1,14 @@
-Quickstart
-==========
+Bắt đầu nhanh
+=============
 
-Eager to get started? This page gives a good introduction to Flask.
-Follow :doc:`installation` to set up a project and install Flask first.
+Bạn đang nóng lòng muốn bắt đầu? Trang này cung cấp một giới thiệu tốt về Flask.
+Hãy làm theo :doc:`installation` để thiết lập dự án và cài đặt Flask trước.
 
 
-A Minimal Application
----------------------
+Một Ứng dụng Tối thiểu
+----------------------
 
-A minimal Flask application looks something like this:
+Một ứng dụng Flask tối thiểu trông giống như thế này:
 
 .. code-block:: python
 
@@ -20,28 +20,27 @@ A minimal Flask application looks something like this:
     def hello_world():
         return "<p>Hello, World!</p>"
 
-So what did that code do?
+Vậy đoạn mã đó đã làm gì?
 
-1.  First we imported the :class:`~flask.Flask` class. An instance of
-    this class will be our WSGI application.
-2.  Next we create an instance of this class. The first argument is the
-    name of the application's module or package. ``__name__`` is a
-    convenient shortcut for this that is appropriate for most cases.
-    This is needed so that Flask knows where to look for resources such
-    as templates and static files.
-3.  We then use the :meth:`~flask.Flask.route` decorator to tell Flask
-    what URL should trigger our function.
-4.  The function returns the message we want to display in the user's
-    browser. The default content type is HTML, so HTML in the string
-    will be rendered by the browser.
+1.  Đầu tiên chúng ta import lớp :class:`~flask.Flask`. Một thể hiện của
+    lớp này sẽ là ứng dụng WSGI của chúng ta.
+2.  Tiếp theo chúng ta tạo một thể hiện của lớp này. Đối số đầu tiên là
+    tên của module hoặc package của ứng dụng. ``__name__`` là một
+    lối tắt thuận tiện cho việc này, phù hợp cho hầu hết các trường hợp.
+    Điều này là cần thiết để Flask biết nơi tìm kiếm các tài nguyên như
+    template và file tĩnh.
+3.  Sau đó chúng ta sử dụng decorator :meth:`~flask.Flask.route` để cho Flask biết
+    URL nào sẽ kích hoạt hàm của chúng ta.
+4.  Hàm trả về thông điệp chúng ta muốn hiển thị trong trình duyệt của người dùng.
+    Loại nội dung mặc định là HTML, vì vậy HTML trong chuỗi
+    sẽ được trình duyệt render.
 
-Save it as :file:`hello.py` or something similar. Make sure to not call
-your application :file:`flask.py` because this would conflict with Flask
-itself.
+Lưu nó dưới tên :file:`hello.py` hoặc tương tự. Đảm bảo không đặt tên
+ứng dụng của bạn là :file:`flask.py` vì điều này sẽ xung đột với chính Flask.
 
-To run the application, use the ``flask`` command or
-``python -m flask``. You need to tell the Flask where your application
-is with the ``--app`` option.
+Để chạy ứng dụng, sử dụng lệnh ``flask`` hoặc
+``python -m flask``. Bạn cần cho Flask biết ứng dụng của bạn ở đâu
+bằng tùy chọn ``--app``.
 
 .. code-block:: text
 
@@ -49,62 +48,62 @@ is with the ``--app`` option.
      * Serving Flask app 'hello'
      * Running on http://127.0.0.1:5000 (Press CTRL+C to quit)
 
-.. admonition:: Application Discovery Behavior
+.. admonition:: Hành vi Khám phá Ứng dụng
 
-    As a shortcut, if the file is named ``app.py`` or ``wsgi.py``, you
-    don't have to use ``--app``. See :doc:`/cli` for more details.
+    Như một lối tắt, nếu file được đặt tên là ``app.py`` hoặc ``wsgi.py``, bạn
+    không cần phải sử dụng ``--app``. Xem :doc:`/cli` để biết thêm chi tiết.
 
-This launches a very simple builtin server, which is good enough for
-testing but probably not what you want to use in production. For
-deployment options see :doc:`deploying/index`.
+Điều này khởi chạy một máy chủ tích hợp rất đơn giản, đủ tốt để
+thử nghiệm nhưng có lẽ không phải là thứ bạn muốn sử dụng trong sản xuất. Để biết các tùy chọn
+triển khai, xem :doc:`deploying/index`.
 
-Now head over to http://127.0.0.1:5000/, and you should see your hello
-world greeting.
+Bây giờ hãy truy cập http://127.0.0.1:5000/, và bạn sẽ thấy lời chào hello
+world của mình.
 
-If another program is already using port 5000, you'll see
-``OSError: [Errno 98]`` or ``OSError: [WinError 10013]`` when the
-server tries to start. See :ref:`address-already-in-use` for how to
-handle that.
+Nếu một chương trình khác đã sử dụng cổng 5000, bạn sẽ thấy
+``OSError: [Errno 98]`` hoặc ``OSError: [WinError 10013]`` khi
+máy chủ cố gắng khởi động. Xem :ref:`address-already-in-use` để biết cách
+xử lý điều đó.
 
 .. _public-server:
 
-.. admonition:: Externally Visible Server
+.. admonition:: Máy chủ Hiển thị ra Bên ngoài
 
-   If you run the server you will notice that the server is only accessible
-   from your own computer, not from any other in the network.  This is the
-   default because in debugging mode a user of the application can execute
-   arbitrary Python code on your computer.
+   Nếu bạn chạy máy chủ, bạn sẽ nhận thấy rằng máy chủ chỉ có thể truy cập được
+   từ máy tính của riêng bạn, không phải từ bất kỳ máy nào khác trong mạng. Đây là
+   mặc định vì trong chế độ debug, người dùng ứng dụng có thể thực thi
+   mã Python tùy ý trên máy tính của bạn.
 
-   If you have the debugger disabled or trust the users on your network,
-   you can make the server publicly available simply by adding
-   ``--host=0.0.0.0`` to the command line::
+   Nếu bạn đã tắt debugger hoặc tin tưởng người dùng trên mạng của mình,
+   bạn có thể làm cho máy chủ khả dụng công khai chỉ bằng cách thêm
+   ``--host=0.0.0.0`` vào dòng lệnh::
 
        $ flask run --host=0.0.0.0
 
-   This tells your operating system to listen on all public IPs.
+   Điều này bảo hệ điều hành của bạn lắng nghe trên tất cả các IP công cộng.
 
 
-Debug Mode
-----------
+Chế độ Debug
+------------
 
-The ``flask run`` command can do more than just start the development
-server. By enabling debug mode, the server will automatically reload if
-code changes, and will show an interactive debugger in the browser if an
-error occurs during a request.
+Lệnh ``flask run`` có thể làm nhiều hơn là chỉ khởi động máy chủ phát triển.
+Bằng cách bật chế độ debug, máy chủ sẽ tự động tải lại nếu
+mã thay đổi, và sẽ hiển thị một trình gỡ lỗi tương tác trong trình duyệt nếu một
+lỗi xảy ra trong quá trình request.
 
 .. image:: _static/debugger.png
     :align: center
     :class: screenshot
-    :alt: The interactive debugger in action.
+    :alt: Trình gỡ lỗi tương tác đang hoạt động.
 
 .. warning::
 
-    The debugger allows executing arbitrary Python code from the
-    browser. It is protected by a pin, but still represents a major
-    security risk. Do not run the development server or debugger in a
-    production environment.
+    Trình gỡ lỗi cho phép thực thi mã Python tùy ý từ
+    trình duyệt. Nó được bảo vệ bởi một mã PIN, nhưng vẫn đại diện cho một rủi ro
+    bảo mật lớn. Không chạy máy chủ phát triển hoặc trình gỡ lỗi trong một
+    môi trường sản xuất.
 
-To enable debug mode, use the ``--debug`` option.
+Để bật chế độ debug, sử dụng tùy chọn ``--debug``.
 
 .. code-block:: text
 
@@ -116,26 +115,26 @@ To enable debug mode, use the ``--debug`` option.
      * Debugger is active!
      * Debugger PIN: nnn-nnn-nnn
 
-See also:
+Xem thêm:
 
--   :doc:`/server` and :doc:`/cli` for information about running in debug mode.
--   :doc:`/debugging` for information about using the built-in debugger
-    and other debuggers.
--   :doc:`/logging` and :doc:`/errorhandling` to log errors and display
-    nice error pages.
+-   :doc:`/server` và :doc:`/cli` để biết thông tin về việc chạy trong chế độ debug.
+-   :doc:`/debugging` để biết thông tin về việc sử dụng trình gỡ lỗi tích hợp
+    và các trình gỡ lỗi khác.
+-   :doc:`/logging` và :doc:`/errorhandling` để ghi log lỗi và hiển thị
+    các trang lỗi đẹp mắt.
 
 
-HTML Escaping
--------------
+Escape HTML
+-----------
 
-When returning HTML (the default response type in Flask), any
-user-provided values rendered in the output must be escaped to protect
-from injection attacks. HTML templates rendered with Jinja, introduced
-later, will do this automatically.
+Khi trả về HTML (loại phản hồi mặc định trong Flask), bất kỳ
+giá trị nào do người dùng cung cấp được render trong đầu ra phải được escape để bảo vệ
+khỏi các cuộc tấn công injection. Các template HTML được render bằng Jinja, được giới thiệu
+sau, sẽ tự động làm điều này.
 
-:func:`~markupsafe.escape`, shown here, can be used manually. It is
-omitted in most examples for brevity, but you should always be aware of
-how you're using untrusted data.
+:func:`~markupsafe.escape`, được hiển thị ở đây, có thể được sử dụng thủ công. Nó bị
+lược bỏ trong hầu hết các ví dụ cho ngắn gọn, nhưng bạn phải luôn nhận thức được
+cách bạn đang sử dụng dữ liệu không tin cậy.
 
 .. code-block:: python
 
@@ -147,18 +146,18 @@ how you're using untrusted data.
         name = request.args.get("name", "Flask")
         return f"Hello, {escape(name)}!"
 
-If a user submits ``/hello?name=<script>alert("bad")</script>``, escaping causes
-it to be rendered as text, rather than running the script in the user's browser.
+Nếu một người dùng gửi ``/hello?name=<script>alert("bad")</script>``, việc escape khiến
+nó được render dưới dạng văn bản, thay vì chạy script trong trình duyệt của người dùng.
 
 
-Routing
--------
+Định tuyến (Routing)
+--------------------
 
-Modern web applications use meaningful URLs to help users. Users are more
-likely to like a page and come back if the page uses a meaningful URL they can
-remember and use to directly visit a page.
+Các ứng dụng web hiện đại sử dụng các URL có ý nghĩa để giúp người dùng. Người dùng có nhiều khả năng
+thích một trang và quay lại nếu trang đó sử dụng một URL có ý nghĩa mà họ có thể
+nhớ và sử dụng để truy cập trực tiếp vào một trang.
 
-Use the :meth:`~flask.Flask.route` decorator to bind a function to a URL. ::
+Sử dụng decorator :meth:`~flask.Flask.route` để liên kết một hàm với một URL. ::
 
     @app.route('/')
     def index():
@@ -168,49 +167,49 @@ Use the :meth:`~flask.Flask.route` decorator to bind a function to a URL. ::
     def hello():
         return 'Hello, World'
 
-You can do more! You can make parts of the URL dynamic and attach multiple
-rules to a function.
+Bạn có thể làm nhiều hơn nữa! Bạn có thể làm cho các phần của URL trở nên động và gắn nhiều
+quy tắc vào một hàm.
 
-Variable Rules
-``````````````
+Quy tắc Biến
+````````````
 
-You can add variable sections to a URL by marking sections with
-``<variable_name>``. Your function then receives the ``<variable_name>``
-as a keyword argument. Optionally, you can use a converter to specify the type
-of the argument like ``<converter:variable_name>``. ::
+Bạn có thể thêm các phần biến vào một URL bằng cách đánh dấu các phần bằng
+``<variable_name>``. Hàm của bạn sau đó nhận ``<variable_name>``
+như một đối số từ khóa. Tùy chọn, bạn có thể sử dụng một bộ chuyển đổi để chỉ định loại
+của đối số như ``<converter:variable_name>``. ::
 
     from markupsafe import escape
 
     @app.route('/user/<username>')
     def show_user_profile(username):
-        # show the user profile for that user
+        # hiển thị hồ sơ người dùng cho người dùng đó
         return f'User {escape(username)}'
 
     @app.route('/post/<int:post_id>')
     def show_post(post_id):
-        # show the post with the given id, the id is an integer
+        # hiển thị bài đăng với id đã cho, id là một số nguyên
         return f'Post {post_id}'
 
     @app.route('/path/<path:subpath>')
     def show_subpath(subpath):
-        # show the subpath after /path/
+        # hiển thị đường dẫn con sau /path/
         return f'Subpath {escape(subpath)}'
 
-Converter types:
+Các loại bộ chuyển đổi:
 
 ========== ==========================================
-``string`` (default) accepts any text without a slash
-``int``    accepts positive integers
-``float``  accepts positive floating point values
-``path``   like ``string`` but also accepts slashes
-``uuid``   accepts UUID strings
+``string`` (mặc định) chấp nhận bất kỳ văn bản nào không có dấu gạch chéo
+``int``    chấp nhận các số nguyên dương
+``float``  chấp nhận các giá trị dấu phẩy động dương
+``path``   giống như ``string`` nhưng cũng chấp nhận các dấu gạch chéo
+``uuid``   chấp nhận các chuỗi UUID
 ========== ==========================================
 
 
-Unique URLs / Redirection Behavior
-``````````````````````````````````
+URL Duy nhất / Hành vi Chuyển hướng
+```````````````````````````````````
 
-The following two rules differ in their use of a trailing slash. ::
+Hai quy tắc sau khác nhau ở việc sử dụng dấu gạch chéo ở cuối. ::
 
     @app.route('/projects/')
     def projects():
@@ -220,45 +219,45 @@ The following two rules differ in their use of a trailing slash. ::
     def about():
         return 'The about page'
 
-The canonical URL for the ``projects`` endpoint has a trailing slash.
-It's similar to a folder in a file system. If you access the URL without
-a trailing slash (``/projects``), Flask redirects you to the canonical URL
-with the trailing slash (``/projects/``).
+URL chính tắc cho endpoint ``projects`` có một dấu gạch chéo ở cuối.
+Nó tương tự như một thư mục trong hệ thống tệp. Nếu bạn truy cập URL mà không có
+dấu gạch chéo ở cuối (``/projects``), Flask chuyển hướng bạn đến URL chính tắc
+với dấu gạch chéo ở cuối (``/projects/``).
 
-The canonical URL for the ``about`` endpoint does not have a trailing
-slash. It's similar to the pathname of a file. Accessing the URL with a
-trailing slash (``/about/``) produces a 404 "Not Found" error. This helps
-keep URLs unique for these resources, which helps search engines avoid
-indexing the same page twice.
+URL chính tắc cho endpoint ``about`` không có dấu gạch chéo ở cuối.
+Nó tương tự như tên đường dẫn của một tệp. Truy cập URL với một
+dấu gạch chéo ở cuối (``/about/``) tạo ra lỗi 404 "Not Found". Điều này giúp
+giữ cho các URL là duy nhất cho các tài nguyên này, giúp các công cụ tìm kiếm tránh
+lập chỉ mục cùng một trang hai lần.
 
 
 .. _url-building:
 
-URL Building
+Xây dựng URL
 ````````````
 
-To build a URL to a specific function, use the :func:`~flask.url_for` function.
-It accepts the name of the function as its first argument and any number of
-keyword arguments, each corresponding to a variable part of the URL rule.
-Unknown variable parts are appended to the URL as query parameters.
+Để xây dựng một URL đến một hàm cụ thể, sử dụng hàm :func:`~flask.url_for`.
+Nó chấp nhận tên của hàm làm đối số đầu tiên và bất kỳ số lượng
+đối số từ khóa nào, mỗi đối số tương ứng với một phần biến của quy tắc URL.
+Các phần biến không xác định được thêm vào URL dưới dạng tham số truy vấn.
 
-Why would you want to build URLs using the URL reversing function
-:func:`~flask.url_for` instead of hard-coding them into your templates?
+Tại sao bạn lại muốn xây dựng URL bằng cách sử dụng hàm đảo ngược URL
+:func:`~flask.url_for` thay vì mã hóa cứng chúng vào template của bạn?
 
-1. Reversing is often more descriptive than hard-coding the URLs.
-2. You can change your URLs in one go instead of needing to remember to
-   manually change hard-coded URLs.
-3. URL building handles escaping of special characters transparently.
-4. The generated paths are always absolute, avoiding unexpected behavior
-   of relative paths in browsers.
-5. If your application is placed outside the URL root, for example, in
-   ``/myapplication`` instead of ``/``, :func:`~flask.url_for` properly
-   handles that for you.
+1. Đảo ngược thường mô tả rõ ràng hơn là mã hóa cứng các URL.
+2. Bạn có thể thay đổi URL của mình trong một lần thay vì cần nhớ để
+   thay đổi thủ công các URL được mã hóa cứng.
+3. Xây dựng URL xử lý việc escape các ký tự đặc biệt một cách minh bạch.
+4. Các đường dẫn được tạo luôn là tuyệt đối, tránh hành vi không mong muốn
+   của các đường dẫn tương đối trong trình duyệt.
+5. Nếu ứng dụng của bạn được đặt bên ngoài thư mục gốc URL, ví dụ, trong
+   ``/myapplication`` thay vì ``/``, :func:`~flask.url_for` xử lý đúng
+   điều đó cho bạn.
 
-For example, here we use the :meth:`~flask.Flask.test_request_context` method
-to try out :func:`~flask.url_for`. :meth:`~flask.Flask.test_request_context`
-tells Flask to behave as though it's handling a request even while we use a
-Python shell. See :doc:`/appcontext`.
+Ví dụ, ở đây chúng ta sử dụng phương thức :meth:`~flask.Flask.test_request_context`
+để thử nghiệm :func:`~flask.url_for`. :meth:`~flask.Flask.test_request_context`
+bảo Flask hành xử như thể nó đang xử lý một request ngay cả khi chúng ta sử dụng một
+Python shell. Xem :doc:`/appcontext`.
 
 .. code-block:: python
 
@@ -290,13 +289,13 @@ Python shell. See :doc:`/appcontext`.
     /user/John%20Doe
 
 
-HTTP Methods
-````````````
+Phương thức HTTP
+````````````````
 
-Web applications use different HTTP methods when accessing URLs. You should
-familiarize yourself with the HTTP methods as you work with Flask. By default,
-a route only answers to ``GET`` requests. You can use the ``methods`` argument
-of the :meth:`~flask.Flask.route` decorator to handle different HTTP methods.
+Các ứng dụng web sử dụng các phương thức HTTP khác nhau khi truy cập URL. Bạn nên
+làm quen với các phương thức HTTP khi làm việc với Flask. Theo mặc định,
+một route chỉ trả lời các request ``GET``. Bạn có thể sử dụng đối số ``methods``
+của decorator :meth:`~flask.Flask.route` để xử lý các phương thức HTTP khác nhau.
 ::
 
     from flask import request
@@ -308,13 +307,13 @@ of the :meth:`~flask.Flask.route` decorator to handle different HTTP methods.
         else:
             return show_the_login_form()
 
-The example above keeps all methods for the route within one function,
-which can be useful if each part uses some common data.
+Ví dụ trên giữ tất cả các phương thức cho route trong một hàm,
+điều này có thể hữu ích nếu mỗi phần sử dụng một số dữ liệu chung.
 
-You can also separate views for different methods into different
-functions. Flask provides a shortcut for decorating such routes with
-:meth:`~flask.Flask.get`, :meth:`~flask.Flask.post`, etc. for each
-common HTTP method.
+Bạn cũng có thể tách các view cho các phương thức khác nhau thành các hàm
+khác nhau. Flask cung cấp một lối tắt để trang trí các route như vậy với
+:meth:`~flask.Flask.get`, :meth:`~flask.Flask.post`, v.v. cho mỗi
+phương thức HTTP phổ biến.
 
 .. code-block:: python
 
@@ -326,47 +325,47 @@ common HTTP method.
     def login_post():
         return do_the_login()
 
-If ``GET`` is present, Flask automatically adds support for the ``HEAD`` method
-and handles ``HEAD`` requests according to the `HTTP RFC`_. Likewise,
-``OPTIONS`` is automatically implemented for you.
+Nếu ``GET`` hiện diện, Flask tự động thêm hỗ trợ cho phương thức ``HEAD``
+và xử lý các request ``HEAD`` theo `HTTP RFC`_. Tương tự,
+``OPTIONS`` được tự động triển khai cho bạn.
 
 .. _HTTP RFC: https://www.ietf.org/rfc/rfc2068.txt
 
-Static Files
-------------
+File Tĩnh
+---------
 
-Dynamic web applications also need static files.  That's usually where
-the CSS and JavaScript files are coming from.  Ideally your web server is
-configured to serve them for you, but during development Flask can do that
-as well.  Just create a folder called :file:`static` in your package or next to
-your module and it will be available at ``/static`` on the application.
+Các ứng dụng web động cũng cần các file tĩnh. Đó thường là nơi
+các file CSS và JavaScript đến từ. Lý tưởng nhất là máy chủ web của bạn được
+cấu hình để phục vụ chúng cho bạn, nhưng trong quá trình phát triển Flask cũng có thể làm điều đó.
+Chỉ cần tạo một thư mục có tên :file:`static` trong package của bạn hoặc bên cạnh
+module của bạn và nó sẽ có sẵn tại ``/static`` trên ứng dụng.
 
-To generate URLs for static files, use the special ``'static'`` endpoint name::
+Để tạo URL cho các file tĩnh, sử dụng tên endpoint đặc biệt ``'static'``::
 
     url_for('static', filename='style.css')
 
-The file has to be stored on the filesystem as :file:`static/style.css`.
+File phải được lưu trữ trên hệ thống tệp dưới dạng :file:`static/style.css`.
 
-Rendering Templates
--------------------
+Render Template
+---------------
 
-Generating HTML from within Python is not fun, and actually pretty
-cumbersome because you have to do the HTML escaping on your own to keep
-the application secure.  Because of that Flask configures the `Jinja
-<https://palletsprojects.com/p/jinja/>`_ template engine for you automatically.
+Tạo HTML từ bên trong Python không vui chút nào, và thực sự khá
+phiền toái vì bạn phải tự thực hiện việc escape HTML để giữ
+cho ứng dụng an toàn. Vì lý do đó, Flask cấu hình công cụ template `Jinja
+<https://palletsprojects.com/p/jinja/>`_ cho bạn một cách tự động.
 
-Templates can be used to generate any type of text file. For web applications, you'll
-primarily be generating HTML pages, but you can also generate markdown, plain text for
-emails, and anything else.
+Template có thể được sử dụng để tạo bất kỳ loại file văn bản nào. Đối với các ứng dụng web, bạn sẽ
+chủ yếu tạo các trang HTML, nhưng bạn cũng có thể tạo markdown, văn bản thuần túy cho
+email, và bất cứ thứ gì khác.
 
-For a reference to HTML, CSS, and other web APIs, use the `MDN Web Docs`_.
+Để tham khảo về HTML, CSS, và các API web khác, hãy sử dụng `MDN Web Docs`_.
 
 .. _MDN Web Docs: https://developer.mozilla.org/
 
-To render a template you can use the :func:`~flask.render_template`
-method.  All you have to do is provide the name of the template and the
-variables you want to pass to the template engine as keyword arguments.
-Here's a simple example of how to render a template::
+Để render một template bạn có thể sử dụng phương thức :func:`~flask.render_template`.
+Tất cả những gì bạn phải làm là cung cấp tên của template và các
+biến bạn muốn truyền cho công cụ template dưới dạng đối số từ khóa.
+Dưới đây là một ví dụ đơn giản về cách render một template::
 
     from flask import render_template
 
@@ -375,28 +374,28 @@ Here's a simple example of how to render a template::
     def hello(name=None):
         return render_template('hello.html', person=name)
 
-Flask will look for templates in the :file:`templates` folder.  So if your
-application is a module, this folder is next to that module, if it's a
-package it's actually inside your package:
+Flask sẽ tìm kiếm các template trong thư mục :file:`templates`. Vì vậy nếu ứng dụng
+của bạn là một module, thư mục này nằm cạnh module đó, nếu nó là một
+package thì nó thực sự nằm bên trong package của bạn:
 
-**Case 1**: a module::
+**Trường hợp 1**: một module::
 
     /application.py
     /templates
         /hello.html
 
-**Case 2**: a package::
+**Trường hợp 2**: một package::
 
     /application
         /__init__.py
         /templates
             /hello.html
 
-For templates you can use the full power of Jinja templates.  Head over
-to the official `Jinja Template Documentation
-<https://jinja.palletsprojects.com/templates/>`_ for more information.
+Đối với các template, bạn có thể sử dụng toàn bộ sức mạnh của template Jinja. Hãy truy cập
+`Tài liệu Template Jinja chính thức
+<https://jinja.palletsprojects.com/templates/>`_ để biết thêm thông tin.
 
-Here is an example template:
+Dưới đây là một ví dụ template:
 
 .. sourcecode:: html+jinja
 
@@ -408,23 +407,23 @@ Here is an example template:
       <h1>Hello, World!</h1>
     {% endif %}
 
-Inside templates you also have access to the :data:`~flask.Flask.config`,
-:class:`~flask.request`, :class:`~flask.session` and :class:`~flask.g` [#]_ objects
-as well as the :func:`~flask.url_for` and :func:`~flask.get_flashed_messages` functions.
+Bên trong template bạn cũng có quyền truy cập vào các đối tượng :data:`~flask.Flask.config`,
+:class:`~flask.request`, :class:`~flask.session` và :class:`~flask.g` [#]_
+cũng như các hàm :func:`~flask.url_for` và :func:`~flask.get_flashed_messages`.
 
-Templates are especially useful if inheritance is used.  If you want to
-know how that works, see :doc:`patterns/templateinheritance`. Basically
-template inheritance makes it possible to keep certain elements on each
-page (like header, navigation and footer).
+Template đặc biệt hữu ích nếu sử dụng kế thừa. Nếu bạn muốn
+biết cách nó hoạt động, xem :doc:`patterns/templateinheritance`. Về cơ bản
+kế thừa template giúp có thể giữ các phần tử nhất định trên mỗi
+trang (như header, navigation và footer).
 
-Automatic escaping is enabled, so if ``person`` contains HTML it will be escaped
-automatically.  If you can trust a variable and you know that it will be
-safe HTML (for example because it came from a module that converts wiki
-markup to HTML) you can mark it as safe by using the
-:class:`~markupsafe.Markup` class or by using the ``|safe`` filter in the
-template.  Head over to the Jinja 2 documentation for more examples.
+Tự động escape được bật, vì vậy nếu ``person`` chứa HTML nó sẽ được escape
+tự động. Nếu bạn có thể tin tưởng một biến và bạn biết rằng nó sẽ là
+HTML an toàn (ví dụ vì nó đến từ một module chuyển đổi wiki
+markup sang HTML) bạn có thể đánh dấu nó là an toàn bằng cách sử dụng lớp
+:class:`~markupsafe.Markup` hoặc bằng cách sử dụng bộ lọc ``|safe`` trong
+template. Hãy truy cập tài liệu Jinja 2 để biết thêm ví dụ.
 
-Here is a basic introduction to how the :class:`~markupsafe.Markup` class works::
+Dưới đây là giới thiệu cơ bản về cách lớp :class:`~markupsafe.Markup` hoạt động::
 
     >>> from markupsafe import Markup
     >>> Markup('<strong>Hello %s!</strong>') % '<blink>hacker</blink>'
@@ -436,38 +435,38 @@ Here is a basic introduction to how the :class:`~markupsafe.Markup` class works:
 
 .. versionchanged:: 0.5
 
-   Autoescaping is no longer enabled for all templates.  The following
-   extensions for templates trigger autoescaping: ``.html``, ``.htm``,
-   ``.xml``, ``.xhtml``.  Templates loaded from a string will have
-   autoescaping disabled.
+   Tự động escape không còn được bật cho tất cả các template. Các phần mở rộng
+   sau cho template kích hoạt tự động escape: ``.html``, ``.htm``,
+   ``.xml``, ``.xhtml``. Các template được tải từ một chuỗi sẽ bị
+   tắt tự động escape.
 
-.. [#] Unsure what that :class:`~flask.g` object is? It's something in which
-   you can store information for your own needs. See the documentation
-   for :class:`flask.g` and :doc:`patterns/sqlite3`.
+.. [#] Không chắc đối tượng :class:`~flask.g` đó là gì? Nó là thứ mà trong đó
+   bạn có thể lưu trữ thông tin cho nhu cầu riêng của mình. Xem tài liệu
+   cho :class:`flask.g` và :doc:`patterns/sqlite3`.
 
 
-Accessing Request Data
-----------------------
+Truy cập Dữ liệu Request
+------------------------
 
-For web applications it's crucial to react to the data a client sends to the
-server. In Flask this information is provided by the global :data:`.request`
-object, which is an instance of :class:`.Request`. This object has many
-attributes and methods to work with the incoming request data, but here is a
-broad overview. First it needs to be imported.
+Đối với các ứng dụng web, điều quan trọng là phản ứng với dữ liệu mà client gửi đến
+máy chủ. Trong Flask thông tin này được cung cấp bởi đối tượng toàn cục :data:`.request`,
+là một thể hiện của :class:`.Request`. Đối tượng này có nhiều
+thuộc tính và phương thức để làm việc với dữ liệu request đến, nhưng đây là một
+tổng quan rộng. Đầu tiên nó cần được import.
 
 .. code-block:: python
 
     from flask import request
 
-If you have some experience with Python you might be wondering how that object
-can be global when Flask handles multiple requests at a time. The answer is
-that :data:`.request` is actually a proxy, pointing at whatever request is
-currently being handled by a given worker, which is managed interanlly by Flask
-and Python. See :doc:`/appcontext` for much more information.
+Nếu bạn có chút kinh nghiệm với Python bạn có thể tự hỏi làm thế nào đối tượng đó
+có thể là toàn cục khi Flask xử lý nhiều request cùng một lúc. Câu trả lời là
+:data:`.request` thực sự là một proxy, trỏ đến bất kỳ request nào đang
+được xử lý bởi một worker nhất định, được quản lý nội bộ bởi Flask
+và Python. Xem :doc:`/appcontext` để biết thêm thông tin.
 
-The current request method is available in the :attr:`~.Request.method`
-attribute. To access form data (data transmitted in a ``POST`` or ``PUT``
-request), use the :attr:`~flask.Request.form` attribute, which behaves like a
+Phương thức request hiện tại có sẵn trong thuộc tính :attr:`~.Request.method`.
+Để truy cập dữ liệu form (dữ liệu được truyền trong một request ``POST`` hoặc ``PUT``),
+sử dụng thuộc tính :attr:`~flask.Request.form`, hoạt động giống như một
 dict.
 
 .. code-block:: python
@@ -482,42 +481,42 @@ dict.
             else:
                 error = "Invalid username or password"
 
-        # Executed if the request method was GET or the credentials were invalid.
+        # Được thực thi nếu phương thức request là GET hoặc thông tin đăng nhập không hợp lệ.
         return render_template("login.html", error=error)
 
-If the key does not exist in ``form``, a special :exc:`KeyError` is raised. You
-can catch it like a normal ``KeyError``, otherwise it will return a HTTP 400
-Bad Request error page. You can also use the
-:meth:`~werkzeug.datastructures.MultiDict.get` method to get a default
-instead of an error.
+Nếu khóa không tồn tại trong ``form``, một :exc:`KeyError` đặc biệt được ném ra. Bạn
+có thể bắt nó như một ``KeyError`` bình thường, nếu không nó sẽ trả về một trang lỗi HTTP 400
+Bad Request. Bạn cũng có thể sử dụng phương thức
+:meth:`~werkzeug.datastructures.MultiDict.get` để lấy một giá trị mặc định
+thay vì lỗi.
 
-To access parameters submitted in the URL (``?key=value``), use the
-:attr:`~.Request.args` attribute. Key errors behave the same as ``form``,
-returning a 400 response if not caught.
+Để truy cập các tham số được gửi trong URL (``?key=value``), sử dụng
+thuộc tính :attr:`~.Request.args`. Lỗi khóa hoạt động giống như ``form``,
+trả về phản hồi 400 nếu không bắt được.
 
 .. code-block:: python
 
     searchword = request.args.get('key', '')
 
-For a full list of methods and attributes of the request object, see the
-:class:`~.Request` documentation.
+Để có danh sách đầy đủ các phương thức và thuộc tính của đối tượng request, xem tài liệu
+:class:`~.Request`.
 
 
-File Uploads
+Tải lên File
 ````````````
 
-You can handle uploaded files with Flask easily.  Just make sure not to
-forget to set the ``enctype="multipart/form-data"`` attribute on your HTML
-form, otherwise the browser will not transmit your files at all.
+Bạn có thể xử lý các file được tải lên với Flask một cách dễ dàng. Chỉ cần đảm bảo không
+quên đặt thuộc tính ``enctype="multipart/form-data"`` trên form HTML
+của bạn, nếu không trình duyệt sẽ không truyền file của bạn đi.
 
-Uploaded files are stored in memory or at a temporary location on the
-filesystem.  You can access those files by looking at the
-:attr:`~flask.request.files` attribute on the request object.  Each
-uploaded file is stored in that dictionary.  It behaves just like a
-standard Python :class:`file` object, but it also has a
-:meth:`~werkzeug.datastructures.FileStorage.save` method that
-allows you to store that file on the filesystem of the server.
-Here is a simple example showing how that works::
+Các file được tải lên được lưu trữ trong bộ nhớ hoặc tại một vị trí tạm thời trên
+hệ thống tệp. Bạn có thể truy cập các file đó bằng cách xem thuộc tính
+:attr:`~flask.request.files` trên đối tượng request. Mỗi
+file được tải lên được lưu trữ trong từ điển đó. Nó hoạt động giống như một
+đối tượng :class:`file` Python tiêu chuẩn, nhưng nó cũng có một phương thức
+:meth:`~werkzeug.datastructures.FileStorage.save` cho phép
+bạn lưu file đó trên hệ thống tệp của máy chủ.
+Dưới đây là một ví dụ đơn giản cho thấy cách nó hoạt động::
 
     from flask import request
 
@@ -528,14 +527,14 @@ Here is a simple example showing how that works::
             f.save('/var/www/uploads/uploaded_file.txt')
         ...
 
-If you want to know how the file was named on the client before it was
-uploaded to your application, you can access the
-:attr:`~werkzeug.datastructures.FileStorage.filename` attribute.
-However please keep in mind that this value can be forged
-so never ever trust that value.  If you want to use the filename
-of the client to store the file on the server, pass it through the
-:func:`~werkzeug.utils.secure_filename` function that
-Werkzeug provides for you::
+Nếu bạn muốn biết file được đặt tên như thế nào trên client trước khi nó được
+tải lên ứng dụng của bạn, bạn có thể truy cập thuộc tính
+:attr:`~werkzeug.datastructures.FileStorage.filename`.
+Tuy nhiên hãy nhớ rằng giá trị này có thể bị giả mạo
+vì vậy đừng bao giờ tin tưởng giá trị đó. Nếu bạn muốn sử dụng tên file
+của client để lưu file trên máy chủ, hãy chuyển nó qua hàm
+:func:`~werkzeug.utils.secure_filename` mà
+Werkzeug cung cấp cho bạn::
 
     from werkzeug.utils import secure_filename
 
@@ -546,30 +545,30 @@ Werkzeug provides for you::
             file.save(f"/var/www/uploads/{secure_filename(file.filename)}")
         ...
 
-For some better examples, see :doc:`patterns/fileuploads`.
+Để có một số ví dụ tốt hơn, xem :doc:`patterns/fileuploads`.
 
 Cookies
 ```````
 
-To access cookies you can use the :attr:`~flask.Request.cookies`
-attribute.  To set cookies you can use the
-:attr:`~flask.Response.set_cookie` method of response objects.  The
-:attr:`~flask.Request.cookies` attribute of request objects is a
-dictionary with all the cookies the client transmits.  If you want to use
-sessions, do not use the cookies directly but instead use the
-:ref:`sessions` in Flask that add some security on top of cookies for you.
+Để truy cập cookies bạn có thể sử dụng thuộc tính :attr:`~flask.Request.cookies`.
+Để đặt cookies bạn có thể sử dụng phương thức
+:attr:`~flask.Response.set_cookie` của các đối tượng response. Thuộc tính
+:attr:`~flask.Request.cookies` của các đối tượng request là một
+từ điển với tất cả các cookies mà client truyền đi. Nếu bạn muốn sử dụng
+sessions, đừng sử dụng cookies trực tiếp mà thay vào đó hãy sử dụng
+:ref:`sessions` trong Flask giúp thêm một số bảo mật trên cookies cho bạn.
 
-Reading cookies::
+Đọc cookies::
 
     from flask import request
 
     @app.route('/')
     def index():
         username = request.cookies.get('username')
-        # use cookies.get(key) instead of cookies[key] to not get a
-        # KeyError if the cookie is missing.
+        # sử dụng cookies.get(key) thay vì cookies[key] để không nhận
+        # KeyError nếu cookie bị thiếu.
 
-Storing cookies::
+Lưu trữ cookies::
 
     from flask import make_response
 
@@ -579,23 +578,23 @@ Storing cookies::
         resp.set_cookie('username', 'the username')
         return resp
 
-Note that cookies are set on response objects.  Since you normally
-just return strings from the view functions Flask will convert them into
-response objects for you.  If you explicitly want to do that you can use
-the :meth:`~flask.make_response` function and then modify it.
+Lưu ý rằng cookies được đặt trên các đối tượng response. Vì bạn thường
+chỉ trả về chuỗi từ các hàm view, Flask sẽ chuyển đổi chúng thành
+các đối tượng response cho bạn. Nếu bạn muốn làm điều đó một cách rõ ràng, bạn có thể sử dụng
+hàm :meth:`~flask.make_response` và sau đó sửa đổi nó.
 
-Sometimes you might want to set a cookie at a point where the response
-object does not exist yet.  This is possible by utilizing the
-:doc:`patterns/deferredcallbacks` pattern.
+Đôi khi bạn có thể muốn đặt một cookie tại một điểm mà đối tượng response
+chưa tồn tại. Điều này có thể thực hiện được bằng cách sử dụng mẫu
+:doc:`patterns/deferredcallbacks`.
 
-For this also see :ref:`about-responses`.
+Về điều này cũng xem :ref:`about-responses`.
 
-Redirects and Errors
---------------------
+Chuyển hướng và Lỗi
+-------------------
 
-To redirect a user to another endpoint, use the :func:`~flask.redirect`
-function; to abort a request early with an error code, use the
-:func:`~flask.abort` function::
+Để chuyển hướng người dùng đến một endpoint khác, sử dụng hàm :func:`~flask.redirect`;
+để hủy một request sớm với một mã lỗi, sử dụng hàm
+:func:`~flask.abort`::
 
     from flask import abort, redirect, url_for
 
@@ -608,13 +607,13 @@ function; to abort a request early with an error code, use the
         abort(401)
         this_is_never_executed()
 
-This is a rather pointless example because a user will be redirected from
-the index to a page they cannot access (401 means access denied) but it
-shows how that works.
+Đây là một ví dụ khá vô nghĩa vì người dùng sẽ được chuyển hướng từ
+index đến một trang mà họ không thể truy cập (401 nghĩa là truy cập bị từ chối) nhưng nó
+cho thấy cách nó hoạt động.
 
-By default a black and white error page is shown for each error code.  If
-you want to customize the error page, you can use the
-:meth:`~flask.Flask.errorhandler` decorator::
+Theo mặc định một trang lỗi đen trắng được hiển thị cho mỗi mã lỗi. Nếu
+bạn muốn tùy chỉnh trang lỗi, bạn có thể sử dụng decorator
+:meth:`~flask.Flask.errorhandler`::
 
     from flask import render_template
 
@@ -622,46 +621,46 @@ you want to customize the error page, you can use the
     def page_not_found(error):
         return render_template('page_not_found.html'), 404
 
-Note the ``404`` after the :func:`~flask.render_template` call.  This
-tells Flask that the status code of that page should be 404 which means
-not found.  By default 200 is assumed which translates to: all went well.
+Lưu ý ``404`` sau cuộc gọi :func:`~flask.render_template`. Điều này
+bảo Flask rằng mã trạng thái của trang đó nên là 404 nghĩa là
+không tìm thấy. Theo mặc định 200 được giả định, dịch ra là: mọi thứ đều ổn.
 
-See :doc:`errorhandling` for more details.
+Xem :doc:`errorhandling` để biết thêm chi tiết.
 
 .. _about-responses:
 
-About Responses
----------------
+Về Phản hồi (Responses)
+-----------------------
 
-The return value from a view function is automatically converted into
-a response object for you. If the return value is a string it's
-converted into a response object with the string as response body, a
-``200 OK`` status code and a :mimetype:`text/html` mimetype. If the
-return value is a dict or list, :func:`jsonify` is called to produce a
-response. The logic that Flask applies to converting return values into
-response objects is as follows:
+Giá trị trả về từ một hàm view được tự động chuyển đổi thành
+một đối tượng response cho bạn. Nếu giá trị trả về là một chuỗi nó được
+chuyển đổi thành một đối tượng response với chuỗi đó làm thân phản hồi, một
+mã trạng thái ``200 OK`` và một mimetype :mimetype:`text/html`. Nếu
+giá trị trả về là một dict hoặc list, :func:`jsonify` được gọi để tạo ra một
+phản hồi. Logic mà Flask áp dụng để chuyển đổi giá trị trả về thành
+các đối tượng response như sau:
 
-1.  If a response object of the correct type is returned it's directly
-    returned from the view.
-2.  If it's a string, a response object is created with that data and
-    the default parameters.
-3.  If it's an iterator or generator returning strings or bytes, it is
-    treated as a streaming response.
-4.  If it's a dict or list, a response object is created using
+1.  Nếu một đối tượng response đúng loại được trả về, nó được trả về trực tiếp
+    từ view.
+2.  Nếu nó là một chuỗi, một đối tượng response được tạo với dữ liệu đó và
+    các tham số mặc định.
+3.  Nếu nó là một iterator hoặc generator trả về chuỗi hoặc bytes, nó được
+    xử lý như một phản hồi streaming.
+4.  Nếu nó là một dict hoặc list, một đối tượng response được tạo sử dụng
     :func:`~flask.json.jsonify`.
-5.  If a tuple is returned the items in the tuple can provide extra
-    information. Such tuples have to be in the form
-    ``(response, status)``, ``(response, headers)``, or
-    ``(response, status, headers)``. The ``status`` value will override
-    the status code and ``headers`` can be a list or dictionary of
-    additional header values.
-6.  If none of that works, Flask will assume the return value is a
-    valid WSGI application and convert that into a response object.
+5.  Nếu một tuple được trả về, các mục trong tuple có thể cung cấp thêm
+    thông tin. Các tuple như vậy phải ở dạng
+    ``(response, status)``, ``(response, headers)``, hoặc
+    ``(response, status, headers)``. Giá trị ``status`` sẽ ghi đè
+    mã trạng thái và ``headers`` có thể là một list hoặc dictionary của
+    các giá trị header bổ sung.
+6.  Nếu không có cái nào hoạt động, Flask sẽ giả định giá trị trả về là một
+    ứng dụng WSGI hợp lệ và chuyển đổi nó thành một đối tượng response.
 
-If you want to get hold of the resulting response object inside the view
-you can use the :func:`~flask.make_response` function.
+Nếu bạn muốn nắm giữ đối tượng response kết quả bên trong view
+bạn có thể sử dụng hàm :func:`~flask.make_response`.
 
-Imagine you have a view like this::
+Hãy tưởng tượng bạn có một view như thế này::
 
     from flask import render_template
 
@@ -669,9 +668,9 @@ Imagine you have a view like this::
     def not_found(error):
         return render_template('error.html'), 404
 
-You just need to wrap the return expression with
-:func:`~flask.make_response` and get the response object to modify it, then
-return it::
+Bạn chỉ cần bọc biểu thức trả về với
+:func:`~flask.make_response` và lấy đối tượng response để sửa đổi nó, sau đó
+trả về nó::
 
     from flask import make_response
 
@@ -682,12 +681,12 @@ return it::
         return resp
 
 
-APIs with JSON
-``````````````
+API với JSON
+````````````
 
-A common response format when writing an API is JSON. It's easy to get
-started writing such an API with Flask. If you return a ``dict`` or
-``list`` from a view, it will be converted to a JSON response.
+Một định dạng phản hồi phổ biến khi viết API là JSON. Rất dễ để bắt đầu
+viết một API như vậy với Flask. Nếu bạn trả về một ``dict`` hoặc
+``list`` từ một view, nó sẽ được chuyển đổi thành một phản hồi JSON.
 
 .. code-block:: python
 
@@ -705,15 +704,15 @@ started writing such an API with Flask. If you return a ``dict`` or
         users = get_all_users()
         return [user.to_json() for user in users]
 
-This is a shortcut to passing the data to the
-:func:`~flask.json.jsonify` function, which will serialize any supported
-JSON data type. That means that all the data in the dict or list must be
-JSON serializable.
+Đây là một lối tắt để truyền dữ liệu đến hàm
+:func:`~flask.json.jsonify`, hàm này sẽ tuần tự hóa bất kỳ loại dữ liệu JSON
+được hỗ trợ nào. Điều đó có nghĩa là tất cả dữ liệu trong dict hoặc list phải
+có thể tuần tự hóa thành JSON.
 
-For complex types such as database models, you'll want to use a
-serialization library to convert the data to valid JSON types first.
-There are many serialization libraries and Flask API extensions
-maintained by the community that support more complex applications.
+Đối với các loại phức tạp như mô hình cơ sở dữ liệu, bạn sẽ muốn sử dụng một
+thư viện tuần tự hóa để chuyển đổi dữ liệu thành các loại JSON hợp lệ trước.
+Có rất nhiều thư viện tuần tự hóa và tiện ích mở rộng API Flask
+được duy trì bởi cộng đồng hỗ trợ các ứng dụng phức tạp hơn.
 
 
 .. _sessions:
@@ -721,19 +720,19 @@ maintained by the community that support more complex applications.
 Sessions
 --------
 
-In addition to the request object there is also a second object called
-:class:`~flask.session` which allows you to store information specific to a
-user from one request to the next.  This is implemented on top of cookies
-for you and signs the cookies cryptographically.  What this means is that
-the user could look at the contents of your cookie but not modify it,
-unless they know the secret key used for signing.
+Ngoài đối tượng request còn có một đối tượng thứ hai được gọi là
+:class:`~flask.session` cho phép bạn lưu trữ thông tin cụ thể cho một
+người dùng từ request này sang request tiếp theo. Điều này được triển khai trên cookies
+cho bạn và ký các cookies bằng mật mã. Điều này có nghĩa là
+người dùng có thể xem nội dung của cookie của bạn nhưng không thể sửa đổi nó,
+trừ khi họ biết khóa bí mật được sử dụng để ký.
 
-In order to use sessions you have to set a secret key.  Here is how
-sessions work::
+Để sử dụng sessions bạn phải đặt một khóa bí mật. Dưới đây là cách
+sessions hoạt động::
 
     from flask import session
 
-    # Set the secret key to some random bytes. Keep this really secret!
+    # Đặt khóa bí mật thành một số byte ngẫu nhiên. Giữ cái này thực sự bí mật!
     app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
     @app.route('/')
@@ -756,103 +755,103 @@ sessions work::
 
     @app.route('/logout')
     def logout():
-        # remove the username from the session if it's there
+        # xóa username khỏi session nếu nó ở đó
         session.pop('username', None)
         return redirect(url_for('index'))
 
-.. admonition:: How to generate good secret keys
+.. admonition:: Cách tạo khóa bí mật tốt
 
-    A secret key should be as random as possible. Your operating system has
-    ways to generate pretty random data based on a cryptographic random
-    generator. Use the following command to quickly generate a value for
-    :attr:`Flask.secret_key` (or :data:`SECRET_KEY`)::
+    Một khóa bí mật nên ngẫu nhiên nhất có thể. Hệ điều hành của bạn có
+    các cách để tạo dữ liệu khá ngẫu nhiên dựa trên một trình tạo ngẫu nhiên
+    mật mã. Sử dụng lệnh sau để nhanh chóng tạo một giá trị cho
+    :attr:`Flask.secret_key` (hoặc :data:`SECRET_KEY`)::
 
         $ python -c 'import secrets; print(secrets.token_hex())'
         '192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
 
-A note on cookie-based sessions: Flask will take the values you put into the
-session object and serialize them into a cookie.  If you are finding some
-values do not persist across requests, cookies are indeed enabled, and you are
-not getting a clear error message, check the size of the cookie in your page
-responses compared to the size supported by web browsers.
+Một lưu ý về sessions dựa trên cookie: Flask sẽ lấy các giá trị bạn đặt vào
+đối tượng session và tuần tự hóa chúng thành một cookie. Nếu bạn thấy một số
+giá trị không tồn tại qua các request, cookies thực sự đã được bật, và bạn
+không nhận được thông báo lỗi rõ ràng, hãy kiểm tra kích thước của cookie trong
+phản hồi trang của bạn so với kích thước được hỗ trợ bởi trình duyệt web.
 
-Besides the default client-side based sessions, if you want to handle
-sessions on the server-side instead, there are several
-Flask extensions that support this.
+Ngoài các sessions dựa trên phía client mặc định, nếu bạn muốn xử lý
+sessions ở phía máy chủ thay vào đó, có một số
+tiện ích mở rộng Flask hỗ trợ điều này.
 
 Message Flashing
 ----------------
 
-Good applications and user interfaces are all about feedback.  If the user
-does not get enough feedback they will probably end up hating the
-application.  Flask provides a really simple way to give feedback to a
-user with the flashing system.  The flashing system basically makes it
-possible to record a message at the end of a request and access it on the next
-(and only the next) request.  This is usually combined with a layout
-template to expose the message.
+Các ứng dụng và giao diện người dùng tốt đều là về phản hồi. Nếu người dùng
+không nhận được đủ phản hồi họ có thể sẽ ghét
+ứng dụng. Flask cung cấp một cách thực sự đơn giản để đưa ra phản hồi cho một
+người dùng với hệ thống flashing. Hệ thống flashing về cơ bản làm cho nó
+có thể ghi lại một tin nhắn ở cuối một request và truy cập nó vào request tiếp theo
+(và chỉ request tiếp theo). Điều này thường được kết hợp với một layout
+template để hiển thị tin nhắn.
 
-To flash a message use the :func:`~flask.flash` method, to get hold of the
-messages you can use :func:`~flask.get_flashed_messages` which is also
-available in the templates. See :doc:`patterns/flashing` for a full
-example.
+Để flash một tin nhắn sử dụng phương thức :func:`~flask.flash`, để nắm giữ các
+tin nhắn bạn có thể sử dụng :func:`~flask.get_flashed_messages` cũng
+có sẵn trong các template. Xem :doc:`patterns/flashing` để có một ví dụ
+đầy đủ.
 
-Logging
--------
+Ghi log (Logging)
+-----------------
 
 .. versionadded:: 0.3
 
-Sometimes you might be in a situation where you deal with data that
-should be correct, but actually is not.  For example you may have
-some client-side code that sends an HTTP request to the server
-but it's obviously malformed.  This might be caused by a user tampering
-with the data, or the client code failing.  Most of the time it's okay
-to reply with ``400 Bad Request`` in that situation, but sometimes
-that won't do and the code has to continue working.
+Đôi khi bạn có thể ở trong tình huống phải xử lý dữ liệu mà
+lẽ ra phải đúng, nhưng thực tế lại không. Ví dụ bạn có thể có
+một số mã phía client gửi một request HTTP đến máy chủ
+nhưng nó rõ ràng bị định dạng sai. Điều này có thể do người dùng can thiệp
+vào dữ liệu, hoặc mã client bị lỗi. Hầu hết thời gian là ổn
+để trả lời với ``400 Bad Request`` trong tình huống đó, nhưng đôi khi
+điều đó sẽ không được và mã phải tiếp tục hoạt động.
 
-You may still want to log that something fishy happened.  This is where
-loggers come in handy.  As of Flask 0.3 a logger is preconfigured for you
-to use.
+Bạn vẫn có thể muốn ghi log rằng có điều gì đó đáng ngờ đã xảy ra. Đây là nơi
+các logger trở nên hữu ích. Kể từ Flask 0.3 một logger được cấu hình sẵn cho bạn
+để sử dụng.
 
-Here are some example log calls::
+Dưới đây là một số ví dụ gọi log::
 
     app.logger.debug('A value for debugging')
     app.logger.warning('A warning occurred (%d apples)', 42)
     app.logger.error('An error occurred')
 
-The attached :attr:`~flask.Flask.logger` is a standard logging
-:class:`~logging.Logger`, so head over to the official :mod:`logging`
-docs for more information.
+:attr:`~flask.Flask.logger` đính kèm là một :class:`~logging.Logger`
+logging tiêu chuẩn, vì vậy hãy truy cập tài liệu :mod:`logging` chính thức
+để biết thêm thông tin.
 
-See :doc:`errorhandling`.
+Xem :doc:`errorhandling`.
 
 
-Hooking in WSGI Middleware
---------------------------
+Hooking vào WSGI Middleware
+---------------------------
 
-To add WSGI middleware to your Flask application, wrap the application's
-``wsgi_app`` attribute. For example, to apply Werkzeug's
-:class:`~werkzeug.middleware.proxy_fix.ProxyFix` middleware for running
-behind Nginx:
+Để thêm WSGI middleware vào ứng dụng Flask của bạn, hãy bọc thuộc tính
+``wsgi_app`` của ứng dụng. Ví dụ, để áp dụng middleware
+:class:`~werkzeug.middleware.proxy_fix.ProxyFix` của Werkzeug để chạy
+phía sau Nginx:
 
 .. code-block:: python
 
     from werkzeug.middleware.proxy_fix import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
-Wrapping ``app.wsgi_app`` instead of ``app`` means that ``app`` still
-points at your Flask application, not at the middleware, so you can
-continue to use and configure ``app`` directly.
+Bọc ``app.wsgi_app`` thay vì ``app`` có nghĩa là ``app`` vẫn
+trỏ vào ứng dụng Flask của bạn, không phải vào middleware, vì vậy bạn có thể
+tiếp tục sử dụng và cấu hình ``app`` trực tiếp.
 
-Using Flask Extensions
-----------------------
+Sử dụng Tiện ích mở rộng Flask
+------------------------------
 
-Extensions are packages that help you accomplish common tasks. For
-example, Flask-SQLAlchemy provides SQLAlchemy support that makes it simple
-and easy to use with Flask.
+Các tiện ích mở rộng là các gói giúp bạn hoàn thành các tác vụ phổ biến. Ví dụ,
+Flask-SQLAlchemy cung cấp hỗ trợ SQLAlchemy giúp nó đơn giản
+và dễ sử dụng với Flask.
 
-For more on Flask extensions, see :doc:`extensions`.
+Để biết thêm về các tiện ích mở rộng Flask, xem :doc:`extensions`.
 
-Deploying to a Web Server
--------------------------
+Triển khai lên Máy chủ Web
+--------------------------
 
-Ready to deploy your new Flask app? See :doc:`deploying/index`.
+Sẵn sàng triển khai ứng dụng Flask mới của bạn? Xem :doc:`deploying/index`.

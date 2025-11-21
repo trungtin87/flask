@@ -1,11 +1,11 @@
-MongoDB with MongoEngine
-========================
+MongoDB với MongoEngine
+=======================
 
-Using a document database like MongoDB is a common alternative to
-relational SQL databases. This pattern shows how to use
-`MongoEngine`_, a document mapper library, to integrate with MongoDB.
+Sử dụng một cơ sở dữ liệu document như MongoDB là một giải pháp thay thế phổ biến cho
+các cơ sở dữ liệu SQL quan hệ. Mẫu này chỉ ra cách sử dụng
+`MongoEngine`_, một thư viện ánh xạ document, để tích hợp với MongoDB.
 
-A running MongoDB server and `Flask-MongoEngine`_ are required. ::
+Một máy chủ MongoDB đang chạy và `Flask-MongoEngine`_ là bắt buộc. ::
 
     pip install flask-mongoengine
 
@@ -13,11 +13,11 @@ A running MongoDB server and `Flask-MongoEngine`_ are required. ::
 .. _Flask-MongoEngine: https://flask-mongoengine.readthedocs.io
 
 
-Configuration
--------------
+Cấu hình
+--------
 
-Basic setup can be done by defining ``MONGODB_SETTINGS`` on
-``app.config`` and creating a ``MongoEngine`` instance. ::
+Thiết lập cơ bản có thể được thực hiện bằng cách định nghĩa ``MONGODB_SETTINGS`` trên
+``app.config`` và tạo một instance ``MongoEngine``. ::
 
     from flask import Flask
     from flask_mongoengine import MongoEngine
@@ -29,11 +29,11 @@ Basic setup can be done by defining ``MONGODB_SETTINGS`` on
     db = MongoEngine(app)
 
 
-Mapping Documents
------------------
+Ánh xạ Document
+---------------
 
-To declare a model that represents a Mongo document, create a class that
-inherits from ``Document`` and declare each of the fields. ::
+Để khai báo một model đại diện cho một Mongo document, hãy tạo một class
+kế thừa từ ``Document`` và khai báo từng field. ::
 
     import mongoengine as me
 
@@ -44,9 +44,9 @@ inherits from ``Document`` and declare each of the fields. ::
         director = me.StringField()
         actors = me.ListField()
 
-If the document has nested fields, use ``EmbeddedDocument`` to
-defined the fields of the embedded document and
-``EmbeddedDocumentField`` to declare it on the parent document. ::
+Nếu document có các field lồng nhau, sử dụng ``EmbeddedDocument`` để
+định nghĩa các field của embedded document và
+``EmbeddedDocumentField`` để khai báo nó trên document cha. ::
 
     class Imdb(me.EmbeddedDocument):
         imdb_id = me.StringField()
@@ -58,12 +58,12 @@ defined the fields of the embedded document and
         imdb = me.EmbeddedDocumentField(Imdb)
 
 
-Creating Data
--------------
+Tạo Dữ liệu
+-----------
 
-Instantiate your document class with keyword arguments for the fields.
-You can also assign values to the field attributes after instantiation.
-Then call ``doc.save()``. ::
+Khởi tạo class document của bạn với các đối số từ khóa cho các field.
+Bạn cũng có thể gán giá trị cho các thuộc tính field sau khi khởi tạo.
+Sau đó gọi ``doc.save()``. ::
 
     bttf = Movie(title="Back To The Future", year=1985)
     bttf.actors = [
@@ -74,17 +74,17 @@ Then call ``doc.save()``. ::
     bttf.save()
 
 
-Queries
--------
+Truy vấn (Queries)
+------------------
 
-Use the class ``objects`` attribute to make queries. A keyword argument
-looks for an equal value on the field. ::
+Sử dụng thuộc tính ``objects`` của class để thực hiện truy vấn. Một đối số từ khóa
+tìm kiếm một giá trị bằng nhau trên field. ::
 
     bttf = Movie.objects(title="Back To The Future").get_or_404()
 
-Query operators may be used by concatenating them with the field name
-using a double-underscore. ``objects``, and queries returned by
-calling it, are iterable. ::
+Các toán tử truy vấn có thể được sử dụng bằng cách nối chúng với tên field
+sử dụng dấu gạch dưới kép. ``objects``, và các truy vấn được trả về bởi
+việc gọi nó, có thể lặp lại. ::
 
     some_theron_movie = Movie.objects(actors__in=["Charlize Theron"]).first()
 
@@ -92,12 +92,12 @@ calling it, are iterable. ::
         print(recents.title)
 
 
-Documentation
--------------
+Tài liệu
+--------
 
-There are many more ways to define and query documents with MongoEngine.
-For more information, check out the `official documentation
+Có nhiều cách khác để định nghĩa và truy vấn document với MongoEngine.
+Để biết thêm thông tin, hãy xem `tài liệu chính thức
 <MongoEngine_>`_.
 
-Flask-MongoEngine adds helpful utilities on top of MongoEngine. Check
-out their `documentation <Flask-MongoEngine_>`_ as well.
+Flask-MongoEngine thêm các tiện ích hữu ích trên MongoEngine. Hãy xem
+`tài liệu <Flask-MongoEngine_>`_ của họ nữa.

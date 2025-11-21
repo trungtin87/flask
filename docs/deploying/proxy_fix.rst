@@ -1,24 +1,24 @@
-Tell Flask it is Behind a Proxy
-===============================
+Báo cho Flask biết nó đang ở Phía sau một Proxy
+=============================================
 
-When using a reverse proxy, or many Python hosting platforms, the proxy
-will intercept and forward all external requests to the local WSGI
-server.
+Khi sử dụng một reverse proxy, hoặc nhiều nền tảng lưu trữ Python, proxy
+sẽ chặn và chuyển tiếp tất cả các request bên ngoài đến máy chủ WSGI
+cục bộ.
 
-From the WSGI server and Flask application's perspectives, requests are
-now coming from the HTTP server to the local address, rather than from
-the remote address to the external server address.
+Từ quan điểm của máy chủ WSGI và ứng dụng Flask, các request
+bây giờ đến từ máy chủ HTTP đến địa chỉ cục bộ, thay vì từ
+địa chỉ từ xa đến địa chỉ máy chủ bên ngoài.
 
-HTTP servers should set ``X-Forwarded-`` headers to pass on the real
-values to the application. The application can then be told to trust and
-use those values by wrapping it with the
-:doc:`werkzeug:middleware/proxy_fix` middleware provided by Werkzeug.
+Các máy chủ HTTP nên đặt các header ``X-Forwarded-`` để truyền các giá trị
+thực cho ứng dụng. Ứng dụng sau đó có thể được bảo để tin tưởng và
+sử dụng các giá trị đó bằng cách bao bọc nó với middleware
+:doc:`werkzeug:middleware/proxy_fix` được cung cấp bởi Werkzeug.
 
-This middleware should only be used if the application is actually
-behind a proxy, and should be configured with the number of proxies that
-are chained in front of it. Not all proxies set all the headers. Since
-incoming headers can be faked, you must set how many proxies are setting
-each header so the middleware knows what to trust.
+Middleware này chỉ nên được sử dụng nếu ứng dụng thực sự
+ở phía sau một proxy, và nên được cấu hình với số lượng proxy
+được chuỗi phía trước nó. Không phải tất cả các proxy đều đặt tất cả các header. Vì
+các header đến có thể bị giả mạo, bạn phải đặt bao nhiêu proxy đang đặt
+mỗi header để middleware biết cái gì nên tin tưởng.
 
 .. code-block:: python
 
@@ -28,6 +28,6 @@ each header so the middleware knows what to trust.
         app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
     )
 
-Remember, only apply this middleware if you are behind a proxy, and set
-the correct number of proxies that set each header. It can be a security
-issue if you get this configuration wrong.
+Hãy nhớ, chỉ áp dụng middleware này nếu bạn đang ở phía sau một proxy, và đặt
+đúng số lượng proxy đặt mỗi header. Nó có thể là một vấn đề bảo mật
+nếu bạn cấu hình sai điều này.

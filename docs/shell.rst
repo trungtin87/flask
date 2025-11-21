@@ -1,81 +1,80 @@
-Working with the Shell
-======================
+Làm việc với Shell
+==================
 
-One of the reasons everybody loves Python is the interactive shell. It allows
-you to play around with code in real time and immediately get results back.
-Flask provides the ``flask shell`` CLI command to start an interactive Python
-shell with some setup done to make working with the Flask app easier.
+Một trong những lý do mọi người yêu thích Python là shell tương tác. Nó cho phép
+bạn chơi đùa với mã trong thời gian thực và nhận kết quả ngay lập tức.
+Flask cung cấp lệnh CLI ``flask shell`` để khởi động một Python shell
+tương tác với một số thiết lập được thực hiện để làm cho việc làm việc với ứng dụng Flask dễ dàng hơn.
 
 .. code-block:: text
 
     $ flask shell
 
-Creating a Request Context
---------------------------
+Tạo một Request Context
+-----------------------
 
-``flask shell`` pushes an app context automatically, so :data:`.current_app` and
-:data:`.g` are already available. However, there is no HTTP request being
-handled in the shell, so :data:`.request` and :data:`.session` are not yet
-available.
+``flask shell`` đẩy một app context tự động, vì vậy :data:`.current_app` và
+:data:`.g` đã có sẵn. Tuy nhiên, không có request HTTP nào đang được
+xử lý trong shell, vì vậy :data:`.request` và :data:`.session` chưa có sẵn.
 
-The easiest way to create a proper request context from the shell is by
-using the :attr:`~flask.Flask.test_request_context` method which creates
-us a :class:`~flask.ctx.RequestContext`:
+Cách dễ nhất để tạo một request context thích hợp từ shell là bằng cách
+sử dụng phương thức :attr:`~flask.Flask.test_request_context` tạo ra
+cho chúng ta một :class:`~flask.ctx.RequestContext`:
 
 >>> ctx = app.test_request_context()
 
-Normally you would use the ``with`` statement to make this context active, but
-in the shell it's easier to call :meth:`~.RequestContext.push` and
-:meth:`~.RequestContext.pop` manually:
+Thông thường bạn sẽ sử dụng câu lệnh ``with`` để làm cho context này hoạt động, nhưng
+trong shell dễ dàng hơn để gọi :meth:`~.RequestContext.push` và
+:meth:`~.RequestContext.pop` thủ công:
 
 >>> ctx.push()
 
-From that point onwards you can work with the request object until you call
+Từ thời điểm đó trở đi bạn có thể làm việc với đối tượng request cho đến khi bạn gọi
 ``pop``:
 
 >>> ctx.pop()
 
-Firing Before/After Request
+Kích hoạt Trước/Sau Request
 ---------------------------
 
-By just creating a request context, you still don't have run the code that
-is normally run before a request.  This might result in your database
-being unavailable if you are connecting to the database in a
-before-request callback or the current user not being stored on the
-:data:`~flask.g` object etc.
+Chỉ bằng cách tạo một request context, bạn vẫn chưa chạy mã mà
+thường được chạy trước một request. Điều này có thể dẫn đến cơ sở dữ liệu của bạn
+không khả dụng nếu bạn đang kết nối với cơ sở dữ liệu trong một
+callback trước request hoặc người dùng hiện tại không được lưu trữ trên
+đối tượng :data:`~flask.g` v.v.
 
-This however can easily be done yourself.  Just call
+Tuy nhiên điều này có thể dễ dàng được thực hiện bởi chính bạn. Chỉ cần gọi
 :meth:`~flask.Flask.preprocess_request`:
 
 >>> ctx = app.test_request_context()
 >>> ctx.push()
 >>> app.preprocess_request()
 
-Keep in mind that the :meth:`~flask.Flask.preprocess_request` function
-might return a response object, in that case just ignore it.
+Hãy nhớ rằng hàm :meth:`~flask.Flask.preprocess_request`
+có thể trả về một đối tượng response, trong trường hợp đó chỉ cần bỏ qua nó.
 
-To shutdown a request, you need to trick a bit before the after request
-functions (triggered by :meth:`~flask.Flask.process_response`) operate on
-a response object:
+Để tắt một request, bạn cần đánh lừa một chút trước khi các hàm sau request
+(được kích hoạt bởi :meth:`~flask.Flask.process_response`) hoạt động trên
+một đối tượng response:
 
 >>> app.process_response(app.response_class())
 <Response 0 bytes [200 OK]>
 >>> ctx.pop()
 
-The functions registered as :meth:`~flask.Flask.teardown_request` are
-automatically called when the context is popped.  So this is the perfect
-place to automatically tear down resources that were needed by the request
-context (such as database connections).
+Các hàm được đăng ký như :meth:`~flask.Flask.teardown_request` được
+tự động gọi khi context bị pop. Vì vậy đây là nơi hoàn hảo
+để tự động hủy các tài nguyên cần thiết bởi request
+context (chẳng hạn như kết nối cơ sở dữ liệu).
 
 
-Further Improving the Shell Experience
---------------------------------------
+Cải thiện hơn nữa Trải nghiệm Shell
+-----------------------------------
 
-If you like the idea of experimenting in a shell, create yourself a module
-with stuff you want to star import into your interactive session.  There
-you could also define some more helper methods for common things such as
-initializing the database, dropping tables etc.
+Nếu bạn thích ý tưởng thử nghiệm trong một shell, hãy tạo cho mình một module
+với những thứ bạn muốn star import vào session tương tác của mình. Ở đó
+bạn cũng có thể định nghĩa thêm một số phương thức trợ giúp cho những việc chung như
+khởi tạo cơ sở dữ liệu, xóa bảng v.v.
 
-Just put them into a module (like `shelltools`) and import from there:
+Chỉ cần đặt chúng vào một module (như `shelltools`) và import từ đó:
 
 >>> from shelltools import *

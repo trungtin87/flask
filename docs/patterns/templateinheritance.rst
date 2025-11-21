@@ -1,20 +1,20 @@
-Template Inheritance
-====================
+Kế thừa Template (Template Inheritance)
+========================================
 
-The most powerful part of Jinja is template inheritance. Template inheritance
-allows you to build a base "skeleton" template that contains all the common
-elements of your site and defines **blocks** that child templates can override.
+Phần mạnh mẽ nhất của Jinja là kế thừa template. Kế thừa template
+cho phép bạn xây dựng một template "bộ xương" cơ sở chứa tất cả các phần tử
+chung của trang web của bạn và định nghĩa các **block** mà các template con có thể ghi đè.
 
-Sounds complicated but is very basic. It's easiest to understand it by starting
-with an example.
+Nghe có vẻ phức tạp nhưng rất cơ bản. Dễ hiểu nhất là bắt đầu
+với một ví dụ.
 
 
-Base Template
--------------
+Template Cơ sở
+--------------
 
-This template, which we'll call :file:`layout.html`, defines a simple HTML skeleton
-document that you might use for a simple two-column page. It's the job of
-"child" templates to fill the empty blocks with content:
+Template này, mà chúng ta sẽ gọi là :file:`layout.html`, định nghĩa một bộ xương HTML đơn giản
+document mà bạn có thể sử dụng cho một trang hai cột đơn giản. Nhiệm vụ của
+các template "con" là điền nội dung vào các block trống:
 
 .. sourcecode:: html+jinja
 
@@ -36,14 +36,14 @@ document that you might use for a simple two-column page. It's the job of
       </body>
     </html>
 
-In this example, the ``{% block %}`` tags define four blocks that child templates
-can fill in. All the `block` tag does is tell the template engine that a
-child template may override those portions of the template.
+Trong ví dụ này, các thẻ ``{% block %}`` định nghĩa bốn block mà các template con
+có thể điền vào. Tất cả những gì thẻ `block` làm là cho engine template biết rằng một
+template con có thể ghi đè những phần đó của template.
 
-Child Template
---------------
+Template Con
+------------
 
-A child template might look like this:
+Một template con có thể trông như thế này:
 
 .. sourcecode:: html+jinja
 
@@ -61,8 +61,8 @@ A child template might look like this:
         Welcome on my awesome homepage.
     {% endblock %}
 
-The ``{% extends %}`` tag is the key here. It tells the template engine that
-this template "extends" another template.  When the template system evaluates
-this template, first it locates the parent.  The extends tag must be the
-first tag in the template.  To render the contents of a block defined in
-the parent template, use ``{{ super() }}``.
+Thẻ ``{% extends %}`` là chìa khóa ở đây. Nó cho engine template biết rằng
+template này "mở rộng" một template khác. Khi hệ thống template đánh giá
+template này, đầu tiên nó xác định vị trí cha. Thẻ extends phải là
+thẻ đầu tiên trong template. Để render nội dung của một block được định nghĩa trong
+template cha, sử dụng ``{{ super() }}``.

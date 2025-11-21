@@ -1,56 +1,56 @@
 uWSGI
 =====
 
-`uWSGI`_ is a fast, compiled server suite with extensive configuration
-and capabilities beyond a basic server.
+`uWSGI`_ là một bộ máy chủ được biên dịch nhanh chóng với cấu hình mở rộng
+và các khả năng vượt ra ngoài một máy chủ cơ bản.
 
-*   It can be very performant due to being a compiled program.
-*   It is complex to configure beyond the basic application, and has so
-    many options that it can be difficult for beginners to understand.
-*   It does not support Windows (but does run on WSL).
-*   It requires a compiler to install in some cases.
+*   Nó có thể rất hiệu quả do là một chương trình được biên dịch.
+*   Nó phức tạp để cấu hình vượt ra ngoài ứng dụng cơ bản, và có quá
+    nhiều tùy chọn khiến người mới bắt đầu khó hiểu.
+*   Nó không hỗ trợ Windows (nhưng chạy trên WSL).
+*   Nó yêu cầu một trình biên dịch để cài đặt trong một số trường hợp.
 
-This page outlines the basics of running uWSGI. Be sure to read its
-documentation to understand what features are available.
+Trang này phác thảo những điều cơ bản về việc chạy uWSGI. Hãy chắc chắn đọc
+tài liệu của nó để hiểu những tính năng nào có sẵn.
 
 .. _uWSGI: https://uwsgi-docs.readthedocs.io/en/latest/
 
 
-Installing
-----------
+Cài đặt
+-------
 
-uWSGI has multiple ways to install it. The most straightforward is to
-install the ``pyuwsgi`` package, which provides precompiled wheels for
-common platforms. However, it does not provide SSL support, which can be
-provided with a reverse proxy instead.
+uWSGI có nhiều cách để cài đặt nó. Cách đơn giản nhất là
+cài đặt package ``pyuwsgi``, cung cấp các wheel được biên dịch sẵn cho
+các nền tảng phổ biến. Tuy nhiên, nó không cung cấp hỗ trợ SSL, cái mà có thể được
+cung cấp với một reverse proxy thay thế.
 
-Create a virtualenv, install your application, then install ``pyuwsgi``.
+Tạo một virtualenv, cài đặt ứng dụng của bạn, sau đó cài đặt ``pyuwsgi``.
 
 .. code-block:: text
 
     $ cd hello-app
     $ python -m venv .venv
     $ . .venv/bin/activate
-    $ pip install .  # install your application
+    $ pip install .  # cài đặt ứng dụng của bạn
     $ pip install pyuwsgi
 
-If you have a compiler available, you can install the ``uwsgi`` package
-instead. Or install the ``pyuwsgi`` package from sdist instead of wheel.
-Either method will include SSL support.
+Nếu bạn có sẵn một trình biên dịch, bạn có thể cài đặt package ``uwsgi``
+thay thế. Hoặc cài đặt package ``pyuwsgi`` từ sdist thay vì wheel.
+Cả hai phương pháp sẽ bao gồm hỗ trợ SSL.
 
 .. code-block:: text
 
     $ pip install uwsgi
 
-    # or
+    # hoặc
     $ pip install --no-binary pyuwsgi pyuwsgi
 
 
-Running
--------
+Chạy
+----
 
-The most basic way to run uWSGI is to tell it to start an HTTP server
-and import your application.
+Cách cơ bản nhất để chạy uWSGI là bảo nó khởi động một máy chủ HTTP
+và import ứng dụng của bạn.
 
 .. code-block:: text
 
@@ -66,8 +66,8 @@ and import your application.
     spawned uWSGI worker 4 (pid: x, cores: 1)
     spawned uWSGI http 1 (pid: x)
 
-If you're using the app factory pattern, you'll need to create a small
-Python file to create the app, then point uWSGI at that.
+Nếu bạn đang sử dụng mẫu app factory, bạn sẽ cần tạo một
+file Python nhỏ để tạo ứng dụng, sau đó trỏ uWSGI vào đó.
 
 .. code-block:: python
     :caption: ``wsgi.py``
@@ -80,54 +80,54 @@ Python file to create the app, then point uWSGI at that.
 
     $ uwsgi --http 127.0.0.1:8000 --master -p 4 -w wsgi:app
 
-The ``--http`` option starts an HTTP server at 127.0.0.1 port 8000. The
-``--master`` option specifies the standard worker manager. The ``-p``
-option starts 4 worker processes; a starting value could be ``CPU * 2``.
-The ``-w`` option tells uWSGI how to import your application
+Tùy chọn ``--http`` khởi động một máy chủ HTTP tại 127.0.0.1 cổng 8000.
+Tùy chọn ``--master`` chỉ định trình quản lý worker tiêu chuẩn. Tùy chọn ``-p``
+khởi động 4 worker process; một giá trị khởi đầu có thể là ``CPU * 2``.
+Tùy chọn ``-w`` bảo uWSGI cách import ứng dụng của bạn
 
 
-Binding Externally
-------------------
+Binding Bên ngoài
+-----------------
 
-uWSGI should not be run as root with the configuration shown in this doc
-because it would cause your application code to run as root, which is
-not secure. However, this means it will not be possible to bind to port
-80 or 443. Instead, a reverse proxy such as :doc:`nginx` or
-:doc:`apache-httpd` should be used in front of uWSGI. It is possible to
-run uWSGI as root securely, but that is beyond the scope of this doc.
+uWSGI không nên được chạy dưới quyền root với cấu hình được hiển thị trong tài liệu này
+vì nó sẽ khiến mã ứng dụng của bạn chạy dưới quyền root, điều này không
+an toàn. Tuy nhiên, điều này có nghĩa là sẽ không thể bind vào cổng
+80 hoặc 443. Thay vào đó, một reverse proxy như :doc:`nginx` hoặc
+:doc:`apache-httpd` nên được sử dụng phía trước uWSGI. Có thể
+chạy uWSGI dưới quyền root một cách an toàn, nhưng điều đó nằm ngoài phạm vi của tài liệu này.
 
-uWSGI has optimized integration with `Nginx uWSGI`_ and
-`Apache mod_proxy_uwsgi`_, and possibly other servers, instead of using
-a standard HTTP proxy. That configuration is beyond the scope of this
-doc, see the links for more information.
+uWSGI có tích hợp tối ưu hóa với `Nginx uWSGI`_ và
+`Apache mod_proxy_uwsgi`_, và có thể các máy chủ khác, thay vì sử dụng
+một proxy HTTP tiêu chuẩn. Cấu hình đó nằm ngoài phạm vi của tài liệu
+này, xem các liên kết để biết thêm thông tin.
 
 .. _Nginx uWSGI: https://uwsgi-docs.readthedocs.io/en/latest/Nginx.html
 .. _Apache mod_proxy_uwsgi: https://uwsgi-docs.readthedocs.io/en/latest/Apache.html#mod-proxy-uwsgi
 
-You can bind to all external IPs on a non-privileged port using the
-``--http 0.0.0.0:8000`` option. Don't do this when using a reverse proxy
-setup, otherwise it will be possible to bypass the proxy.
+Bạn có thể bind vào tất cả các IP bên ngoài trên một cổng không có đặc quyền bằng cách sử dụng
+tùy chọn ``--http 0.0.0.0:8000``. Đừng làm điều này khi sử dụng thiết lập reverse proxy,
+nếu không sẽ có thể bỏ qua proxy.
 
 .. code-block:: text
 
     $ uwsgi --http 0.0.0.0:8000 --master -p 4 -w wsgi:app
 
-``0.0.0.0`` is not a valid address to navigate to, you'd use a specific
-IP address in your browser.
+``0.0.0.0`` không phải là một địa chỉ hợp lệ để điều hướng đến, bạn sẽ sử dụng một
+địa chỉ IP cụ thể trong trình duyệt của mình.
 
 
-Async with gevent
------------------
+Async với gevent
+----------------
 
-The default sync worker is appropriate for many use cases. If you need
-asynchronous support, uWSGI provides a `gevent`_ worker. This is not the
-same as Python's ``async/await``, or the ASGI server spec. You must
-actually use gevent in your own code to see any benefit to using the
+Sync worker mặc định phù hợp cho nhiều trường hợp sử dụng. Nếu bạn cần
+hỗ trợ bất đồng bộ, uWSGI cung cấp một worker `gevent`_. Điều này không
+giống như ``async/await`` của Python, hoặc đặc tả máy chủ ASGI. Bạn phải
+thực sự sử dụng gevent trong mã của riêng bạn để thấy bất kỳ lợi ích nào khi sử dụng
 worker.
 
-When using gevent, greenlet>=1.0 is required, otherwise context locals
-such as ``request`` will not work as expected. When using PyPy,
-PyPy>=7.3.7 is required.
+Khi sử dụng gevent, yêu cầu greenlet>=1.0, nếu không các biến cục bộ ngữ cảnh
+như ``request`` sẽ không hoạt động như mong đợi. Khi sử dụng PyPy,
+yêu cầu PyPy>=7.3.7.
 
 .. code-block:: text
 

@@ -1,43 +1,43 @@
-Background Tasks with Celery
-============================
+Tác vụ Nền với Celery
+=======================
 
-If your application has a long running task, such as processing some uploaded data or
-sending email, you don't want to wait for it to finish during a request. Instead, use a
-task queue to send the necessary data to another process that will run the task in the
-background while the request returns immediately.
+Nếu ứng dụng của bạn có một tác vụ chạy lâu, chẳng hạn như xử lý một số dữ liệu đã tải lên hoặc
+gửi email, bạn không muốn đợi nó hoàn thành trong một request. Thay vào đó, hãy sử dụng một
+hàng đợi tác vụ để gửi dữ liệu cần thiết đến một process khác sẽ chạy tác vụ trong
+nền trong khi request trả về ngay lập tức.
 
-`Celery`_ is a powerful task queue that can be used for simple background tasks as well
-as complex multi-stage programs and schedules. This guide will show you how to configure
-Celery using Flask. Read Celery's `First Steps with Celery`_ guide to learn how to use
-Celery itself.
+`Celery`_ là một hàng đợi tác vụ mạnh mẽ có thể được sử dụng cho các tác vụ nền đơn giản cũng như
+các chương trình và lịch trình đa giai đoạn phức tạp. Hướng dẫn này sẽ chỉ cho bạn cách cấu hình
+Celery bằng Flask. Đọc hướng dẫn `First Steps with Celery`_ của Celery để tìm hiểu cách sử dụng
+chính Celery.
 
 .. _Celery: https://celery.readthedocs.io
 .. _First Steps with Celery: https://celery.readthedocs.io/en/latest/getting-started/first-steps-with-celery.html
 
-The Flask repository contains `an example <https://github.com/pallets/flask/tree/main/examples/celery>`_
-based on the information on this page, which also shows how to use JavaScript to submit
-tasks and poll for progress and results.
+Kho lưu trữ Flask chứa `một ví dụ <https://github.com/pallets/flask/tree/main/examples/celery>`_
+dựa trên thông tin trên trang này, cũng chỉ ra cách sử dụng JavaScript để gửi
+các tác vụ và thăm dò tiến trình và kết quả.
 
 
-Install
+Cài đặt
 -------
 
-Install Celery from PyPI, for example using pip:
+Cài đặt Celery từ PyPI, ví dụ sử dụng pip:
 
 .. code-block:: text
 
     $ pip install celery
 
 
-Integrate Celery with Flask
----------------------------
+Tích hợp Celery với Flask
+-------------------------
 
-You can use Celery without any integration with Flask, but it's convenient to configure
-it through Flask's config, and to let tasks access the Flask application.
+Bạn có thể sử dụng Celery mà không cần bất kỳ sự tích hợp nào với Flask, nhưng thật tiện lợi khi cấu hình
+nó thông qua config của Flask, và để các tác vụ truy cập vào ứng dụng Flask.
 
-Celery uses similar ideas to Flask, with a ``Celery`` app object that has configuration
-and registers tasks. While creating a Flask app, use the following code to create and
-configure a Celery app as well.
+Celery sử dụng các ý tưởng tương tự như Flask, với một đối tượng ứng dụng ``Celery`` có cấu hình
+và đăng ký các tác vụ. Trong khi tạo một ứng dụng Flask, hãy sử dụng mã sau để tạo và
+cấu hình một ứng dụng Celery nữa.
 
 .. code-block:: python
 
@@ -55,17 +55,17 @@ configure a Celery app as well.
         app.extensions["celery"] = celery_app
         return celery_app
 
-This creates and returns a ``Celery`` app object. Celery `configuration`_ is taken from
-the ``CELERY`` key in the Flask configuration. The Celery app is set as the default, so
-that it is seen during each request. The ``Task`` subclass automatically runs task
-functions with a Flask app context active, so that services like your database
-connections are available.
+Điều này tạo và trả về một đối tượng ứng dụng ``Celery``. `Cấu hình`_ Celery được lấy từ
+khóa ``CELERY`` trong cấu hình Flask. Ứng dụng Celery được đặt làm mặc định, để
+nó được nhìn thấy trong mỗi request. Lớp con ``Task`` tự động chạy các hàm
+tác vụ với một ngữ cảnh ứng dụng Flask đang hoạt động, để các dịch vụ như kết nối cơ sở dữ liệu
+của bạn có sẵn.
 
 .. _configuration: https://celery.readthedocs.io/en/stable/userguide/configuration.html
 
-Here's a basic ``example.py`` that configures Celery to use Redis for communication. We
-enable a result backend, but ignore results by default. This allows us to store results
-only for tasks where we care about the result.
+Dưới đây là một ``example.py`` cơ bản cấu hình Celery để sử dụng Redis để giao tiếp. Chúng tôi
+bật một result backend, nhưng bỏ qua kết quả theo mặc định. Điều này cho phép chúng tôi lưu trữ kết quả
+chỉ cho các tác vụ mà chúng tôi quan tâm đến kết quả.
 
 .. code-block:: python
 
@@ -81,14 +81,14 @@ only for tasks where we care about the result.
     )
     celery_app = celery_init_app(app)
 
-Point the ``celery worker`` command at this and it will find the ``celery_app`` object.
+Trỏ lệnh ``celery worker`` vào đây và nó sẽ tìm thấy đối tượng ``celery_app``.
 
 .. code-block:: text
 
     $ celery -A example worker --loglevel INFO
 
-You can also run the ``celery beat`` command to run tasks on a schedule. See Celery's
-docs for more information about defining schedules.
+Bạn cũng có thể chạy lệnh ``celery beat`` để chạy các tác vụ theo lịch trình. Xem tài liệu
+của Celery để biết thêm thông tin về việc định nghĩa lịch trình.
 
 .. code-block:: text
 
@@ -98,9 +98,9 @@ docs for more information about defining schedules.
 Application Factory
 -------------------
 
-When using the Flask application factory pattern, call the ``celery_init_app`` function
-inside the factory. It sets ``app.extensions["celery"]`` to the Celery app object, which
-can be used to get the Celery app from the Flask app returned by the factory.
+Khi sử dụng mẫu application factory của Flask, hãy gọi hàm ``celery_init_app``
+bên trong factory. Nó đặt ``app.extensions["celery"]`` thành đối tượng ứng dụng Celery, cái mà
+có thể được sử dụng để lấy ứng dụng Celery từ ứng dụng Flask được trả về bởi factory.
 
 .. code-block:: python
 
@@ -117,9 +117,9 @@ can be used to get the Celery app from the Flask app returned by the factory.
         celery_init_app(app)
         return app
 
-To use ``celery`` commands, Celery needs an app object, but that's no longer directly
-available. Create a ``make_celery.py`` file that calls the Flask app factory and gets
-the Celery app from the returned Flask app.
+Để sử dụng các lệnh ``celery``, Celery cần một đối tượng ứng dụng, nhưng điều đó không còn
+có sẵn trực tiếp nữa. Tạo một file ``make_celery.py`` gọi Flask app factory và lấy
+ứng dụng Celery từ ứng dụng Flask được trả về.
 
 .. code-block:: python
 
@@ -128,7 +128,7 @@ the Celery app from the returned Flask app.
     flask_app = create_app()
     celery_app = flask_app.extensions["celery"]
 
-Point the ``celery`` command to this file.
+Trỏ lệnh ``celery`` đến file này.
 
 .. code-block:: text
 
@@ -136,19 +136,19 @@ Point the ``celery`` command to this file.
     $ celery -A make_celery beat --loglevel INFO
 
 
-Defining Tasks
---------------
+Định nghĩa Tác vụ
+-----------------
 
-Using ``@celery_app.task`` to decorate task functions requires access to the
-``celery_app`` object, which won't be available when using the factory pattern. It also
-means that the decorated tasks are tied to the specific Flask and Celery app instances,
-which could be an issue during testing if you change configuration for a test.
+Sử dụng ``@celery_app.task`` để decorate các hàm tác vụ yêu cầu quyền truy cập vào
+đối tượng ``celery_app``, cái mà sẽ không có sẵn khi sử dụng mẫu factory. Nó cũng
+có nghĩa là các tác vụ được decorate bị ràng buộc với các instance ứng dụng Flask và Celery cụ thể,
+điều này có thể là một vấn đề trong quá trình kiểm thử nếu bạn thay đổi cấu hình cho một bài kiểm tra.
 
-Instead, use Celery's ``@shared_task`` decorator. This creates task objects that will
-access whatever the "current app" is, which is a similar concept to Flask's blueprints
-and app context. This is why we called ``celery_app.set_default()`` above.
+Thay vào đó, hãy sử dụng decorator ``@shared_task`` của Celery. Điều này tạo ra các đối tượng tác vụ sẽ
+truy cập bất cứ thứ gì là "ứng dụng hiện tại", một khái niệm tương tự như các blueprint
+và ngữ cảnh ứng dụng của Flask. Đây là lý do tại sao chúng ta đã gọi ``celery_app.set_default()`` ở trên.
 
-Here's an example task that adds two numbers together and returns the result.
+Dưới đây là một tác vụ ví dụ cộng hai số lại với nhau và trả về kết quả.
 
 .. code-block:: python
 
@@ -158,20 +158,20 @@ Here's an example task that adds two numbers together and returns the result.
     def add_together(a: int, b: int) -> int:
         return a + b
 
-Earlier, we configured Celery to ignore task results by default. Since we want to know
-the return value of this task, we set ``ignore_result=False``. On the other hand, a task
-that didn't need a result, such as sending an email, wouldn't set this.
+Trước đó, chúng ta đã cấu hình Celery để bỏ qua kết quả tác vụ theo mặc định. Vì chúng ta muốn biết
+giá trị trả về của tác vụ này, chúng ta đặt ``ignore_result=False``. Mặt khác, một tác vụ
+không cần kết quả, chẳng hạn như gửi email, sẽ không đặt điều này.
 
 
-Calling Tasks
--------------
+Gọi Tác vụ
+----------
 
-The decorated function becomes a task object with methods to call it in the background.
-The simplest way is to use the ``delay(*args, **kwargs)`` method. See Celery's docs for
-more methods.
+Hàm được decorate trở thành một đối tượng tác vụ với các phương thức để gọi nó trong nền.
+Cách đơn giản nhất là sử dụng phương thức ``delay(*args, **kwargs)``. Xem tài liệu của Celery để biết
+thêm các phương thức.
 
-A Celery worker must be running to run the task. Starting a worker is shown in the
-previous sections.
+Một worker Celery phải đang chạy để chạy tác vụ. Việc khởi động một worker được hiển thị trong
+các phần trước.
 
 .. code-block:: python
 
@@ -184,17 +184,17 @@ previous sections.
         result = add_together.delay(a, b)
         return {"result_id": result.id}
 
-The route doesn't get the task's result immediately. That would defeat the purpose by
-blocking the response. Instead, we return the running task's result id, which we can use
-later to get the result.
+Route không nhận được kết quả của tác vụ ngay lập tức. Điều đó sẽ đánh bại mục đích bằng cách
+chặn phản hồi. Thay vào đó, chúng ta trả về id kết quả của tác vụ đang chạy, cái mà chúng ta có thể sử dụng
+sau này để lấy kết quả.
 
 
-Getting Results
----------------
+Lấy Kết quả
+-----------
 
-To fetch the result of the task we started above, we'll add another route that takes the
-result id we returned before. We return whether the task is finished (ready), whether it
-finished successfully, and what the return value (or error) was if it is finished.
+Để lấy kết quả của tác vụ chúng ta đã bắt đầu ở trên, chúng ta sẽ thêm một route khác nhận
+id kết quả mà chúng ta đã trả về trước đó. Chúng ta trả về việc liệu tác vụ đã hoàn thành (sẵn sàng) chưa, liệu nó
+đã hoàn thành thành công chưa, và giá trị trả về (hoặc lỗi) là gì nếu nó đã hoàn thành.
 
 .. code-block:: python
 
@@ -209,28 +209,28 @@ finished successfully, and what the return value (or error) was if it is finishe
             "value": result.result if result.ready() else None,
         }
 
-Now you can start the task using the first route, then poll for the result using the
-second route. This keeps the Flask request workers from being blocked waiting for tasks
-to finish.
+Bây giờ bạn có thể bắt đầu tác vụ bằng cách sử dụng route đầu tiên, sau đó thăm dò kết quả bằng cách sử dụng
+route thứ hai. Điều này giữ cho các worker request của Flask không bị chặn chờ đợi các tác vụ
+hoàn thành.
 
-The Flask repository contains `an example <https://github.com/pallets/flask/tree/main/examples/celery>`_
-using JavaScript to submit tasks and poll for progress and results.
+Kho lưu trữ Flask chứa `một ví dụ <https://github.com/pallets/flask/tree/main/examples/celery>`_
+sử dụng JavaScript để gửi các tác vụ và thăm dò tiến trình và kết quả.
 
 
-Passing Data to Tasks
----------------------
+Truyền Dữ liệu cho Tác vụ
+-------------------------
 
-The "add" task above took two integers as arguments. To pass arguments to tasks, Celery
-has to serialize them to a format that it can pass to other processes. Therefore,
-passing complex objects is not recommended. For example, it would be impossible to pass
-a SQLAlchemy model object, since that object is probably not serializable and is tied to
-the session that queried it.
+Tác vụ "add" ở trên đã nhận hai số nguyên làm đối số. Để truyền các đối số cho các tác vụ, Celery
+phải tuần tự hóa chúng thành một định dạng mà nó có thể truyền cho các process khác. Do đó,
+việc truyền các đối tượng phức tạp không được khuyến nghị. Ví dụ, sẽ không thể truyền
+một đối tượng model SQLAlchemy, vì đối tượng đó có thể không tuần tự hóa được và bị ràng buộc với
+phiên làm việc đã truy vấn nó.
 
-Pass the minimal amount of data necessary to fetch or recreate any complex data within
-the task. Consider a task that will run when the logged in user asks for an archive of
-their data. The Flask request knows the logged in user, and has the user object queried
-from the database. It got that by querying the database for a given id, so the task can
-do the same thing. Pass the user's id rather than the user object.
+Truyền lượng dữ liệu tối thiểu cần thiết để lấy hoặc tạo lại bất kỳ dữ liệu phức tạp nào bên trong
+tác vụ. Hãy xem xét một tác vụ sẽ chạy khi người dùng đã đăng nhập yêu cầu một bản lưu trữ
+dữ liệu của họ. Request Flask biết người dùng đã đăng nhập, và có đối tượng người dùng được truy vấn
+từ cơ sở dữ liệu. Nó có được điều đó bằng cách truy vấn cơ sở dữ liệu cho một id nhất định, vì vậy tác vụ có thể
+làm điều tương tự. Truyền id của người dùng thay vì đối tượng người dùng.
 
 .. code-block:: python
 

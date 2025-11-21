@@ -1,6 +1,6 @@
 :orphan:
 
-The Request Context
-===================
+Request Context
+===============
 
-Obsolete, see :doc:`/appcontext` instead.
+Lỗi thời, xem :doc:`/appcontext` thay thế.

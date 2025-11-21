@@ -1,33 +1,33 @@
-Make the Project Installable
-============================
+Làm cho Dự án Có thể Cài đặt
+=============================
 
-Making your project installable means that you can build a *wheel* file and install that
-in another environment, just like you installed Flask in your project's environment.
-This makes deploying your project the same as installing any other library, so you're
-using all the standard Python tools to manage everything.
+Làm cho dự án của bạn có thể cài đặt có nghĩa là bạn có thể xây dựng một file *wheel* và cài đặt nó
+trong một môi trường khác, giống như bạn đã cài đặt Flask trong môi trường dự án của mình.
+Điều này làm cho việc triển khai dự án của bạn giống như cài đặt bất kỳ thư viện nào khác, vì vậy bạn đang
+sử dụng tất cả các công cụ Python tiêu chuẩn để quản lý mọi thứ.
 
-Installing also comes with other benefits that might not be obvious from
-the tutorial or as a new Python user, including:
+Cài đặt cũng đi kèm với các lợi ích khác có thể không rõ ràng từ
+tutorial hoặc với tư cách là người dùng Python mới, bao gồm:
 
-*   Currently, Python and Flask understand how to use the ``flaskr``
-    package only because you're running from your project's directory.
-    Installing means you can import it no matter where you run from.
+*   Hiện tại, Python và Flask hiểu cách sử dụng package ``flaskr``
+    chỉ vì bạn đang chạy từ thư mục dự án của mình.
+    Cài đặt có nghĩa là bạn có thể import nó bất kể bạn chạy từ đâu.
 
-*   You can manage your project's dependencies just like other packages
-    do, so ``pip install yourproject.whl`` installs them.
+*   Bạn có thể quản lý các dependency của dự án giống như các package
+    khác làm, vì vậy ``pip install yourproject.whl`` cài đặt chúng.
 
-*   Test tools can isolate your test environment from your development
-    environment.
+*   Các công cụ kiểm thử có thể cô lập môi trường kiểm thử của bạn khỏi môi trường phát triển
+    của bạn.
 
 .. note::
-    This is being introduced late in the tutorial, but in your future
-    projects you should always start with this.
+    Điều này được giới thiệu muộn trong tutorial, nhưng trong các
+    dự án tương lai của bạn, bạn nên luôn bắt đầu với điều này.
 
 
-Describe the Project
---------------------
+Mô tả Dự án
+-----------
 
-The ``pyproject.toml`` file describes your project and how to build it.
+File ``pyproject.toml`` mô tả dự án của bạn và cách xây dựng nó.
 
 .. code-block:: toml
     :caption: ``pyproject.toml``
@@ -44,27 +44,27 @@ The ``pyproject.toml`` file describes your project and how to build it.
     requires = ["flit_core<4"]
     build-backend = "flit_core.buildapi"
 
-See the official `Packaging tutorial <packaging tutorial_>`_ for more
-explanation of the files and options used.
+Xem `Hướng dẫn Packaging chính thức <packaging tutorial_>`_ để biết thêm
+giải thích về các file và tùy chọn được sử dụng.
 
 .. _packaging tutorial: https://packaging.python.org/tutorials/packaging-projects/
 
 
-Install the Project
--------------------
+Cài đặt Dự án
+-------------
 
-Use ``pip`` to install your project in the virtual environment.
+Sử dụng ``pip`` để cài đặt dự án của bạn trong môi trường ảo.
 
 .. code-block:: none
 
     $ pip install -e .
 
-This tells pip to find ``pyproject.toml`` in the current directory and install the
-project in *editable* or *development* mode. Editable mode means that as you make
-changes to your local code, you'll only need to re-install if you change the metadata
-about the project, such as its dependencies.
+Điều này cho pip biết tìm ``pyproject.toml`` trong thư mục hiện tại và cài đặt
+dự án ở chế độ *editable* hoặc *development*. Chế độ editable có nghĩa là khi bạn thực hiện
+các thay đổi đối với mã cục bộ của mình, bạn chỉ cần cài đặt lại nếu bạn thay đổi metadata
+về dự án, chẳng hạn như các dependency của nó.
 
-You can observe that the project is now installed with ``pip list``.
+Bạn có thể quan sát rằng dự án hiện đã được cài đặt với ``pip list``.
 
 .. code-block:: none
 
@@ -81,9 +81,9 @@ You can observe that the project is now installed with ``pip list``.
     pip            9.0.3
     Werkzeug       0.14.1
 
-Nothing changes from how you've been running your project so far.
-``--app`` is still set to ``flaskr`` and ``flask run`` still runs
-the application, but you can call it from anywhere, not just the
-``flask-tutorial`` directory.
+Không có gì thay đổi so với cách bạn đã chạy dự án của mình cho đến nay.
+``--app`` vẫn được đặt thành ``flaskr`` và ``flask run`` vẫn chạy
+ứng dụng, nhưng bạn có thể gọi nó từ bất kỳ đâu, không chỉ từ
+thư mục ``flask-tutorial``.
 
-Continue to :doc:`tests`.
+Tiếp tục đến :doc:`tests`.

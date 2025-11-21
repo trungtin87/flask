@@ -1,31 +1,31 @@
-Debugging Application Errors
-============================
+Gỡ lỗi Lỗi Ứng dụng
+===================
 
 
-In Production
--------------
+Trong Production
+----------------
 
-**Do not run the development server, or enable the built-in debugger, in
-a production environment.** The debugger allows executing arbitrary
-Python code from the browser. It's protected by a pin, but that should
-not be relied on for security.
+**Không chạy máy chủ phát triển, hoặc bật debugger tích hợp sẵn, trong
+môi trường production.** Debugger cho phép thực thi mã
+Python tùy ý từ trình duyệt. Nó được bảo vệ bởi một pin, nhưng điều đó không
+nên được dựa vào cho bảo mật.
 
-Use an error logging tool, such as Sentry, as described in
-:ref:`error-logging-tools`, or enable logging and notifications as
-described in :doc:`/logging`.
+Sử dụng một công cụ ghi log lỗi, chẳng hạn như Sentry, như được mô tả trong
+:ref:`error-logging-tools`, hoặc bật logging và thông báo như
+được mô tả trong :doc:`/logging`.
 
-If you have access to the server, you could add some code to start an
-external debugger if ``request.remote_addr`` matches your IP. Some IDE
-debuggers also have a remote mode so breakpoints on the server can be
-interacted with locally. Only enable a debugger temporarily.
+Nếu bạn có quyền truy cập vào máy chủ, bạn có thể thêm một số mã để khởi động một
+debugger bên ngoài nếu ``request.remote_addr`` khớp với IP của bạn. Một số IDE
+debugger cũng có chế độ remote để các breakpoint trên máy chủ có thể được
+tương tác cục bộ. Chỉ bật debugger tạm thời.
 
 
-The Built-In Debugger
+Debugger Tích hợp sẵn
 ---------------------
 
-The built-in Werkzeug development server provides a debugger which shows
-an interactive traceback in the browser when an unhandled error occurs
-during a request. This debugger should only be used during development.
+Máy chủ phát triển Werkzeug tích hợp sẵn cung cấp một debugger hiển thị
+một traceback tương tác trong trình duyệt khi một lỗi không được xử lý xảy ra
+trong một request. Debugger này chỉ nên được sử dụng trong quá trình phát triển.
 
 .. image:: _static/debugger.png
    :align: center
@@ -34,62 +34,62 @@ during a request. This debugger should only be used during development.
 
 .. warning::
 
-    The debugger allows executing arbitrary Python code from the
-    browser. It is protected by a pin, but still represents a major
-    security risk. Do not run the development server or debugger in a
-    production environment.
+    Debugger cho phép thực thi mã Python tùy ý từ
+    trình duyệt. Nó được bảo vệ bởi một pin, nhưng vẫn đại diện cho một
+    rủi ro bảo mật lớn. Không chạy máy chủ phát triển hoặc debugger trong
+    môi trường production.
 
-The debugger is enabled by default when the development server is run in debug mode.
+Debugger được bật theo mặc định khi máy chủ phát triển được chạy trong chế độ debug.
 
 .. code-block:: text
 
     $ flask --app hello run --debug
 
-When running from Python code, passing ``debug=True`` enables debug mode, which is
-mostly equivalent.
+Khi chạy từ mã Python, truyền ``debug=True`` bật chế độ debug, điều này
+hầu như tương đương.
 
 .. code-block:: python
 
     app.run(debug=True)
 
-:doc:`/server` and :doc:`/cli` have more information about running the debugger and
-debug mode. More information about the debugger can be found in the `Werkzeug
-documentation <https://werkzeug.palletsprojects.com/debug/>`__.
+:doc:`/server` và :doc:`/cli` có thêm thông tin về chạy debugger và
+chế độ debug. Thêm thông tin về debugger có thể được tìm thấy trong `tài liệu Werkzeug
+<https://werkzeug.palletsprojects.com/debug/>`__.
 
 
-External Debuggers
+Debugger Bên ngoài
 ------------------
 
-External debuggers, such as those provided by IDEs, can offer a more
-powerful debugging experience than the built-in debugger. They can also
-be used to step through code during a request before an error is raised,
-or if no error is raised. Some even have a remote mode so you can debug
-code running on another machine.
+Các debugger bên ngoài, chẳng hạn như những debugger được cung cấp bởi IDE, có thể cung cấp một
+trải nghiệm gỡ lỗi mạnh mẽ hơn so với debugger tích hợp sẵn. Chúng cũng có thể
+được sử dụng để step through mã trong một request trước khi một lỗi được đưa ra,
+hoặc nếu không có lỗi nào được đưa ra. Một số thậm chí có chế độ remote để bạn có thể gỡ lỗi
+mã đang chạy trên một máy khác.
 
-When using an external debugger, the app should still be in debug mode, otherwise Flask
-turns unhandled errors into generic 500 error pages. However, the built-in debugger and
-reloader should be disabled so they don't interfere with the external debugger.
+Khi sử dụng một debugger bên ngoài, ứng dụng vẫn nên ở chế độ debug, nếu không Flask
+chuyển các lỗi không được xử lý thành các trang lỗi 500 chung. Tuy nhiên, debugger tích hợp sẵn và
+reloader nên được tắt để chúng không can thiệp vào debugger bên ngoài.
 
 .. code-block:: text
 
     $ flask --app hello run --debug --no-debugger --no-reload
 
-When running from Python:
+Khi chạy từ Python:
 
 .. code-block:: python
 
     app.run(debug=True, use_debugger=False, use_reloader=False)
 
-Disabling these isn't required, an external debugger will continue to work with the
-following caveats.
+Tắt những thứ này không bắt buộc, một debugger bên ngoài sẽ tiếp tục hoạt động với các
+lưu ý sau.
 
--   If the built-in debugger is not disabled, it will catch unhandled exceptions before
-    the external debugger can.
--   If the reloader is not disabled, it could cause an unexpected reload if code changes
-    during a breakpoint.
--   The development server will still catch unhandled exceptions if the built-in
-    debugger is disabled, otherwise it would crash on any error. If you want that (and
-    usually you don't) pass ``passthrough_errors=True`` to ``app.run``.
+-   Nếu debugger tích hợp sẵn không bị tắt, nó sẽ bắt các exception không được xử lý trước khi
+    debugger bên ngoài có thể.
+-   Nếu reloader không bị tắt, nó có thể gây ra một reload không mong muốn nếu mã thay đổi
+    trong một breakpoint.
+-   Máy chủ phát triển vẫn sẽ bắt các exception không được xử lý nếu debugger tích hợp sẵn
+    bị tắt, nếu không nó sẽ crash trên bất kỳ lỗi nào. Nếu bạn muốn điều đó (và
+    thường thì bạn không muốn) hãy truyền ``passthrough_errors=True`` cho ``app.run``.
 
     .. code-block:: python
 

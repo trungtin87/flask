@@ -1,12 +1,12 @@
 ASGI
 ====
 
-If you'd like to use an ASGI server you will need to utilise WSGI to
-ASGI middleware. The asgiref
+Nếu bạn muốn sử dụng một máy chủ ASGI bạn sẽ cần sử dụng middleware WSGI sang
+ASGI. Adapter asgiref
 `WsgiToAsgi <https://github.com/django/asgiref#wsgi-to-asgi-adapter>`_
-adapter is recommended as it integrates with the event loop used for
-Flask's :ref:`async_await` support. You can use the adapter by
-wrapping the Flask app,
+được khuyến nghị vì nó tích hợp với vòng lặp sự kiện được sử dụng cho
+hỗ trợ :ref:`async_await` của Flask. Bạn có thể sử dụng adapter bằng cách
+bao bọc ứng dụng Flask,
 
 .. code-block:: python
 
@@ -19,7 +19,7 @@ wrapping the Flask app,
 
     asgi_app = WsgiToAsgi(app)
 
-and then serving the ``asgi_app`` with the ASGI server, e.g. using
+và sau đó phục vụ ``asgi_app`` với máy chủ ASGI, ví dụ sử dụng
 `Hypercorn <https://github.com/pgjones/hypercorn>`_,
 
 .. sourcecode:: text

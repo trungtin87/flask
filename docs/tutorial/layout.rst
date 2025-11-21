@@ -1,23 +1,23 @@
-Project Layout
-==============
+Bố cục Dự án
+============
 
-Create a project directory and enter it:
+Tạo một thư mục dự án và vào đó:
 
 .. code-block:: none
 
     $ mkdir flask-tutorial
     $ cd flask-tutorial
 
-Then follow the :doc:`installation instructions </installation>` to set
-up a Python virtual environment and install Flask for your project.
+Sau đó làm theo :doc:`hướng dẫn cài đặt </installation>` để thiết lập
+một môi trường ảo Python và cài đặt Flask cho dự án của bạn.
 
-The tutorial will assume you're working from the ``flask-tutorial``
-directory from now on. The file names at the top of each code block are
-relative to this directory.
+Tutorial sẽ giả định bạn đang làm việc từ thư mục ``flask-tutorial``
+từ bây giờ. Tên file ở đầu mỗi khối mã là
+tương đối với thư mục này.
 
 ----
 
-A Flask application can be as simple as a single file.
+Một ứng dụng Flask có thể đơn giản như một file duy nhất.
 
 .. code-block:: python
     :caption: ``hello.py``
@@ -31,27 +31,27 @@ A Flask application can be as simple as a single file.
     def hello():
         return 'Hello, World!'
 
-However, as a project gets bigger, it becomes overwhelming to keep all
-the code in one file. Python projects use *packages* to organize code
-into multiple modules that can be imported where needed, and the
-tutorial will do this as well.
+Tuy nhiên, khi một dự án trở nên lớn hơn, việc giữ tất cả
+mã trong một file trở nên quá tải. Các dự án Python sử dụng *package* để tổ chức mã
+thành nhiều module có thể được import khi cần, và
+tutorial cũng sẽ làm điều này.
 
-The project directory will contain:
+Thư mục dự án sẽ chứa:
 
-* ``flaskr/``, a Python package containing your application code and
-  files.
-* ``tests/``, a directory containing test modules.
-* ``.venv/``, a Python virtual environment where Flask and other
-  dependencies are installed.
-* Installation files telling Python how to install your project.
-* Version control config, such as `git`_. You should make a habit of
-  using some type of version control for all your projects, no matter
-  the size.
-* Any other project files you might add in the future.
+* ``flaskr/``, một package Python chứa mã ứng dụng và
+  file của bạn.
+* ``tests/``, một thư mục chứa các module kiểm thử.
+* ``.venv/``, một môi trường ảo Python nơi Flask và các
+  dependency khác được cài đặt.
+* Các file cài đặt cho Python biết cách cài đặt dự án của bạn.
+* Cấu hình version control, chẳng hạn như `git`_. Bạn nên tạo thói quen
+  sử dụng một số loại version control cho tất cả các dự án của mình, bất kể
+  kích thước.
+* Bất kỳ file dự án nào khác bạn có thể thêm trong tương lai.
 
 .. _git: https://git-scm.com/
 
-By the end, your project layout will look like this:
+Đến cuối, bố cục dự án của bạn sẽ trông như thế này:
 
 .. code-block:: none
 
@@ -84,10 +84,10 @@ By the end, your project layout will look like this:
     ├── pyproject.toml
     └── MANIFEST.in
 
-If you're using version control, the following files that are generated
-while running your project should be ignored. There may be other files
-based on the editor you use. In general, ignore files that you didn't
-write. For example, with git:
+Nếu bạn đang sử dụng version control, các file sau được tạo ra
+trong khi chạy dự án của bạn nên được bỏ qua. Có thể có các file khác
+dựa trên trình soạn thảo bạn sử dụng. Nói chung, hãy bỏ qua các file mà bạn không
+viết. Ví dụ, với git:
 
 .. code-block:: none
     :caption: ``.gitignore``
@@ -107,4 +107,4 @@ write. For example, with git:
     build/
     *.egg-info/
 
-Continue to :doc:`factory`.
+Tiếp tục đến :doc:`factory`.

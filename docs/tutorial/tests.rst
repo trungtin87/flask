@@ -3,28 +3,28 @@
 Test Coverage
 =============
 
-Writing unit tests for your application lets you check that the code
-you wrote works the way you expect. Flask provides a test client that
-simulates requests to the application and returns the response data.
+Viết các unit test cho ứng dụng của bạn cho phép bạn kiểm tra rằng mã
+bạn đã viết hoạt động theo cách bạn mong đợi. Flask cung cấp một test client
+mô phỏng các request đến ứng dụng và trả về dữ liệu phản hồi.
 
-You should test as much of your code as possible. Code in functions only
-runs when the function is called, and code in branches, such as ``if``
-blocks, only runs when the condition is met. You want to make sure that
-each function is tested with data that covers each branch.
+Bạn nên kiểm tra càng nhiều mã của mình càng tốt. Mã trong các hàm chỉ
+chạy khi hàm được gọi, và mã trong các nhánh, chẳng hạn như các khối ``if``
+, chỉ chạy khi điều kiện được đáp ứng. Bạn muốn đảm bảo rằng
+mỗi hàm được kiểm tra với dữ liệu bao phủ mỗi nhánh.
 
-The closer you get to 100% coverage, the more comfortable you can be
-that making a change won't unexpectedly change other behavior. However,
-100% coverage doesn't guarantee that your application doesn't have bugs.
-In particular, it doesn't test how the user interacts with the
-application in the browser. Despite this, test coverage is an important
-tool to use during development.
+Càng gần đến 100% coverage, bạn càng có thể thoải mái
+rằng việc thực hiện một thay đổi sẽ không thay đổi hành vi khác một cách bất ngờ. Tuy nhiên,
+100% coverage không đảm bảo rằng ứng dụng của bạn không có lỗi.
+Đặc biệt, nó không kiểm tra cách người dùng tương tác với
+ứng dụng trong trình duyệt. Mặc dù vậy, test coverage là một công cụ
+quan trọng để sử dụng trong quá trình phát triển.
 
 .. note::
-    This is being introduced late in the tutorial, but in your future
-    projects you should test as you develop.
+    Điều này được giới thiệu muộn trong tutorial, nhưng trong các
+    dự án tương lai của bạn, bạn nên kiểm tra khi bạn phát triển.
 
-You'll use `pytest`_ and `coverage`_ to test and measure your code.
-Install them both:
+Bạn sẽ sử dụng `pytest`_ và `coverage`_ để kiểm tra và đo lường mã của bạn.
+Cài đặt cả hai:
 
 .. code-block:: none
 
@@ -34,19 +34,19 @@ Install them both:
 .. _coverage: https://coverage.readthedocs.io/
 
 
-Setup and Fixtures
-------------------
+Thiết lập và Fixture
+--------------------
 
-The test code is located in the ``tests`` directory. This directory is
-*next to* the ``flaskr`` package, not inside it. The
-``tests/conftest.py`` file contains setup functions called *fixtures*
-that each test will use. Tests are in Python modules that start with
-``test_``, and each test function in those modules also starts with
+Mã kiểm tra nằm trong thư mục ``tests``. Thư mục này nằm
+*bên cạnh* package ``flaskr``, không phải bên trong nó.
+File ``tests/conftest.py`` chứa các hàm thiết lập được gọi là *fixture*
+mà mỗi bài kiểm tra sẽ sử dụng. Các bài kiểm tra nằm trong các module Python bắt đầu bằng
+``test_``, và mỗi hàm kiểm tra trong các module đó cũng bắt đầu bằng
 ``test_``.
 
-Each test will create a new temporary database file and populate some
-data that will be used in the tests. Write a SQL file to insert that
-data.
+Mỗi bài kiểm tra sẽ tạo một file cơ sở dữ liệu tạm thời mới và điền một số
+dữ liệu sẽ được sử dụng trong các bài kiểm tra. Viết một file SQL để chèn
+dữ liệu đó.
 
 .. code-block:: sql
     :caption: ``tests/data.sql``
@@ -60,9 +60,9 @@ data.
     VALUES
       ('test title', 'test' || x'0a' || 'body', 1, '2018-01-01 00:00:00');
 
-The ``app`` fixture will call the factory and pass ``test_config`` to
-configure the application and database for testing instead of using your
-local development configuration.
+Fixture ``app`` sẽ gọi factory và truyền ``test_config`` để
+cấu hình ứng dụng và cơ sở dữ liệu cho kiểm tra thay vì sử dụng
+cấu hình phát triển cục bộ của bạn.
 
 .. code-block:: python
     :caption: ``tests/conftest.py``
@@ -106,43 +106,43 @@ local development configuration.
     def runner(app):
         return app.test_cli_runner()
 
-:func:`tempfile.mkstemp` creates and opens a temporary file, returning
-the file descriptor and the path to it. The ``DATABASE`` path is
-overridden so it points to this temporary path instead of the instance
-folder. After setting the path, the database tables are created and the
-test data is inserted. After the test is over, the temporary file is
-closed and removed.
+:func:`tempfile.mkstemp` tạo và mở một file tạm thời, trả về
+file descriptor và đường dẫn đến nó. Đường dẫn ``DATABASE`` được
+ghi đè để nó trỏ đến đường dẫn tạm thời này thay vì thư mục
+instance. Sau khi đặt đường dẫn, các bảng cơ sở dữ liệu được tạo và
+dữ liệu kiểm tra được chèn vào. Sau khi bài kiểm tra kết thúc, file tạm thời được
+đóng và xóa.
 
-:data:`TESTING` tells Flask that the app is in test mode. Flask changes
-some internal behavior so it's easier to test, and other extensions can
-also use the flag to make testing them easier.
+:data:`TESTING` cho Flask biết rằng ứng dụng đang ở chế độ kiểm tra. Flask thay đổi
+một số hành vi nội bộ để dễ kiểm tra hơn, và các extension khác cũng có thể
+sử dụng cờ này để làm cho việc kiểm tra chúng dễ dàng hơn.
 
-The ``client`` fixture calls
-:meth:`app.test_client() <Flask.test_client>` with the application
-object created by the ``app`` fixture. Tests will use the client to make
-requests to the application without running the server.
+Fixture ``client`` gọi
+:meth:`app.test_client() <Flask.test_client>` với đối tượng ứng dụng
+được tạo bởi fixture ``app``. Các bài kiểm tra sẽ sử dụng client để thực hiện
+các request đến ứng dụng mà không cần chạy máy chủ.
 
-The ``runner`` fixture is similar to ``client``.
-:meth:`app.test_cli_runner() <Flask.test_cli_runner>` creates a runner
-that can call the Click commands registered with the application.
+Fixture ``runner`` tương tự như ``client``.
+:meth:`app.test_cli_runner() <Flask.test_cli_runner>` tạo một runner
+có thể gọi các lệnh Click được đăng ký với ứng dụng.
 
-Pytest uses fixtures by matching their function names with the names
-of arguments in the test functions. For example, the ``test_hello``
-function you'll write next takes a ``client`` argument. Pytest matches
-that with the ``client`` fixture function, calls it, and passes the
-returned value to the test function.
+Pytest sử dụng các fixture bằng cách khớp tên hàm của chúng với tên
+của các đối số trong các hàm kiểm tra. Ví dụ, hàm ``test_hello``
+bạn sẽ viết tiếp theo nhận một đối số ``client``. Pytest khớp
+điều đó với hàm fixture ``client``, gọi nó, và truyền
+giá trị được trả về cho hàm kiểm tra.
 
 
 Factory
 -------
 
-There's not much to test about the factory itself. Most of the code will
-be executed for each test already, so if something fails the other tests
-will notice.
+Không có nhiều điều để kiểm tra về chính factory. Hầu hết mã sẽ
+được thực thi cho mỗi bài kiểm tra rồi, vì vậy nếu có gì đó thất bại, các bài kiểm tra khác
+sẽ nhận thấy.
 
-The only behavior that can change is passing test config. If config is
-not passed, there should be some default configuration, otherwise the
-configuration should be overridden.
+Hành vi duy nhất có thể thay đổi là truyền test config. Nếu config không
+được truyền, nên có một số cấu hình mặc định, nếu không
+cấu hình nên được ghi đè.
 
 .. code-block:: python
     :caption: ``tests/test_factory.py``
@@ -159,17 +159,17 @@ configuration should be overridden.
         response = client.get('/hello')
         assert response.data == b'Hello, World!'
 
-You added the ``hello`` route as an example when writing the factory at
-the beginning of the tutorial. It returns "Hello, World!", so the test
-checks that the response data matches.
+Bạn đã thêm route ``hello`` làm ví dụ khi viết factory ở
+đầu tutorial. Nó trả về "Hello, World!", vì vậy bài kiểm tra
+kiểm tra rằng dữ liệu phản hồi khớp.
 
 
-Database
---------
+Cơ sở dữ liệu
+-------------
 
-Within an application context, ``get_db`` should return the same
-connection each time it's called. After the context, the connection
-should be closed.
+Trong một application context, ``get_db`` nên trả về cùng một
+kết nối mỗi khi nó được gọi. Sau context, kết nối
+nên được đóng.
 
 .. code-block:: python
     :caption: ``tests/test_db.py``
@@ -190,8 +190,8 @@ should be closed.
 
         assert 'closed' in str(e.value)
 
-The ``init-db`` command should call the ``init_db`` function and output
-a message.
+Lệnh ``init-db`` nên gọi hàm ``init_db`` và xuất ra
+một tin nhắn.
 
 .. code-block:: python
     :caption: ``tests/test_db.py``
@@ -208,20 +208,20 @@ a message.
         assert 'Initialized' in result.output
         assert Recorder.called
 
-This test uses Pytest's ``monkeypatch`` fixture to replace the
-``init_db`` function with one that records that it's been called. The
-``runner`` fixture you wrote above is used to call the ``init-db``
-command by name.
+Bài kiểm tra này sử dụng fixture ``monkeypatch`` của Pytest để thay thế hàm
+``init_db`` bằng một hàm ghi lại rằng nó đã được gọi.
+Fixture ``runner`` bạn đã viết ở trên được sử dụng để gọi lệnh ``init-db``
+theo tên.
 
 
-Authentication
---------------
+Xác thực
+--------
 
-For most of the views, a user needs to be logged in. The easiest way to
-do this in tests is to make a ``POST`` request to the ``login`` view
-with the client. Rather than writing that out every time, you can write
-a class with methods to do that, and use a fixture to pass it the client
-for each test.
+Đối với hầu hết các view, một người dùng cần phải đăng nhập. Cách dễ nhất để
+làm điều này trong các bài kiểm tra là thực hiện một request ``POST`` đến view ``login``
+với client. Thay vì viết điều đó ra mỗi lần, bạn có thể viết
+một class với các phương thức để làm điều đó, và sử dụng một fixture để truyền nó client
+cho mỗi bài kiểm tra.
 
 .. code-block:: python
     :caption: ``tests/conftest.py``
@@ -244,14 +244,14 @@ for each test.
     def auth(client):
         return AuthActions(client)
 
-With the ``auth`` fixture, you can call ``auth.login()`` in a test to
-log in as the ``test`` user, which was inserted as part of the test
-data in the ``app`` fixture.
+Với fixture ``auth``, bạn có thể gọi ``auth.login()`` trong một bài kiểm tra để
+đăng nhập với tư cách là người dùng ``test``, đã được chèn vào như một phần của
+dữ liệu kiểm tra trong fixture ``app``.
 
-The ``register`` view should render successfully on ``GET``. On ``POST``
-with valid form data, it should redirect to the login URL and the user's
-data should be in the database. Invalid data should display error
-messages.
+View ``register`` nên render thành công trên ``GET``. Trên ``POST``
+với dữ liệu form hợp lệ, nó nên chuyển hướng đến URL đăng nhập và dữ liệu của người dùng
+nên có trong cơ sở dữ liệu. Dữ liệu không hợp lệ nên hiển thị các thông báo
+lỗi.
 
 .. code-block:: python
     :caption: ``tests/test_auth.py``
@@ -286,32 +286,32 @@ messages.
         )
         assert message in response.data
 
-:meth:`client.get() <werkzeug.test.Client.get>` makes a ``GET`` request
-and returns the :class:`Response` object returned by Flask. Similarly,
-:meth:`client.post() <werkzeug.test.Client.post>` makes a ``POST``
-request, converting the ``data`` dict into form data.
+:meth:`client.get() <werkzeug.test.Client.get>` thực hiện một request ``GET``
+và trả về đối tượng :class:`Response` được trả về bởi Flask. Tương tự,
+:meth:`client.post() <werkzeug.test.Client.post>` thực hiện một request ``POST``
+, chuyển đổi dict ``data`` thành dữ liệu form.
 
-To test that the page renders successfully, a simple request is made and
-checked for a ``200 OK`` :attr:`~Response.status_code`. If
-rendering failed, Flask would return a ``500 Internal Server Error``
-code.
+Để kiểm tra rằng trang render thành công, một request đơn giản được thực hiện và
+kiểm tra mã :attr:`~Response.status_code` ``200 OK``. Nếu
+rendering thất bại, Flask sẽ trả về mã ``500 Internal Server Error``
+.
 
-:attr:`~Response.headers` will have a ``Location`` header with the login
-URL when the register view redirects to the login view.
+:attr:`~Response.headers` sẽ có một header ``Location`` với URL đăng nhập
+khi view register chuyển hướng đến view login.
 
-:attr:`~Response.data` contains the body of the response as bytes. If
-you expect a certain value to render on the page, check that it's in
-``data``. Bytes must be compared to bytes. If you want to compare text,
-use :meth:`get_data(as_text=True) <werkzeug.wrappers.Response.get_data>`
-instead.
+:attr:`~Response.data` chứa nội dung phản hồi dưới dạng byte. Nếu
+bạn mong đợi một giá trị nhất định được render trên trang, hãy kiểm tra rằng nó có trong
+``data``. Byte phải được so sánh với byte. Nếu bạn muốn so sánh văn bản,
+hãy sử dụng :meth:`get_data(as_text=True) <werkzeug.wrappers.Response.get_data>`
+thay thế.
 
-``pytest.mark.parametrize`` tells Pytest to run the same test function
-with different arguments. You use it here to test different invalid
-input and error messages without writing the same code three times.
+``pytest.mark.parametrize`` cho Pytest biết chạy cùng một hàm kiểm tra
+với các đối số khác nhau. Bạn sử dụng nó ở đây để kiểm tra các đầu vào không hợp lệ
+và thông báo lỗi khác nhau mà không cần viết cùng một mã ba lần.
 
-The tests for the ``login`` view are very similar to those for
-``register``. Rather than testing the data in the database,
-:data:`.session` should have ``user_id`` set after logging in.
+Các bài kiểm tra cho view ``login`` rất giống với các bài kiểm tra cho
+``register``. Thay vì kiểm tra dữ liệu trong cơ sở dữ liệu,
+:data:`.session` nên có ``user_id`` được đặt sau khi đăng nhập.
 
 .. code-block:: python
     :caption: ``tests/test_auth.py``
@@ -335,12 +335,12 @@ The tests for the ``login`` view are very similar to those for
         response = auth.login(username, password)
         assert message in response.data
 
-Using ``client`` in a ``with`` block allows accessing context variables
-such as :data:`.session` after the response is returned. Normally,
-accessing ``session`` outside of a request would raise an error.
+Sử dụng ``client`` trong một khối ``with`` cho phép truy cập các biến context
+chẳng hạn như :data:`.session` sau khi phản hồi được trả về. Thông thường,
+truy cập ``session`` bên ngoài một request sẽ đưa ra lỗi.
 
-Testing ``logout`` is the opposite of ``login``. :data:`.session` should
-not contain ``user_id`` after logging out.
+Kiểm tra ``logout`` là ngược lại của ``login``. :data:`.session` không nên
+chứa ``user_id`` sau khi đăng xuất.
 
 .. code-block:: python
     :caption: ``tests/test_auth.py``
@@ -356,17 +356,17 @@ not contain ``user_id`` after logging out.
 Blog
 ----
 
-All the blog views use the ``auth`` fixture you wrote earlier. Call
-``auth.login()`` and subsequent requests from the client will be logged
-in as the ``test`` user.
+Tất cả các view blog sử dụng fixture ``auth`` bạn đã viết trước đó. Gọi
+``auth.login()`` và các request tiếp theo từ client sẽ được đăng nhập
+với tư cách là người dùng ``test``.
 
-The ``index`` view should display information about the post that was
-added with the test data. When logged in as the author, there should be
-a link to edit the post.
+View ``index`` nên hiển thị thông tin về bài viết đã được
+thêm vào với dữ liệu kiểm tra. Khi đăng nhập với tư cách là tác giả, nên có
+một liên kết để chỉnh sửa bài viết.
 
-You can also test some more authentication behavior while testing the
-``index`` view. When not logged in, each page shows links to log in or
-register. When logged in, there's a link to log out.
+Bạn cũng có thể kiểm tra một số hành vi xác thực khác trong khi kiểm tra
+view ``index``. Khi chưa đăng nhập, mỗi trang hiển thị các liên kết để đăng nhập hoặc
+đăng ký. Khi đã đăng nhập, có một liên kết để đăng xuất.
 
 .. code-block:: python
     :caption: ``tests/test_blog.py``
@@ -388,11 +388,11 @@ register. When logged in, there's a link to log out.
         assert b'test\nbody' in response.data
         assert b'href="/1/update"' in response.data
 
-A user must be logged in to access the ``create``, ``update``, and
-``delete`` views. The logged in user must be the author of the post to
-access ``update`` and ``delete``, otherwise a ``403 Forbidden`` status
-is returned. If a ``post`` with the given ``id`` doesn't exist,
-``update`` and ``delete`` should return ``404 Not Found``.
+Một người dùng phải đăng nhập để truy cập các view ``create``, ``update``, và
+``delete``. Người dùng đã đăng nhập phải là tác giả của bài viết để
+truy cập ``update`` và ``delete``, nếu không trạng thái ``403 Forbidden``
+được trả về. Nếu một ``post`` với ``id`` đã cho không tồn tại,
+``update`` và ``delete`` nên trả về ``404 Not Found``.
 
 .. code-block:: python
     :caption: ``tests/test_blog.py``
@@ -408,17 +408,17 @@ is returned. If a ``post`` with the given ``id`` doesn't exist,
 
 
     def test_author_required(app, client, auth):
-        # change the post author to another user
+        # thay đổi tác giả bài viết thành người dùng khác
         with app.app_context():
             db = get_db()
             db.execute('UPDATE post SET author_id = 2 WHERE id = 1')
             db.commit()
 
         auth.login()
-        # current user can't modify other user's post
+        # người dùng hiện tại không thể sửa đổi bài viết của người dùng khác
         assert client.post('/1/update').status_code == 403
         assert client.post('/1/delete').status_code == 403
-        # current user doesn't see edit link
+        # người dùng hiện tại không thấy liên kết chỉnh sửa
         assert b'href="/1/update"' not in client.get('/').data
 
 
@@ -430,11 +430,11 @@ is returned. If a ``post`` with the given ``id`` doesn't exist,
         auth.login()
         assert client.post(path).status_code == 404
 
-The ``create`` and ``update`` views should render and return a
-``200 OK`` status for a ``GET`` request. When valid data is sent in a
-``POST`` request, ``create`` should insert the new post data into the
-database, and ``update`` should modify the existing data. Both pages
-should show an error message on invalid data.
+Các view ``create`` và ``update`` nên render và trả về trạng thái
+``200 OK`` cho một request ``GET``. Khi dữ liệu hợp lệ được gửi trong một
+request ``POST``, ``create`` nên chèn dữ liệu bài viết mới vào
+cơ sở dữ liệu, và ``update`` nên sửa đổi dữ liệu hiện có. Cả hai trang
+nên hiển thị thông báo lỗi trên dữ liệu không hợp lệ.
 
 .. code-block:: python
     :caption: ``tests/test_blog.py``
@@ -470,8 +470,8 @@ should show an error message on invalid data.
         response = client.post(path, data={'title': '', 'body': ''})
         assert b'Title is required.' in response.data
 
-The ``delete`` view should redirect to the index URL and the post should
-no longer exist in the database.
+View ``delete`` nên chuyển hướng đến URL index và bài viết không nên
+còn tồn tại trong cơ sở dữ liệu nữa.
 
 .. code-block:: python
     :caption: ``tests/test_blog.py``
@@ -487,11 +487,11 @@ no longer exist in the database.
             assert post is None
 
 
-Running the Tests
------------------
+Chạy Các Bài kiểm tra
+---------------------
 
-Some extra configuration, which is not required but makes running tests with coverage
-less verbose, can be added to the project's ``pyproject.toml`` file.
+Một số cấu hình bổ sung, không bắt buộc nhưng làm cho việc chạy các bài kiểm tra với coverage
+ít dài dòng hơn, có thể được thêm vào file ``pyproject.toml`` của dự án.
 
 .. code-block:: toml
     :caption: ``pyproject.toml``
@@ -503,8 +503,8 @@ less verbose, can be added to the project's ``pyproject.toml`` file.
     branch = true
     source = ["flaskr"]
 
-To run the tests, use the ``pytest`` command. It will find and run all
-the test functions you've written.
+Để chạy các bài kiểm tra, sử dụng lệnh ``pytest``. Nó sẽ tìm và chạy tất cả
+các hàm kiểm tra bạn đã viết.
 
 .. code-block:: none
 
@@ -522,17 +522,17 @@ the test functions you've written.
 
     ====================== 24 passed in 0.64 seconds =======================
 
-If any tests fail, pytest will show the error that was raised. You can
-run ``pytest -v`` to get a list of each test function rather than dots.
+Nếu bất kỳ bài kiểm tra nào thất bại, pytest sẽ hiển thị lỗi đã được đưa ra. Bạn có thể
+chạy ``pytest -v`` để có danh sách từng hàm kiểm tra thay vì các dấu chấm.
 
-To measure the code coverage of your tests, use the ``coverage`` command
-to run pytest instead of running it directly.
+Để đo lường code coverage của các bài kiểm tra của bạn, sử dụng lệnh ``coverage``
+để chạy pytest thay vì chạy nó trực tiếp.
 
 .. code-block:: none
 
     $ coverage run -m pytest
 
-You can either view a simple coverage report in the terminal:
+Bạn có thể xem một báo cáo coverage đơn giản trong terminal:
 
 .. code-block:: none
 
@@ -547,13 +547,13 @@ You can either view a simple coverage report in the terminal:
     ------------------------------------------------------
     TOTAL                  153      0     44      0   100%
 
-An HTML report allows you to see which lines were covered in each file:
+Một báo cáo HTML cho phép bạn xem các dòng nào đã được bao phủ trong mỗi file:
 
 .. code-block:: none
 
     $ coverage html
 
-This generates files in the ``htmlcov`` directory. Open
-``htmlcov/index.html`` in your browser to see the report.
+Điều này tạo ra các file trong thư mục ``htmlcov``. Mở
+``htmlcov/index.html`` trong trình duyệt của bạn để xem báo cáo.
 
-Continue to :doc:`deploy`.
+Tiếp tục đến :doc:`deploy`.

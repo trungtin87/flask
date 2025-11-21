@@ -1,21 +1,21 @@
 .. currentmodule:: flask
 
-Blog Blueprint
+Blueprint Blog
 ==============
 
-You'll use the same techniques you learned about when writing the
-authentication blueprint to write the blog blueprint. The blog should
-list all posts, allow logged in users to create posts, and allow the
-author of a post to edit or delete it.
+Bạn sẽ sử dụng các kỹ thuật tương tự mà bạn đã học khi viết
+blueprint xác thực để viết blueprint blog. Blog nên
+liệt kê tất cả các bài viết, cho phép người dùng đã đăng nhập tạo bài viết, và cho phép
+tác giả của một bài viết chỉnh sửa hoặc xóa nó.
 
-As you implement each view, keep the development server running. As you
-save your changes, try going to the URL in your browser and testing them
-out.
+Khi bạn triển khai mỗi view, hãy giữ máy chủ phát triển chạy. Khi bạn
+lưu các thay đổi của mình, hãy thử truy cập URL trong trình duyệt và kiểm tra chúng
+.
 
-The Blueprint
--------------
+Blueprint
+---------
 
-Define the blueprint and register it in the application factory.
+Định nghĩa blueprint và đăng ký nó trong application factory.
 
 .. code-block:: python
     :caption: ``flaskr/blog.py``
@@ -30,9 +30,9 @@ Define the blueprint and register it in the application factory.
 
     bp = Blueprint('blog', __name__)
 
-Import and register the blueprint from the factory using
-:meth:`app.register_blueprint() <Flask.register_blueprint>`. Place the
-new code at the end of the factory function before returning the app.
+Import và đăng ký blueprint từ factory bằng cách sử dụng
+:meth:`app.register_blueprint() <Flask.register_blueprint>`. Đặt
+mã mới ở cuối hàm factory trước khi trả về ứng dụng.
 
 .. code-block:: python
     :caption: ``flaskr/__init__.py``
@@ -48,30 +48,30 @@ new code at the end of the factory function before returning the app.
         return app
 
 
-Unlike the auth blueprint, the blog blueprint does not have a
-``url_prefix``. So the ``index`` view will be at ``/``, the ``create``
-view at ``/create``, and so on. The blog is the main feature of Flaskr,
-so it makes sense that the blog index will be the main index.
+Không giống như blueprint auth, blueprint blog không có
+``url_prefix``. Vì vậy view ``index`` sẽ ở ``/``, view ``create``
+ở ``/create``, v.v. Blog là tính năng chính của Flaskr,
+vì vậy hợp lý khi index blog sẽ là index chính.
 
-However, the endpoint for the ``index`` view defined below will be
-``blog.index``. Some of the authentication views referred to a plain
-``index`` endpoint. :meth:`app.add_url_rule() <Flask.add_url_rule>`
-associates the endpoint name ``'index'`` with the ``/`` url so that
-``url_for('index')`` or ``url_for('blog.index')`` will both work,
-generating the same ``/`` URL either way.
+Tuy nhiên, endpoint cho view ``index`` được định nghĩa bên dưới sẽ là
+``blog.index``. Một số view xác thực đã tham chiếu đến một endpoint
+``index`` đơn giản. :meth:`app.add_url_rule() <Flask.add_url_rule>`
+liên kết tên endpoint ``'index'`` với url ``/`` để
+``url_for('index')`` hoặc ``url_for('blog.index')`` đều hoạt động,
+tạo ra cùng một URL ``/`` theo cả hai cách.
 
-In another application you might give the blog blueprint a
-``url_prefix`` and define a separate ``index`` view in the application
-factory, similar to the ``hello`` view. Then the ``index`` and
-``blog.index`` endpoints and URLs would be different.
+Trong một ứng dụng khác, bạn có thể cung cấp cho blueprint blog một
+``url_prefix`` và định nghĩa một view ``index`` riêng biệt trong application
+factory, tương tự như view ``hello``. Sau đó các endpoint và URL ``index`` và
+``blog.index`` sẽ khác nhau.
 
 
 Index
 -----
 
-The index will show all of the posts, most recent first. A ``JOIN`` is
-used so that the author information from the ``user`` table is
-available in the result.
+Index sẽ hiển thị tất cả các bài viết, gần đây nhất trước. Một ``JOIN`` được
+sử dụng để thông tin tác giả từ bảng ``user`` có sẵn
+trong kết quả.
 
 .. code-block:: python
     :caption: ``flaskr/blog.py``
@@ -118,26 +118,26 @@ available in the result.
       {% endfor %}
     {% endblock %}
 
-When a user is logged in, the ``header`` block adds a link to the
-``create`` view. When the user is the author of a post, they'll see an
-"Edit" link to the ``update`` view for that post. ``loop.last`` is a
-special variable available inside `Jinja for loops`_. It's used to
-display a line after each post except the last one, to visually separate
-them.
+Khi một người dùng đã đăng nhập, khối ``header`` thêm một liên kết đến view
+``create``. Khi người dùng là tác giả của một bài viết, họ sẽ thấy một
+liên kết "Edit" đến view ``update`` cho bài viết đó. ``loop.last`` là một
+biến đặc biệt có sẵn bên trong `vòng lặp for Jinja`_. Nó được sử dụng để
+hiển thị một dòng sau mỗi bài viết ngoại trừ bài cuối cùng, để tách biệt chúng
+một cách trực quan.
 
 .. _Jinja for loops: https://jinja.palletsprojects.com/templates/#for
 
 
-Create
-------
+Tạo
+---
 
-The ``create`` view works the same as the auth ``register`` view. Either
-the form is displayed, or the posted data is validated and the post is
-added to the database or an error is shown.
+View ``create`` hoạt động giống như view ``register`` của auth. Hoặc
+form được hiển thị, hoặc dữ liệu đã đăng được xác thực và bài viết được
+thêm vào cơ sở dữ liệu hoặc một lỗi được hiển thị.
 
-The ``login_required`` decorator you wrote earlier is used on the blog
-views. A user must be logged in to visit these views, otherwise they
-will be redirected to the login page.
+Decorator ``login_required`` mà bạn đã viết trước đó được sử dụng trên các view
+blog. Một người dùng phải đăng nhập để truy cập các view này, nếu không họ
+sẽ được chuyển hướng đến trang đăng nhập.
 
 .. code-block:: python
     :caption: ``flaskr/blog.py``
@@ -187,13 +187,13 @@ will be redirected to the login page.
     {% endblock %}
 
 
-Update
-------
+Cập nhật
+--------
 
-Both the ``update`` and ``delete`` views will need to fetch a ``post``
-by ``id`` and check if the author matches the logged in user. To avoid
-duplicating code, you can write a function to get the ``post`` and call
-it from each view.
+Cả view ``update`` và ``delete`` đều cần lấy một ``post``
+theo ``id`` và kiểm tra xem tác giả có khớp với người dùng đã đăng nhập không. Để tránh
+trùng lặp mã, bạn có thể viết một hàm để lấy ``post`` và gọi
+nó từ mỗi view.
 
 .. code-block:: python
     :caption: ``flaskr/blog.py``
@@ -214,16 +214,16 @@ it from each view.
 
         return post
 
-:func:`abort` will raise a special exception that returns an HTTP status
-code. It takes an optional message to show with the error, otherwise a
-default message is used. ``404`` means "Not Found", and ``403`` means
-"Forbidden". (``401`` means "Unauthorized", but you redirect to the
-login page instead of returning that status.)
+:func:`abort` sẽ đưa ra một exception đặc biệt trả về một mã trạng thái HTTP
+. Nó nhận một tin nhắn tùy chọn để hiển thị với lỗi, nếu không một
+tin nhắn mặc định được sử dụng. ``404`` có nghĩa là "Not Found", và ``403`` có nghĩa là
+"Forbidden". (``401`` có nghĩa là "Unauthorized", nhưng bạn chuyển hướng đến
+trang đăng nhập thay vì trả về trạng thái đó.)
 
-The ``check_author`` argument is defined so that the function can be
-used to get a ``post`` without checking the author. This would be useful
-if you wrote a view to show an individual post on a page, where the user
-doesn't matter because they're not modifying the post.
+Đối số ``check_author`` được định nghĩa để hàm có thể được
+sử dụng để lấy một ``post`` mà không cần kiểm tra tác giả. Điều này sẽ hữu ích
+nếu bạn viết một view để hiển thị một bài viết riêng lẻ trên một trang, nơi người dùng
+không quan trọng vì họ không sửa đổi bài viết.
 
 .. code-block:: python
     :caption: ``flaskr/blog.py``
@@ -255,21 +255,21 @@ doesn't matter because they're not modifying the post.
 
         return render_template('blog/update.html', post=post)
 
-Unlike the views you've written so far, the ``update`` function takes
-an argument, ``id``. That corresponds to the ``<int:id>`` in the route.
-A real URL will look like ``/1/update``. Flask will capture the ``1``,
-ensure it's an :class:`int`, and pass it as the ``id`` argument. If you
-don't specify ``int:`` and instead do ``<id>``, it will be a string.
-To generate a URL to the update page, :func:`url_for` needs to be passed
-the ``id`` so it knows what to fill in:
-``url_for('blog.update', id=post['id'])``. This is also in the
-``index.html`` file above.
+Không giống như các view bạn đã viết cho đến nay, hàm ``update`` nhận
+một đối số, ``id``. Điều đó tương ứng với ``<int:id>`` trong route.
+Một URL thực sẽ trông giống như ``/1/update``. Flask sẽ bắt ``1``,
+đảm bảo nó là một :class:`int`, và truyền nó làm đối số ``id``. Nếu bạn
+không chỉ định ``int:`` và thay vào đó làm ``<id>``, nó sẽ là một chuỗi.
+Để tạo một URL đến trang cập nhật, :func:`url_for` cần được truyền
+``id`` để nó biết điền gì vào:
+``url_for('blog.update', id=post['id'])``. Điều này cũng có trong
+file ``index.html`` ở trên.
 
-The ``create`` and ``update`` views look very similar. The main
-difference is that the ``update`` view uses a ``post`` object and an
-``UPDATE`` query instead of an ``INSERT``. With some clever refactoring,
-you could use one view and template for both actions, but for the
-tutorial it's clearer to keep them separate.
+Các view ``create`` và ``update`` trông rất giống nhau. Sự khác biệt chính
+là view ``update`` sử dụng một đối tượng ``post`` và một
+truy vấn ``UPDATE`` thay vì ``INSERT``. Với một số tái cấu trúc thông minh,
+bạn có thể sử dụng một view và template cho cả hai hành động, nhưng cho
+tutorial, rõ ràng hơn khi giữ chúng riêng biệt.
 
 .. code-block:: html+jinja
     :caption: ``flaskr/templates/blog/update.html``
@@ -295,27 +295,27 @@ tutorial it's clearer to keep them separate.
       </form>
     {% endblock %}
 
-This template has two forms. The first posts the edited data to the
-current page (``/<id>/update``). The other form contains only a button
-and specifies an ``action`` attribute that posts to the delete view
-instead. The button uses some JavaScript to show a confirmation dialog
-before submitting.
+Template này có hai form. Form đầu tiên đăng dữ liệu đã chỉnh sửa đến
+trang hiện tại (``/<id>/update``). Form khác chỉ chứa một nút
+và chỉ định một thuộc tính ``action`` đăng đến view delete
+thay thế. Nút sử dụng một số JavaScript để hiển thị hộp thoại xác nhận
+trước khi gửi.
 
-The pattern ``{{ request.form['title'] or post['title'] }}`` is used to
-choose what data appears in the form. When the form hasn't been
-submitted, the original ``post`` data appears, but if invalid form data
-was posted you want to display that so the user can fix the error, so
-``request.form`` is used instead. :data:`.request` is another variable
-that's automatically available in templates.
+Mẫu ``{{ request.form['title'] or post['title'] }}`` được sử dụng để
+chọn dữ liệu nào xuất hiện trong form. Khi form chưa được
+gửi, dữ liệu ``post`` gốc xuất hiện, nhưng nếu dữ liệu form không hợp lệ
+được đăng, bạn muốn hiển thị điều đó để người dùng có thể sửa lỗi, vì vậy
+``request.form`` được sử dụng thay thế. :data:`.request` là một biến khác
+tự động có sẵn trong các template.
 
 
-Delete
-------
+Xóa
+---
 
-The delete view doesn't have its own template, the delete button is part
-of ``update.html`` and posts to the ``/<id>/delete`` URL. Since there
-is no template, it will only handle the ``POST`` method and then redirect
-to the ``index`` view.
+View delete không có template riêng, nút delete là một phần
+của ``update.html`` và đăng đến URL ``/<id>/delete``. Vì không có
+template, nó sẽ chỉ xử lý phương thức ``POST`` và sau đó chuyển hướng
+đến view ``index``.
 
 .. code-block:: python
     :caption: ``flaskr/blog.py``
@@ -329,8 +329,8 @@ to the ``index`` view.
         db.commit()
         return redirect(url_for('blog.index'))
 
-Congratulations, you've now finished writing your application! Take some
-time to try out everything in the browser. However, there's still more
-to do before the project is complete.
+Chúc mừng, bạn đã hoàn thành việc viết ứng dụng của mình! Hãy dành một chút
+thời gian để thử mọi thứ trong trình duyệt. Tuy nhiên, vẫn còn nhiều việc
+cần làm trước khi dự án hoàn thành.
 
-Continue to :doc:`install`.
+Tiếp tục đến :doc:`install`.

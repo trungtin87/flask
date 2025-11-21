@@ -1,30 +1,30 @@
 Deferred Request Callbacks
 ==========================
 
-One of the design principles of Flask is that response objects are created and
-passed down a chain of potential callbacks that can modify them or replace
-them. When the request handling starts, there is no response object yet. It is
-created as necessary either by a view function or by some other component in
-the system.
+Một trong những nguyên tắc thiết kế của Flask là các đối tượng phản hồi được tạo ra và
+truyền xuống một chuỗi các callback tiềm năng có thể sửa đổi chúng hoặc thay thế
+chúng. Khi việc xử lý request bắt đầu, chưa có đối tượng phản hồi nào. Nó được
+tạo ra khi cần thiết bởi một view function hoặc bởi một số thành phần khác trong
+hệ thống.
 
-What happens if you want to modify the response at a point where the response
-does not exist yet?  A common example for that would be a
-:meth:`~flask.Flask.before_request` callback that wants to set a cookie on the
-response object.
+Điều gì xảy ra nếu bạn muốn sửa đổi phản hồi tại một điểm mà phản hồi
+chưa tồn tại? Một ví dụ phổ biến cho điều đó sẽ là một callback
+:meth:`~flask.Flask.before_request` muốn đặt một cookie trên
+đối tượng phản hồi.
 
-One way is to avoid the situation. Very often that is possible. For instance
-you can try to move that logic into a :meth:`~flask.Flask.after_request`
-callback instead. However, sometimes moving code there makes it
-more complicated or awkward to reason about.
+Một cách là tránh tình huống này. Rất thường xuyên điều đó là có thể. Ví dụ
+bạn có thể cố gắng di chuyển logic đó vào một callback :meth:`~flask.Flask.after_request`
+thay thế. Tuy nhiên, đôi khi việc di chuyển mã đến đó làm cho nó
+phức tạp hơn hoặc khó xử lý hơn.
 
-As an alternative, you can use :func:`~flask.after_this_request` to register
-callbacks that will execute after only the current request. This way you can
-defer code execution from anywhere in the application, based on the current
-request.
+Như một giải pháp thay thế, bạn có thể sử dụng :func:`~flask.after_this_request` để đăng ký
+các callback sẽ thực thi chỉ sau request hiện tại. Bằng cách này bạn có thể
+trì hoãn việc thực thi mã từ bất kỳ đâu trong ứng dụng, dựa trên request
+hiện tại.
 
-At any time during a request, we can register a function to be called at the
-end of the request. For example you can remember the current language of the
-user in a cookie in a :meth:`~flask.Flask.before_request` callback::
+Bất cứ lúc nào trong một request, chúng ta có thể đăng ký một hàm để được gọi vào
+cuối request. Ví dụ bạn có thể ghi nhớ ngôn ngữ hiện tại của
+người dùng trong một cookie trong một callback :meth:`~flask.Flask.before_request`::
 
     from flask import request, after_this_request
 
@@ -35,7 +35,7 @@ user in a cookie in a :meth:`~flask.Flask.before_request` callback::
         if language is None:
             language = guess_language_from_request()
 
-            # when the response exists, set a cookie with the language
+            # khi phản hồi tồn tại, đặt một cookie với ngôn ngữ
             @after_this_request
             def remember_language(response):
                 response.set_cookie('user_lang', language)

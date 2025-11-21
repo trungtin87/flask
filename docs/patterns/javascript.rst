@@ -1,17 +1,17 @@
-JavaScript, ``fetch``, and JSON
-===============================
+JavaScript, ``fetch``, và JSON
+==============================
 
-You may want to make your HTML page dynamic, by changing data without
-reloading the entire page. Instead of submitting an HTML ``<form>`` and
-performing a redirect to re-render the template, you can add
-`JavaScript`_ that calls |fetch|_ and replaces content on the page.
+Bạn có thể muốn làm cho trang HTML của mình trở nên động, bằng cách thay đổi dữ liệu mà không cần
+tải lại toàn bộ trang. Thay vì gửi một ``<form>`` HTML và
+thực hiện chuyển hướng để render lại template, bạn có thể thêm
+`JavaScript`_ gọi |fetch|_ và thay thế nội dung trên trang.
 
-|fetch|_ is the modern, built-in JavaScript solution to making
-requests from a page. You may have heard of other "AJAX" methods and
-libraries, such as |XHR|_ or `jQuery`_. These are no longer needed in
-modern browsers, although you may choose to use them or another library
-depending on your application's requirements. These docs will only focus
-on built-in JavaScript features.
+|fetch|_ là giải pháp JavaScript hiện đại, tích hợp sẵn để thực hiện
+các request từ một trang. Bạn có thể đã nghe nói về các phương pháp và thư viện "AJAX"
+khác, chẳng hạn như |XHR|_ hoặc `jQuery`_. Những thứ này không còn cần thiết trong
+các trình duyệt hiện đại, mặc dù bạn có thể chọn sử dụng chúng hoặc một thư viện khác
+tùy thuộc vào yêu cầu của ứng dụng của bạn. Các tài liệu này sẽ chỉ tập trung
+vào các tính năng JavaScript tích hợp sẵn.
 
 .. _JavaScript: https://developer.mozilla.org/Web/JavaScript
 .. |fetch| replace:: ``fetch()``
@@ -21,22 +21,22 @@ on built-in JavaScript features.
 .. _jQuery: https://jquery.com/
 
 
-Rendering Templates
--------------------
+Render Template
+---------------
 
-It is important to understand the difference between templates and
-JavaScript. Templates are rendered on the server, before the response is
-sent to the user's browser. JavaScript runs in the user's browser, after
-the template is rendered and sent. Therefore, it is impossible to use
-JavaScript to affect how the Jinja template is rendered, but it is
-possible to render data into the JavaScript that will run.
+Điều quan trọng là phải hiểu sự khác biệt giữa template và
+JavaScript. Template được render trên máy chủ, trước khi phản hồi được
+gửi đến trình duyệt của người dùng. JavaScript chạy trong trình duyệt của người dùng, sau khi
+template được render và gửi đi. Do đó, không thể sử dụng
+JavaScript để ảnh hưởng đến cách template Jinja được render, nhưng có thể
+render dữ liệu vào JavaScript sẽ chạy.
 
-To provide data to JavaScript when rendering the template, use the
-:func:`~jinja-filters.tojson` filter in a ``<script>`` block. This will
-convert the data to a valid JavaScript object, and ensure that any
-unsafe HTML characters are rendered safely. If you do not use the
-``tojson`` filter, you will get a ``SyntaxError`` in the browser
-console.
+Để cung cấp dữ liệu cho JavaScript khi render template, hãy sử dụng
+bộ lọc :func:`~jinja-filters.tojson` trong một khối ``<script>``. Điều này sẽ
+chuyển đổi dữ liệu thành một đối tượng JavaScript hợp lệ, và đảm bảo rằng bất kỳ
+ký tự HTML không an toàn nào được render an toàn. Nếu bạn không sử dụng
+bộ lọc ``tojson``, bạn sẽ nhận được một ``SyntaxError`` trong console của
+trình duyệt.
 
 .. code-block:: python
 
@@ -50,61 +50,61 @@ console.
         chartLib.makeChart(chart_data)
     </script>
 
-A less common pattern is to add the data to a ``data-`` attribute on an
-HTML tag. In this case, you must use single quotes around the value, not
-double quotes, otherwise you will produce invalid or unsafe HTML.
+Một mẫu ít phổ biến hơn là thêm dữ liệu vào thuộc tính ``data-`` trên một
+thẻ HTML. Trong trường hợp này, bạn phải sử dụng dấu nháy đơn xung quanh giá trị, không phải
+dấu nháy kép, nếu không bạn sẽ tạo ra HTML không hợp lệ hoặc không an toàn.
 
 .. code-block:: jinja
 
     <div data-chart='{{ chart_data|tojson }}'></div>
 
 
-Generating URLs
----------------
+Tạo URL
+-------
 
-The other way to get data from the server to JavaScript is to make a
-request for it. First, you need to know the URL to request.
+Cách khác để lấy dữ liệu từ máy chủ đến JavaScript là thực hiện một
+request cho nó. Đầu tiên, bạn cần biết URL để request.
 
-The simplest way to generate URLs is to continue to use
-:func:`~flask.url_for` when rendering the template. For example:
+Cách đơn giản nhất để tạo URL là tiếp tục sử dụng
+:func:`~flask.url_for` khi render template. Ví dụ:
 
 .. code-block:: javascript
 
     const user_url = {{ url_for("user", id=current_user.id)|tojson }}
     fetch(user_url).then(...)
 
-However, you might need to generate a URL based on information you only
-know in JavaScript. As discussed above, JavaScript runs in the user's
-browser, not as part of the template rendering, so you can't use
-``url_for`` at that point.
+Tuy nhiên, bạn có thể cần tạo một URL dựa trên thông tin bạn chỉ
+biết trong JavaScript. Như đã thảo luận ở trên, JavaScript chạy trong trình duyệt
+của người dùng, không phải là một phần của quá trình render template, vì vậy bạn không thể sử dụng
+``url_for`` tại thời điểm đó.
 
-In this case, you need to know the "root URL" under which your
-application is served. In simple setups, this is ``/``, but it might
-also be something else, like ``https://example.com/myapp/``.
+Trong trường hợp này, bạn cần biết "root URL" mà ứng dụng của bạn
+được phục vụ. Trong các thiết lập đơn giản, đây là ``/``, nhưng nó cũng có thể
+là một cái gì đó khác, như ``https://example.com/myapp/``.
 
-A simple way to tell your JavaScript code about this root is to set it
-as a global variable when rendering the template. Then you can use it
-when generating URLs from JavaScript.
+Một cách đơn giản để cho mã JavaScript của bạn biết về root này là đặt nó
+làm biến toàn cục khi render template. Sau đó bạn có thể sử dụng nó
+khi tạo URL từ JavaScript.
 
 .. code-block:: javascript
 
     const SCRIPT_ROOT = {{ request.script_root|tojson }}
-    let user_id = ...  // do something to get a user id from the page
+    let user_id = ...  // làm gì đó để lấy user id từ trang
     let user_url = `${SCRIPT_ROOT}/user/${user_id}`
     fetch(user_url).then(...)
 
 
-Making a Request with ``fetch``
+Thực hiện Request với ``fetch``
 -------------------------------
 
-|fetch|_ takes two arguments, a URL and an object with other options,
-and returns a |Promise|_. We won't cover all the available options, and
-will only use ``then()`` on the promise, not other callbacks or
-``await`` syntax. Read the linked MDN docs for more information about
-those features.
+|fetch|_ nhận hai đối số, một URL và một đối tượng với các tùy chọn khác,
+và trả về một |Promise|_. Chúng tôi sẽ không đề cập đến tất cả các tùy chọn có sẵn, và
+sẽ chỉ sử dụng ``then()`` trên promise, không phải các callback khác hoặc
+cú pháp ``await``. Đọc tài liệu MDN được liên kết để biết thêm thông tin về
+các tính năng đó.
 
-By default, the GET method is used. If the response contains JSON, it
-can be used with a ``then()`` callback chain.
+Theo mặc định, phương thức GET được sử dụng. Nếu phản hồi chứa JSON, nó
+có thể được sử dụng với một chuỗi callback ``then()``.
 
 .. code-block:: javascript
 
@@ -112,15 +112,15 @@ can be used with a ``then()`` callback chain.
     fetch(room_url)
         .then(response => response.json())
         .then(data => {
-            // data is a parsed JSON object
+            // data là một đối tượng JSON đã được phân tích cú pháp
         })
 
-To send data, use a data method such as POST, and pass the ``body``
-option. The most common types for data are form data or JSON data.
+Để gửi dữ liệu, sử dụng một phương thức dữ liệu như POST, và truyền tùy chọn ``body``.
+Các loại dữ liệu phổ biến nhất là form data hoặc JSON data.
 
-To send form data, pass a populated |FormData|_ object. This uses the
-same format as an HTML form, and would be accessed with ``request.form``
-in a Flask view.
+Để gửi form data, truyền một đối tượng |FormData|_ đã được điền. Điều này sử dụng
+cùng định dạng như một form HTML, và sẽ được truy cập với ``request.form``
+trong một view Flask.
 
 .. code-block:: javascript
 
@@ -132,11 +132,11 @@ in a Flask view.
         "body": data,
     }).then(...)
 
-In general, prefer sending request data as form data, as would be used
-when submitting an HTML form. JSON can represent more complex data, but
-unless you need that it's better to stick with the simpler format. When
-sending JSON data, the ``Content-Type: application/json`` header must be
-sent as well, otherwise Flask will return a 400 error.
+Nói chung, ưu tiên gửi dữ liệu request dưới dạng form data, như sẽ được sử dụng
+khi gửi một form HTML. JSON có thể đại diện cho dữ liệu phức tạp hơn, nhưng
+trừ khi bạn cần điều đó, tốt hơn là nên gắn bó với định dạng đơn giản hơn. Khi
+gửi dữ liệu JSON, header ``Content-Type: application/json`` cũng phải được
+gửi, nếu không Flask sẽ trả về lỗi 400.
 
 .. code-block:: javascript
 
@@ -156,14 +156,14 @@ sent as well, otherwise Flask will return a 400 error.
 .. _FormData: https://developer.mozilla.org/en-US/docs/Web/API/FormData
 
 
-Following Redirects
--------------------
+Theo dõi Chuyển hướng (Redirects)
+---------------------------------
 
-A response might be a redirect, for example if you logged in with
-JavaScript instead of a traditional HTML form, and your view returned
-a redirect instead of JSON. JavaScript requests do follow redirects, but
-they don't change the page. If you want to make the page change you can
-inspect the response and apply the redirect manually.
+Một phản hồi có thể là một chuyển hướng, ví dụ nếu bạn đã đăng nhập bằng
+JavaScript thay vì form HTML truyền thống, và view của bạn trả về
+một chuyển hướng thay vì JSON. Các request JavaScript có theo dõi chuyển hướng, nhưng
+chúng không thay đổi trang. Nếu bạn muốn làm cho trang thay đổi bạn có thể
+kiểm tra phản hồi và áp dụng chuyển hướng thủ công.
 
 .. code-block:: javascript
 
@@ -178,14 +178,14 @@ inspect the response and apply the redirect manually.
     )
 
 
-Replacing Content
+Thay thế Nội dung
 -----------------
 
-A response might be new HTML, either a new section of the page to add or
-replace, or an entirely new page. In general, if you're returning the
-entire page, it would be better to handle that with a redirect as shown
-in the previous section. The following example shows how to replace a
-``<div>`` with the HTML returned by a request.
+Một phản hồi có thể là HTML mới, hoặc là một phần mới của trang để thêm hoặc
+thay thế, hoặc một trang hoàn toàn mới. Nói chung, nếu bạn đang trả về
+toàn bộ trang, sẽ tốt hơn nếu xử lý điều đó bằng một chuyển hướng như được hiển thị
+trong phần trước. Ví dụ sau đây chỉ ra cách thay thế một
+``<div>`` bằng HTML được trả về bởi một request.
 
 .. code-block:: html
 
@@ -201,11 +201,11 @@ in the previous section. The following example shows how to replace a
     </script>
 
 
-Return JSON from Views
-----------------------
+Trả về JSON từ Views
+--------------------
 
-To return a JSON object from your API view, you can directly return a
-dict from the view. It will be serialized to JSON automatically.
+Để trả về một đối tượng JSON từ API view của bạn, bạn có thể trực tiếp trả về một
+dict từ view. Nó sẽ được tuần tự hóa thành JSON một cách tự động.
 
 .. code-block:: python
 
@@ -218,9 +218,9 @@ dict from the view. It will be serialized to JSON automatically.
             "picture": url_for("static", filename=f"users/{id}/profile.png"),
         }
 
-If you want to return another JSON type, use the
-:func:`~flask.json.jsonify` function, which creates a response object
-with the given data serialized to JSON.
+Nếu bạn muốn trả về một loại JSON khác, hãy sử dụng hàm
+:func:`~flask.json.jsonify`, hàm này tạo ra một đối tượng phản hồi
+với dữ liệu đã cho được tuần tự hóa thành JSON.
 
 .. code-block:: python
 
@@ -231,21 +231,21 @@ with the given data serialized to JSON.
         users = User.query.order_by(User.name).all()
         return jsonify([u.to_json() for u in users])
 
-It is usually not a good idea to return file data in a JSON response.
-JSON cannot represent binary data directly, so it must be base64
-encoded, which can be slow, takes more bandwidth to send, and is not as
-easy to cache. Instead, serve files using one view, and generate a URL
-to the desired file to include in the JSON. Then the client can make a
-separate request to get the linked resource after getting the JSON.
+Thường không phải là ý tưởng hay khi trả về dữ liệu tệp trong một phản hồi JSON.
+JSON không thể đại diện cho dữ liệu nhị phân trực tiếp, vì vậy nó phải được mã hóa
+base64, điều này có thể chậm, tốn nhiều băng thông hơn để gửi, và không
+dễ cache. Thay vào đó, hãy phục vụ các tệp bằng cách sử dụng một view, và tạo một URL
+đến tệp mong muốn để bao gồm trong JSON. Sau đó client có thể thực hiện một
+request riêng biệt để lấy tài nguyên được liên kết sau khi nhận được JSON.
 
 
-Receiving JSON in Views
------------------------
+Nhận JSON trong Views
+---------------------
 
-Use the :attr:`~flask.Request.json` property of the
-:data:`~flask.request` object to decode the request's body as JSON. If
-the body is not valid JSON, or the ``Content-Type`` header is not set to
-``application/json``, a 400 Bad Request error will be raised.
+Sử dụng thuộc tính :attr:`~flask.Request.json` của đối tượng
+:data:`~flask.request` để giải mã body của request dưới dạng JSON. Nếu
+body không phải là JSON hợp lệ, hoặc header ``Content-Type`` không được đặt thành
+``application/json``, một lỗi 400 Bad Request sẽ được đưa ra.
 
 .. code-block:: python
 
