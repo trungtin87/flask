@@ -1,68 +1,68 @@
 Flaskr
 ======
 
-The basic blog app built in the Flask `tutorial`_.
+Ứng dụng blog cơ bản được xây dựng trong `hướng dẫn`_ Flask.
 
-.. _tutorial: https://flask.palletsprojects.com/tutorial/
+.. _hướng dẫn: https://flask.palletsprojects.com/tutorial/
 
 
-Install
+Cài đặt
 -------
 
-**Be sure to use the same version of the code as the version of the docs
-you're reading.** You probably want the latest tagged version, but the
-default Git version is the main branch. ::
+**Hãy chắc chắn sử dụng cùng một phiên bản mã nguồn như phiên bản tài liệu
+bạn đang đọc.** Bạn có thể muốn phiên bản được gắn thẻ mới nhất, nhưng
+phiên bản Git mặc định là nhánh main. ::
 
-    # clone the repository
+    # clone kho lưu trữ
     $ git clone https://github.com/pallets/flask
     $ cd flask
-    # checkout the correct version
-    $ git tag  # shows the tagged versions
+    # checkout phiên bản chính xác
+    $ git tag  # hiển thị các phiên bản đã gắn thẻ
     $ git checkout latest-tag-found-above
     $ cd examples/tutorial
 
-Create a virtualenv and activate it::
+Tạo một virtualenv và kích hoạt nó::
 
     $ python3 -m venv .venv
     $ . .venv/bin/activate
 
-Or on Windows cmd::
+Hoặc trên Windows cmd::
 
     $ py -3 -m venv .venv
     $ .venv\Scripts\activate.bat
 
-Install Flaskr::
+Cài đặt Flaskr::
 
     $ pip install -e .
 
-Or if you are using the main branch, install Flask from source before
-installing Flaskr::
+Hoặc nếu bạn đang sử dụng nhánh main, hãy cài đặt Flask từ mã nguồn trước khi
+cài đặt Flaskr::
 
     $ pip install -e ../..
     $ pip install -e .
 
 
-Run
----
+Chạy
+----
 
 .. code-block:: text
 
     $ flask --app flaskr init-db
     $ flask --app flaskr run --debug
 
-Open http://127.0.0.1:5000 in a browser.
+Mở http://127.0.0.1:5000 trong trình duyệt.
 
 
-Test
-----
+Kiểm thử
+--------
 
 ::
 
     $ pip install '.[test]'
     $ pytest
 
-Run with coverage report::
+Chạy với báo cáo độ bao phủ::
 
     $ coverage run -m pytest
     $ coverage report
-    $ coverage html  # open htmlcov/index.html in a browser
+    $ coverage html  # mở htmlcov/index.html trong trình duyệt

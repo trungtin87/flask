@@ -7,9 +7,9 @@ from flask import g
 
 
 def get_db():
-    """Connect to the application's configured database. The connection
-    is unique for each request and will be reused if this is called
-    again.
+    """Kết nối đến cơ sở dữ liệu đã cấu hình của ứng dụng. Kết nối
+    là duy nhất cho mỗi yêu cầu và sẽ được sử dụng lại nếu hàm này được gọi
+    lại.
     """
     if "db" not in g:
         g.db = sqlite3.connect(
@@ -21,8 +21,8 @@ def get_db():
 
 
 def close_db(e=None):
-    """If this request connected to the database, close the
-    connection.
+    """Nếu yêu cầu này đã kết nối đến cơ sở dữ liệu, đóng
+    kết nối.
     """
     db = g.pop("db", None)
 
@@ -31,7 +31,7 @@ def close_db(e=None):
 
 
 def init_db():
-    """Clear existing data and create new tables."""
+    """Xóa dữ liệu hiện có và tạo các bảng mới."""
     db = get_db()
 
     with current_app.open_resource("schema.sql") as f:
@@ -40,17 +40,17 @@ def init_db():
 
 @click.command("init-db")
 def init_db_command():
-    """Clear existing data and create new tables."""
+    """Xóa dữ liệu hiện có và tạo các bảng mới."""
     init_db()
-    click.echo("Initialized the database.")
+    click.echo("Đã khởi tạo cơ sở dữ liệu.")
 
 
 sqlite3.register_converter("timestamp", lambda v: datetime.fromisoformat(v.decode()))
 
 
 def init_app(app):
-    """Register database functions with the Flask app. This is called by
-    the application factory.
+    """Đăng ký các hàm cơ sở dữ liệu với ứng dụng Flask. Hàm này được gọi bởi
+    application factory.
     """
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)

@@ -22,53 +22,53 @@ if t.TYPE_CHECKING:  # pragma: no cover
 
 
 class SessionMixin(MutableMapping[str, t.Any]):
-    """Expands a basic dictionary with session attributes."""
+    """Mở rộng một từ điển cơ bản với các thuộc tính session."""
 
     @property
     def permanent(self) -> bool:
-        """This reflects the ``'_permanent'`` key in the dict."""
+        """Điều này phản ánh khóa ``'_permanent'`` trong dict."""
         return self.get("_permanent", False)
 
     @permanent.setter
     def permanent(self, value: bool) -> None:
         self["_permanent"] = bool(value)
 
-    #: Some implementations can detect whether a session is newly
-    #: created, but that is not guaranteed. Use with caution. The mixin
-    # default is hard-coded ``False``.
+    #: Một số triển khai có thể phát hiện xem một session có phải là mới
+    #: được tạo hay không, nhưng điều đó không được đảm bảo. Sử dụng cẩn thận. Mixin
+    # mặc định được hard-code là ``False``.
     new = False
 
-    #: Some implementations can detect changes to the session and set
-    #: this when that happens. The mixin default is hard coded to
+    #: Một số triển khai có thể phát hiện các thay đổi đối với session và thiết lập
+    #: điều này khi điều đó xảy ra. Mixin mặc định được hard code thành
     #: ``True``.
     modified = True
 
-    #: Some implementations can detect when session data is read or
-    #: written and set this when that happens. The mixin default is hard
-    #: coded to ``True``.
+    #: Một số triển khai có thể phát hiện khi dữ liệu session được đọc hoặc
+    #: ghi và thiết lập điều này khi điều đó xảy ra. Mixin mặc định được hard
+    #: code thành ``True``.
     accessed = True
 
 
 class SecureCookieSession(CallbackDict[str, t.Any], SessionMixin):
-    """Base class for sessions based on signed cookies.
+    """Lớp cơ sở cho các session dựa trên cookie đã ký.
 
-    This session backend will set the :attr:`modified` and
-    :attr:`accessed` attributes. It cannot reliably track whether a
-    session is new (vs. empty), so :attr:`new` remains hard coded to
+    Backend session này sẽ thiết lập các thuộc tính :attr:`modified` và
+    :attr:`accessed`. Nó không thể theo dõi một cách đáng tin cậy xem một
+    session có phải là mới (so với trống) hay không, vì vậy :attr:`new` vẫn được hard code thành
     ``False``.
     """
 
-    #: When data is changed, this is set to ``True``. Only the session
-    #: dictionary itself is tracked; if the session contains mutable
-    #: data (for example a nested dict) then this must be set to
-    #: ``True`` manually when modifying that data. The session cookie
-    #: will only be written to the response if this is ``True``.
+    #: Khi dữ liệu bị thay đổi, cái này được đặt thành ``True``. Chỉ từ điển
+    #: session chính nó được theo dõi; nếu session chứa dữ liệu có thể thay đổi
+    #: (ví dụ một dict lồng nhau) thì cái này phải được đặt thành
+    #: ``True`` thủ công khi sửa đổi dữ liệu đó. Cookie session
+    #: sẽ chỉ được ghi vào phản hồi nếu cái này là ``True``.
     modified = False
 
-    #: When data is read or written, this is set to ``True``. Used by
-    # :class:`.SecureCookieSessionInterface` to add a ``Vary: Cookie``
-    #: header, which allows caching proxies to cache different pages for
-    #: different users.
+    #: Khi dữ liệu được đọc hoặc ghi, cái này được đặt thành ``True``. Được sử dụng bởi
+    # :class:`.SecureCookieSessionInterface` để thêm một header ``Vary: Cookie``,
+    #: cho phép các proxy caching cache các trang khác nhau cho
+    #: những người dùng khác nhau.
     accessed = False
 
     def __init__(
@@ -95,16 +95,16 @@ class SecureCookieSession(CallbackDict[str, t.Any], SessionMixin):
 
 
 class NullSession(SecureCookieSession):
-    """Class used to generate nicer error messages if sessions are not
-    available.  Will still allow read-only access to the empty session
-    but fail on setting.
+    """Lớp được sử dụng để tạo ra các thông báo lỗi đẹp hơn nếu các session không
+    có sẵn. Sẽ vẫn cho phép truy cập chỉ đọc vào session trống
+    nhưng thất bại khi thiết lập.
     """
 
     def _fail(self, *args: t.Any, **kwargs: t.Any) -> t.NoReturn:
         raise RuntimeError(
-            "The session is unavailable because no secret "
-            "key was set.  Set the secret_key on the "
-            "application to something unique and secret."
+            "Session không có sẵn vì không có secret "
+            "key nào được thiết lập. Thiết lập secret_key trên "
+            "ứng dụng thành một cái gì đó duy nhất và bí mật."
         )
 
     __setitem__ = __delitem__ = clear = pop = popitem = update = setdefault = _fail  # noqa: B950
@@ -112,146 +112,145 @@ class NullSession(SecureCookieSession):
 
 
 class SessionInterface:
-    """The basic interface you have to implement in order to replace the
-    default session interface which uses werkzeug's securecookie
-    implementation.  The only methods you have to implement are
-    :meth:`open_session` and :meth:`save_session`, the others have
-    useful defaults which you don't need to change.
+    """Giao diện cơ bản bạn phải triển khai để thay thế
+    giao diện session mặc định sử dụng triển khai securecookie của
+    werkzeug. Các phương thức duy nhất bạn phải triển khai là
+    :meth:`open_session` và :meth:`save_session`, những cái khác có
+    các giá trị mặc định hữu ích mà bạn không cần phải thay đổi.
 
-    The session object returned by the :meth:`open_session` method has to
-    provide a dictionary like interface plus the properties and methods
-    from the :class:`SessionMixin`.  We recommend just subclassing a dict
-    and adding that mixin::
+    Đối tượng session được trả về bởi phương thức :meth:`open_session` phải
+    cung cấp một giao diện giống từ điển cộng với các thuộc tính và phương thức
+    từ :class:`SessionMixin`. Chúng tôi khuyên bạn chỉ nên phân lớp một dict
+    và thêm mixin đó::
 
         class Session(dict, SessionMixin):
             pass
 
-    If :meth:`open_session` returns ``None`` Flask will call into
-    :meth:`make_null_session` to create a session that acts as replacement
-    if the session support cannot work because some requirement is not
-    fulfilled.  The default :class:`NullSession` class that is created
-    will complain that the secret key was not set.
+    Nếu :meth:`open_session` trả về ``None`` Flask sẽ gọi vào
+    :meth:`make_null_session` để tạo một session hoạt động như thay thế
+    nếu hỗ trợ session không thể hoạt động vì một số yêu cầu không được
+    đáp ứng. Lớp :class:`NullSession` mặc định được tạo ra
+    sẽ phàn nàn rằng secret key không được thiết lập.
 
-    To replace the session interface on an application all you have to do
-    is to assign :attr:`flask.Flask.session_interface`::
+    Để thay thế giao diện session trên một ứng dụng tất cả những gì bạn phải làm
+    là gán :attr:`flask.Flask.session_interface`::
 
         app = Flask(__name__)
         app.session_interface = MySessionInterface()
 
-    Multiple requests with the same session may be sent and handled
-    concurrently. When implementing a new session interface, consider
-    whether reads or writes to the backing store must be synchronized.
-    There is no guarantee on the order in which the session for each
-    request is opened or saved, it will occur in the order that requests
-    begin and end processing.
+    Nhiều request với cùng một session có thể được gửi và xử lý
+    đồng thời. Khi triển khai một giao diện session mới, hãy xem xét
+    xem việc đọc hoặc ghi vào kho lưu trữ hỗ trợ có phải được đồng bộ hóa hay không.
+    Không có đảm bảo về thứ tự mà session cho mỗi
+    request được mở hoặc lưu, nó sẽ xảy ra theo thứ tự mà các request
+    bắt đầu và kết thúc xử lý.
 
     .. versionadded:: 0.8
     """
 
-    #: :meth:`make_null_session` will look here for the class that should
-    #: be created when a null session is requested.  Likewise the
-    #: :meth:`is_null_session` method will perform a typecheck against
-    #: this type.
+    #: :meth:`make_null_session` sẽ tìm ở đây cho lớp nên
+    #: được tạo khi một session null được yêu cầu. Tương tự phương thức
+    #: :meth:`is_null_session` sẽ thực hiện một kiểm tra kiểu đối với
+    #: loại này.
     null_session_class = NullSession
 
-    #: A flag that indicates if the session interface is pickle based.
-    #: This can be used by Flask extensions to make a decision in regards
-    #: to how to deal with the session object.
+    #: Một cờ chỉ ra nếu giao diện session dựa trên pickle.
+    #: Điều này có thể được sử dụng bởi các tiện ích mở rộng Flask để đưa ra quyết định liên quan
+    #: đến cách xử lý đối tượng session.
     #:
     #: .. versionadded:: 0.10
     pickle_based = False
 
     def make_null_session(self, app: Flask) -> NullSession:
-        """Creates a null session which acts as a replacement object if the
-        real session support could not be loaded due to a configuration
-        error.  This mainly aids the user experience because the job of the
-        null session is to still support lookup without complaining but
-        modifications are answered with a helpful error message of what
-        failed.
+        """Tạo một session null hoạt động như một đối tượng thay thế nếu
+        hỗ trợ session thực sự không thể được tải do một lỗi cấu hình.
+        Điều này chủ yếu hỗ trợ trải nghiệm người dùng vì công việc của
+        session null là vẫn hỗ trợ tra cứu mà không phàn nàn nhưng
+        các sửa đổi được trả lời với một thông báo lỗi hữu ích về những gì
+        đã thất bại.
 
-        This creates an instance of :attr:`null_session_class` by default.
+        Điều này tạo ra một thể hiện của :attr:`null_session_class` theo mặc định.
         """
         return self.null_session_class()
 
     def is_null_session(self, obj: object) -> bool:
-        """Checks if a given object is a null session.  Null sessions are
-        not asked to be saved.
+        """Kiểm tra xem một đối tượng đã cho có phải là một session null hay không. Các session null
+        không được yêu cầu lưu.
 
-        This checks if the object is an instance of :attr:`null_session_class`
-        by default.
+        Điều này kiểm tra xem đối tượng có phải là một thể hiện của :attr:`null_session_class`
+        theo mặc định hay không.
         """
         return isinstance(obj, self.null_session_class)
 
     def get_cookie_name(self, app: Flask) -> str:
-        """The name of the session cookie. Uses``app.config["SESSION_COOKIE_NAME"]``."""
+        """Tên của cookie session. Sử dụng ``app.config["SESSION_COOKIE_NAME"]``."""
         return app.config["SESSION_COOKIE_NAME"]  # type: ignore[no-any-return]
 
     def get_cookie_domain(self, app: Flask) -> str | None:
-        """The value of the ``Domain`` parameter on the session cookie. If not set,
-        browsers will only send the cookie to the exact domain it was set from.
-        Otherwise, they will send it to any subdomain of the given value as well.
+        """Giá trị của tham số ``Domain`` trên cookie session. Nếu không được thiết lập,
+        các trình duyệt sẽ chỉ gửi cookie đến tên miền chính xác mà nó được thiết lập.
+        Nếu không, chúng sẽ gửi nó đến bất kỳ tên miền phụ nào của giá trị đã cho.
 
-        Uses the :data:`SESSION_COOKIE_DOMAIN` config.
+        Sử dụng cấu hình :data:`SESSION_COOKIE_DOMAIN`.
 
         .. versionchanged:: 2.3
-            Not set by default, does not fall back to ``SERVER_NAME``.
+            Không được thiết lập theo mặc định, không quay lại ``SERVER_NAME``.
         """
         return app.config["SESSION_COOKIE_DOMAIN"]  # type: ignore[no-any-return]
 
     def get_cookie_path(self, app: Flask) -> str:
-        """Returns the path for which the cookie should be valid.  The
-        default implementation uses the value from the ``SESSION_COOKIE_PATH``
-        config var if it's set, and falls back to ``APPLICATION_ROOT`` or
-        uses ``/`` if it's ``None``.
+        """Trả về đường dẫn mà cookie nên hợp lệ. Triển khai
+        mặc định sử dụng giá trị từ biến cấu hình ``SESSION_COOKIE_PATH``
+        nếu nó được thiết lập, và quay lại ``APPLICATION_ROOT`` hoặc
+        sử dụng ``/`` nếu nó là ``None``.
         """
         return app.config["SESSION_COOKIE_PATH"] or app.config["APPLICATION_ROOT"]  # type: ignore[no-any-return]
 
     def get_cookie_httponly(self, app: Flask) -> bool:
-        """Returns True if the session cookie should be httponly.  This
-        currently just returns the value of the ``SESSION_COOKIE_HTTPONLY``
-        config var.
+        """Trả về True nếu cookie session nên là httponly. Điều này
+        hiện tại chỉ trả về giá trị của biến cấu hình ``SESSION_COOKIE_HTTPONLY``.
         """
         return app.config["SESSION_COOKIE_HTTPONLY"]  # type: ignore[no-any-return]
 
     def get_cookie_secure(self, app: Flask) -> bool:
-        """Returns True if the cookie should be secure.  This currently
-        just returns the value of the ``SESSION_COOKIE_SECURE`` setting.
+        """Trả về True nếu cookie nên được bảo mật. Điều này hiện tại
+        chỉ trả về giá trị của cài đặt ``SESSION_COOKIE_SECURE``.
         """
         return app.config["SESSION_COOKIE_SECURE"]  # type: ignore[no-any-return]
 
     def get_cookie_samesite(self, app: Flask) -> str | None:
-        """Return ``'Strict'`` or ``'Lax'`` if the cookie should use the
-        ``SameSite`` attribute. This currently just returns the value of
-        the :data:`SESSION_COOKIE_SAMESITE` setting.
+        """Trả về ``'Strict'`` hoặc ``'Lax'`` nếu cookie nên sử dụng
+        thuộc tính ``SameSite``. Điều này hiện tại chỉ trả về giá trị của
+        cài đặt :data:`SESSION_COOKIE_SAMESITE`.
         """
         return app.config["SESSION_COOKIE_SAMESITE"]  # type: ignore[no-any-return]
 
     def get_cookie_partitioned(self, app: Flask) -> bool:
-        """Returns True if the cookie should be partitioned. By default, uses
-        the value of :data:`SESSION_COOKIE_PARTITIONED`.
+        """Trả về True nếu cookie nên được phân vùng. Theo mặc định, sử dụng
+        giá trị của :data:`SESSION_COOKIE_PARTITIONED`.
 
         .. versionadded:: 3.1
         """
         return app.config["SESSION_COOKIE_PARTITIONED"]  # type: ignore[no-any-return]
 
     def get_expiration_time(self, app: Flask, session: SessionMixin) -> datetime | None:
-        """A helper method that returns an expiration date for the session
-        or ``None`` if the session is linked to the browser session.  The
-        default implementation returns now + the permanent session
-        lifetime configured on the application.
+        """Một phương thức trợ giúp trả về ngày hết hạn cho session
+        hoặc ``None`` nếu session được liên kết với session trình duyệt. Triển khai
+        mặc định trả về bây giờ + thời gian tồn tại session vĩnh viễn
+        được cấu hình trên ứng dụng.
         """
         if session.permanent:
             return datetime.now(timezone.utc) + app.permanent_session_lifetime
         return None
 
     def should_set_cookie(self, app: Flask, session: SessionMixin) -> bool:
-        """Used by session backends to determine if a ``Set-Cookie`` header
-        should be set for this session cookie for this response. If the session
-        has been modified, the cookie is set. If the session is permanent and
-        the ``SESSION_REFRESH_EACH_REQUEST`` config is true, the cookie is
-        always set.
+        """Được sử dụng bởi các backend session để xác định xem header ``Set-Cookie``
+        có nên được thiết lập cho cookie session này cho phản hồi này hay không. Nếu session
+        đã được sửa đổi, cookie được thiết lập. Nếu session là vĩnh viễn và
+        cấu hình ``SESSION_REFRESH_EACH_REQUEST`` là true, cookie luôn được
+        thiết lập.
 
-        This check is usually skipped if the session was deleted.
+        Kiểm tra này thường bị bỏ qua nếu session đã bị xóa.
 
         .. versionadded:: 0.11
         """
@@ -261,25 +260,25 @@ class SessionInterface:
         )
 
     def open_session(self, app: Flask, request: Request) -> SessionMixin | None:
-        """This is called at the beginning of each request, after
-        pushing the request context, before matching the URL.
+        """Cái này được gọi ở đầu mỗi request, sau khi
+        push ngữ cảnh request, trước khi khớp URL.
 
-        This must return an object which implements a dictionary-like
-        interface as well as the :class:`SessionMixin` interface.
+        Cái này phải trả về một đối tượng triển khai giao diện giống từ điển
+        cũng như giao diện :class:`SessionMixin`.
 
-        This will return ``None`` to indicate that loading failed in
-        some way that is not immediately an error. The request
-        context will fall back to using :meth:`make_null_session`
-        in this case.
+        Cái này sẽ trả về ``None`` để chỉ ra rằng việc tải đã thất bại theo
+        một cách nào đó không phải là lỗi ngay lập tức. Ngữ cảnh request
+        sẽ quay lại sử dụng :meth:`make_null_session`
+        trong trường hợp này.
         """
         raise NotImplementedError()
 
     def save_session(
         self, app: Flask, session: SessionMixin, response: Response
     ) -> None:
-        """This is called at the end of each request, after generating
-        a response, before removing the request context. It is skipped
-        if :meth:`is_null_session` returns ``True``.
+        """Cái này được gọi ở cuối mỗi request, sau khi tạo
+        một phản hồi, trước khi xóa ngữ cảnh request. Nó bị bỏ qua
+        nếu :meth:`is_null_session` trả về ``True``.
         """
         raise NotImplementedError()
 
@@ -288,29 +287,29 @@ session_json_serializer = TaggedJSONSerializer()
 
 
 def _lazy_sha1(string: bytes = b"") -> t.Any:
-    """Don't access ``hashlib.sha1`` until runtime. FIPS builds may not include
-    SHA-1, in which case the import and use as a default would fail before the
-    developer can configure something else.
+    """Không truy cập ``hashlib.sha1`` cho đến khi runtime. Các bản build FIPS có thể không bao gồm
+    SHA-1, trong trường hợp đó việc import và sử dụng làm mặc định sẽ thất bại trước khi
+    nhà phát triển có thể cấu hình cái gì đó khác.
     """
     return hashlib.sha1(string)
 
 
 class SecureCookieSessionInterface(SessionInterface):
-    """The default session interface that stores sessions in signed cookies
-    through the :mod:`itsdangerous` module.
+    """Giao diện session mặc định lưu trữ các session trong các cookie đã ký
+    thông qua module :mod:`itsdangerous`.
     """
 
-    #: the salt that should be applied on top of the secret key for the
-    #: signing of cookie based sessions.
+    #: salt nên được áp dụng trên secret key cho
+    #: việc ký các session dựa trên cookie.
     salt = "cookie-session"
-    #: the hash function to use for the signature.  The default is sha1
+    #: hàm băm để sử dụng cho chữ ký. Mặc định là sha1
     digest_method = staticmethod(_lazy_sha1)
-    #: the name of the itsdangerous supported key derivation.  The default
-    #: is hmac.
+    #: tên của dẫn xuất khóa được itsdangerous hỗ trợ. Mặc định
+    #: là hmac.
     key_derivation = "hmac"
-    #: A python serializer for the payload.  The default is a compact
-    #: JSON derived serializer with support for some extra Python types
-    #: such as datetime objects or tuples.
+    #: Một serializer python cho payload. Mặc định là một serializer
+    #: dẫn xuất JSON nhỏ gọn với hỗ trợ cho một số loại Python bổ sung
+    #: chẳng hạn như các đối tượng datetime hoặc tuple.
     serializer = session_json_serializer
     session_class = SecureCookieSession
 
@@ -359,12 +358,12 @@ class SecureCookieSessionInterface(SessionInterface):
         samesite = self.get_cookie_samesite(app)
         httponly = self.get_cookie_httponly(app)
 
-        # Add a "Vary: Cookie" header if the session was accessed at all.
+        # Thêm một header "Vary: Cookie" nếu session đã được truy cập.
         if session.accessed:
             response.vary.add("Cookie")
 
-        # If the session is modified to be empty, remove the cookie.
-        # If the session is empty, return without setting the cookie.
+        # Nếu session được sửa đổi thành trống, xóa cookie.
+        # Nếu session trống, trả về mà không thiết lập cookie.
         if not session:
             if session.modified:
                 response.delete_cookie(

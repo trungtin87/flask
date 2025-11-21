@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from blinker import Namespace
 
-# This namespace is only for signals provided by Flask itself.
+# Namespace này chỉ dành cho các tín hiệu được cung cấp bởi chính Flask.
 _signals = Namespace()
 
 template_rendered = _signals.signal("template-rendered")

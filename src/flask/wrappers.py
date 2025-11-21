@@ -16,40 +16,40 @@ if t.TYPE_CHECKING:  # pragma: no cover
 
 
 class Request(RequestBase):
-    """The request object used by default in Flask.  Remembers the
-    matched endpoint and view arguments.
+    """Đối tượng request được sử dụng theo mặc định trong Flask. Ghi nhớ
+    endpoint đã khớp và các đối số view.
 
-    It is what ends up as :class:`~flask.request`.  If you want to replace
-    the request object used you can subclass this and set
-    :attr:`~flask.Flask.request_class` to your subclass.
+    Nó là cái kết thúc như là :class:`~flask.request`. Nếu bạn muốn thay thế
+    đối tượng request được sử dụng, bạn có thể phân lớp cái này và thiết lập
+    :attr:`~flask.Flask.request_class` thành lớp con của bạn.
 
-    The request object is a :class:`~werkzeug.wrappers.Request` subclass and
-    provides all of the attributes Werkzeug defines plus a few Flask
-    specific ones.
+    Đối tượng request là một lớp con của :class:`~werkzeug.wrappers.Request` và
+    cung cấp tất cả các thuộc tính mà Werkzeug định nghĩa cộng với một vài thuộc tính cụ thể
+    của Flask.
     """
 
     json_module: t.Any = json
 
-    #: The internal URL rule that matched the request.  This can be
-    #: useful to inspect which methods are allowed for the URL from
-    #: a before/after handler (``request.url_rule.methods``) etc.
-    #: Though if the request's method was invalid for the URL rule,
-    #: the valid list is available in ``routing_exception.valid_methods``
-    #: instead (an attribute of the Werkzeug exception
+    #: Quy tắc URL nội bộ đã khớp với request. Điều này có thể
+    #: hữu ích để kiểm tra những phương thức nào được phép cho URL từ
+    #: một handler before/after (``request.url_rule.methods``) v.v.
+    #: Mặc dù nếu phương thức của request không hợp lệ cho quy tắc URL,
+    #: danh sách hợp lệ có sẵn trong ``routing_exception.valid_methods``
+    #: thay thế (một thuộc tính của ngoại lệ Werkzeug
     #: :exc:`~werkzeug.exceptions.MethodNotAllowed`)
-    #: because the request was never internally bound.
+    #: bởi vì request chưa bao giờ được ràng buộc nội bộ.
     #:
     #: .. versionadded:: 0.6
     url_rule: Rule | None = None
 
-    #: A dict of view arguments that matched the request.  If an exception
-    #: happened when matching, this will be ``None``.
+    #: Một dict các đối số view đã khớp với request. Nếu một ngoại lệ
+    #: xảy ra khi khớp, cái này sẽ là ``None``.
     view_args: dict[str, t.Any] | None = None
 
-    #: If matching the URL failed, this is the exception that will be
-    #: raised / was raised as part of the request handling.  This is
-    #: usually a :exc:`~werkzeug.exceptions.NotFound` exception or
-    #: something similar.
+    #: Nếu khớp URL thất bại, đây là ngoại lệ sẽ được
+    #: ném ra / đã được ném ra như một phần của xử lý request. Đây
+    #: thường là một ngoại lệ :exc:`~werkzeug.exceptions.NotFound` hoặc
+    #: một cái gì đó tương tự.
     routing_exception: HTTPException | None = None
 
     _max_content_length: int | None = None
@@ -58,24 +58,24 @@ class Request(RequestBase):
 
     @property
     def max_content_length(self) -> int | None:
-        """The maximum number of bytes that will be read during this request. If
-        this limit is exceeded, a 413 :exc:`~werkzeug.exceptions.RequestEntityTooLarge`
-        error is raised. If it is set to ``None``, no limit is enforced at the
-        Flask application level. However, if it is ``None`` and the request has
-        no ``Content-Length`` header and the WSGI server does not indicate that
-        it terminates the stream, then no data is read to avoid an infinite
-        stream.
+        """Số byte tối đa sẽ được đọc trong request này. Nếu
+        giới hạn này bị vượt quá, một lỗi 413 :exc:`~werkzeug.exceptions.RequestEntityTooLarge`
+        được ném ra. Nếu nó được thiết lập thành ``None``, không có giới hạn nào được thực thi ở cấp độ
+        ứng dụng Flask. Tuy nhiên, nếu nó là ``None`` và request không có
+        header ``Content-Length`` và máy chủ WSGI không chỉ ra rằng
+        nó chấm dứt luồng, thì không có dữ liệu nào được đọc để tránh một luồng
+        vô hạn.
 
-        Each request defaults to the :data:`MAX_CONTENT_LENGTH` config, which
-        defaults to ``None``. It can be set on a specific ``request`` to apply
-        the limit to that specific view. This should be set appropriately based
-        on an application's or view's specific needs.
+        Mỗi request mặc định theo cấu hình :data:`MAX_CONTENT_LENGTH`, cái mà
+        mặc định là ``None``. Nó có thể được thiết lập trên một ``request`` cụ thể để áp dụng
+        giới hạn cho view cụ thể đó. Điều này nên được thiết lập một cách thích hợp dựa trên
+        nhu cầu cụ thể của ứng dụng hoặc view.
 
         .. versionchanged:: 3.1
-            This can be set per-request.
+            Cái này có thể được thiết lập theo mỗi request.
 
         .. versionchanged:: 0.6
-            This is configurable through Flask config.
+            Cái này có thể cấu hình thông qua cấu hình Flask.
         """
         if self._max_content_length is not None:
             return self._max_content_length
@@ -91,18 +91,18 @@ class Request(RequestBase):
 
     @property
     def max_form_memory_size(self) -> int | None:
-        """The maximum size in bytes any non-file form field may be in a
-        ``multipart/form-data`` body. If this limit is exceeded, a 413
-        :exc:`~werkzeug.exceptions.RequestEntityTooLarge` error is raised. If it
-        is set to ``None``, no limit is enforced at the Flask application level.
+        """Kích thước tối đa tính bằng byte mà bất kỳ trường form không phải tệp nào có thể có trong một
+        body ``multipart/form-data``. Nếu giới hạn này bị vượt quá, một lỗi 413
+        :exc:`~werkzeug.exceptions.RequestEntityTooLarge` được ném ra. Nếu nó
+        được thiết lập thành ``None``, không có giới hạn nào được thực thi ở cấp độ ứng dụng Flask.
 
-        Each request defaults to the :data:`MAX_FORM_MEMORY_SIZE` config, which
-        defaults to ``500_000``. It can be set on a specific ``request`` to
-        apply the limit to that specific view. This should be set appropriately
-        based on an application's or view's specific needs.
+        Mỗi request mặc định theo cấu hình :data:`MAX_FORM_MEMORY_SIZE`, cái mà
+        mặc định là ``500_000``. Nó có thể được thiết lập trên một ``request`` cụ thể để
+        áp dụng giới hạn cho view cụ thể đó. Điều này nên được thiết lập một cách thích hợp
+        dựa trên nhu cầu cụ thể của ứng dụng hoặc view.
 
         .. versionchanged:: 3.1
-            This is configurable through Flask config.
+            Cái này có thể cấu hình thông qua cấu hình Flask.
         """
         if self._max_form_memory_size is not None:
             return self._max_form_memory_size
@@ -118,18 +118,18 @@ class Request(RequestBase):
 
     @property  # type: ignore[override]
     def max_form_parts(self) -> int | None:
-        """The maximum number of fields that may be present in a
-        ``multipart/form-data`` body. If this limit is exceeded, a 413
-        :exc:`~werkzeug.exceptions.RequestEntityTooLarge` error is raised. If it
-        is set to ``None``, no limit is enforced at the Flask application level.
+        """Số lượng trường tối đa có thể có trong một
+        body ``multipart/form-data``. Nếu giới hạn này bị vượt quá, một lỗi 413
+        :exc:`~werkzeug.exceptions.RequestEntityTooLarge` được ném ra. Nếu nó
+        được thiết lập thành ``None``, không có giới hạn nào được thực thi ở cấp độ ứng dụng Flask.
 
-        Each request defaults to the :data:`MAX_FORM_PARTS` config, which
-        defaults to ``1_000``. It can be set on a specific ``request`` to apply
-        the limit to that specific view. This should be set appropriately based
-        on an application's or view's specific needs.
+        Mỗi request mặc định theo cấu hình :data:`MAX_FORM_PARTS`, cái mà
+        mặc định là ``1_000``. Nó có thể được thiết lập trên một ``request`` cụ thể để áp dụng
+        giới hạn cho view cụ thể đó. Điều này nên được thiết lập một cách thích hợp dựa trên
+        nhu cầu cụ thể của ứng dụng hoặc view.
 
         .. versionchanged:: 3.1
-            This is configurable through Flask config.
+            Cái này có thể cấu hình thông qua cấu hình Flask.
         """
         if self._max_form_parts is not None:
             return self._max_form_parts
@@ -145,13 +145,13 @@ class Request(RequestBase):
 
     @property
     def endpoint(self) -> str | None:
-        """The endpoint that matched the request URL.
+        """Endpoint đã khớp với URL request.
 
-        This will be ``None`` if matching failed or has not been
-        performed yet.
+        Cái này sẽ là ``None`` nếu khớp thất bại hoặc chưa được
+        thực hiện.
 
-        This in combination with :attr:`view_args` can be used to
-        reconstruct the same URL or a modified URL.
+        Cái này kết hợp với :attr:`view_args` có thể được sử dụng để
+        tái tạo cùng một URL hoặc một URL đã sửa đổi.
         """
         if self.url_rule is not None:
             return self.url_rule.endpoint  # type: ignore[no-any-return]
@@ -160,15 +160,14 @@ class Request(RequestBase):
 
     @property
     def blueprint(self) -> str | None:
-        """The registered name of the current blueprint.
+        """Tên đã đăng ký của blueprint hiện tại.
 
-        This will be ``None`` if the endpoint is not part of a
-        blueprint, or if URL matching failed or has not been performed
-        yet.
+        Cái này sẽ là ``None`` nếu endpoint không phải là một phần của một
+        blueprint, hoặc nếu khớp URL thất bại hoặc chưa được thực hiện.
 
-        This does not necessarily match the name the blueprint was
-        created with. It may have been nested, or registered with a
-        different name.
+        Cái này không nhất thiết phải khớp với tên mà blueprint được
+        tạo ra. Nó có thể đã được lồng nhau, hoặc được đăng ký với một
+        tên khác.
         """
         endpoint = self.endpoint
 
@@ -179,11 +178,11 @@ class Request(RequestBase):
 
     @property
     def blueprints(self) -> list[str]:
-        """The registered names of the current blueprint upwards through
-        parent blueprints.
+        """Các tên đã đăng ký của blueprint hiện tại lên trên qua
+        các blueprint cha.
 
-        This will be an empty list if there is no current blueprint, or
-        if URL matching failed.
+        Cái này sẽ là một danh sách trống nếu không có blueprint hiện tại, hoặc
+        nếu khớp URL thất bại.
 
         .. versionadded:: 2.0.1
         """
@@ -197,8 +196,8 @@ class Request(RequestBase):
     def _load_form_data(self) -> None:
         super()._load_form_data()
 
-        # In debug mode we're replacing the files multidict with an ad-hoc
-        # subclass that raises a different error for key errors.
+        # Trong chế độ debug chúng tôi đang thay thế multidict files bằng một
+        # lớp con ad-hoc ném ra một lỗi khác cho các lỗi khóa.
         if (
             current_app
             and current_app.debug
@@ -220,21 +219,21 @@ class Request(RequestBase):
 
 
 class Response(ResponseBase):
-    """The response object that is used by default in Flask.  Works like the
-    response object from Werkzeug but is set to have an HTML mimetype by
-    default.  Quite often you don't have to create this object yourself because
-    :meth:`~flask.Flask.make_response` will take care of that for you.
+    """Đối tượng phản hồi được sử dụng theo mặc định trong Flask. Hoạt động giống như
+    đối tượng phản hồi từ Werkzeug nhưng được thiết lập để có mimetype HTML theo
+    mặc định. Khá thường xuyên bạn không phải tự tạo đối tượng này vì
+    :meth:`~flask.Flask.make_response` sẽ lo việc đó cho bạn.
 
-    If you want to replace the response object used you can subclass this and
-    set :attr:`~flask.Flask.response_class` to your subclass.
-
-    .. versionchanged:: 1.0
-        JSON support is added to the response, like the request. This is useful
-        when testing to get the test client response data as JSON.
+    Nếu bạn muốn thay thế đối tượng phản hồi được sử dụng, bạn có thể phân lớp cái này và
+    thiết lập :attr:`~flask.Flask.response_class` thành lớp con của bạn.
 
     .. versionchanged:: 1.0
+        Hỗ trợ JSON được thêm vào phản hồi, giống như request. Điều này hữu ích
+        khi kiểm thử để lấy dữ liệu phản hồi của test client dưới dạng JSON.
 
-        Added :attr:`max_cookie_size`.
+    .. versionchanged:: 1.0
+
+        Đã thêm :attr:`max_cookie_size`.
     """
 
     default_mimetype: str | None = "text/html"
@@ -245,13 +244,13 @@ class Response(ResponseBase):
 
     @property
     def max_cookie_size(self) -> int:  # type: ignore
-        """Read-only view of the :data:`MAX_COOKIE_SIZE` config key.
+        """View chỉ đọc của khóa cấu hình :data:`MAX_COOKIE_SIZE`.
 
-        See :attr:`~werkzeug.wrappers.Response.max_cookie_size` in
-        Werkzeug's docs.
+        Xem :attr:`~werkzeug.wrappers.Response.max_cookie_size` trong
+        tài liệu của Werkzeug.
         """
         if current_app:
             return current_app.config["MAX_COOKIE_SIZE"]  # type: ignore[no-any-return]
 
-        # return Werkzeug's default when not in an app context
+        # trả về mặc định của Werkzeug khi không ở trong một ngữ cảnh ứng dụng
         return super().max_cookie_size

@@ -14,13 +14,12 @@ http_method_funcs = frozenset(
 
 
 class View:
-    """Subclass this class and override :meth:`dispatch_request` to
-    create a generic class-based view. Call :meth:`as_view` to create a
-    view function that creates an instance of the class with the given
-    arguments and calls its ``dispatch_request`` method with any URL
-    variables.
+    """Phân lớp lớp này và ghi đè :meth:`dispatch_request` để
+    tạo một view dựa trên lớp chung. Gọi :meth:`as_view` để tạo một
+    hàm view tạo ra một thể hiện của lớp với các đối số đã cho
+    và gọi phương thức ``dispatch_request`` của nó với bất kỳ biến URL nào.
 
-    See :doc:`views` for a detailed guide.
+    Xem :doc:`views` để biết hướng dẫn chi tiết.
 
     .. code-block:: python
 
@@ -34,51 +33,51 @@ class View:
             "/hello/<name>", view_func=Hello.as_view("hello")
         )
 
-    Set :attr:`methods` on the class to change what methods the view
-    accepts.
+    Thiết lập :attr:`methods` trên lớp để thay đổi những phương thức mà view
+    chấp nhận.
 
-    Set :attr:`decorators` on the class to apply a list of decorators to
-    the generated view function. Decorators applied to the class itself
-    will not be applied to the generated view function!
+    Thiết lập :attr:`decorators` trên lớp để áp dụng một danh sách các decorator cho
+    hàm view đã tạo. Các decorator được áp dụng cho chính lớp đó
+    sẽ không được áp dụng cho hàm view đã tạo!
 
-    Set :attr:`init_every_request` to ``False`` for efficiency, unless
-    you need to store request-global data on ``self``.
+    Thiết lập :attr:`init_every_request` thành ``False`` để tăng hiệu quả, trừ khi
+    bạn cần lưu trữ dữ liệu toàn cục request trên ``self``.
     """
 
-    #: The methods this view is registered for. Uses the same default
-    #: (``["GET", "HEAD", "OPTIONS"]``) as ``route`` and
-    #: ``add_url_rule`` by default.
+    #: Các phương thức mà view này được đăng ký. Sử dụng cùng mặc định
+    #: (``["GET", "HEAD", "OPTIONS"]``) như ``route`` và
+    #: ``add_url_rule`` theo mặc định.
     methods: t.ClassVar[t.Collection[str] | None] = None
 
-    #: Control whether the ``OPTIONS`` method is handled automatically.
-    #: Uses the same default (``True``) as ``route`` and
-    #: ``add_url_rule`` by default.
+    #: Kiểm soát xem phương thức ``OPTIONS`` có được xử lý tự động hay không.
+    #: Sử dụng cùng mặc định (``True``) như ``route`` và
+    #: ``add_url_rule`` theo mặc định.
     provide_automatic_options: t.ClassVar[bool | None] = None
 
-    #: A list of decorators to apply, in order, to the generated view
-    #: function. Remember that ``@decorator`` syntax is applied bottom
-    #: to top, so the first decorator in the list would be the bottom
-    #: decorator.
+    #: Một danh sách các decorator để áp dụng, theo thứ tự, cho hàm view
+    #: đã tạo. Hãy nhớ rằng cú pháp ``@decorator`` được áp dụng từ dưới
+    #: lên trên, vì vậy decorator đầu tiên trong danh sách sẽ là decorator
+    #: dưới cùng.
     #:
     #: .. versionadded:: 0.8
     decorators: t.ClassVar[list[t.Callable[..., t.Any]]] = []
 
-    #: Create a new instance of this view class for every request by
-    #: default. If a view subclass sets this to ``False``, the same
-    #: instance is used for every request.
+    #: Tạo một thể hiện mới của lớp view này cho mỗi request theo
+    #: mặc định. Nếu một lớp con view thiết lập cái này thành ``False``, cùng một
+    #: thể hiện được sử dụng cho mỗi request.
     #:
-    #: A single instance is more efficient, especially if complex setup
-    #: is done during init. However, storing data on ``self`` is no
-    #: longer safe across requests, and :data:`~flask.g` should be used
-    #: instead.
+    #: Một thể hiện duy nhất hiệu quả hơn, đặc biệt nếu thiết lập phức tạp
+    #: được thực hiện trong quá trình init. Tuy nhiên, việc lưu trữ dữ liệu trên ``self`` không còn
+    #: an toàn qua các request, và :data:`~flask.g` nên được sử dụng
+    #: thay thế.
     #:
     #: .. versionadded:: 2.2
     init_every_request: t.ClassVar[bool] = True
 
     def dispatch_request(self) -> ft.ResponseReturnValue:
-        """The actual view function behavior. Subclasses must override
-        this and return a valid response. Any variables from the URL
-        rule are passed as keyword arguments.
+        """Hành vi hàm view thực tế. Các lớp con phải ghi đè
+        cái này và trả về một phản hồi hợp lệ. Bất kỳ biến nào từ quy tắc
+        URL đều được truyền dưới dạng đối số từ khóa.
         """
         raise NotImplementedError()
 
@@ -86,20 +85,20 @@ class View:
     def as_view(
         cls, name: str, *class_args: t.Any, **class_kwargs: t.Any
     ) -> ft.RouteCallable:
-        """Convert the class into a view function that can be registered
-        for a route.
+        """Chuyển đổi lớp thành một hàm view có thể được đăng ký
+        cho một route.
 
-        By default, the generated view will create a new instance of the
-        view class for every request and call its
-        :meth:`dispatch_request` method. If the view class sets
-        :attr:`init_every_request` to ``False``, the same instance will
-        be used for every request.
+        Theo mặc định, view đã tạo sẽ tạo một thể hiện mới của
+        lớp view cho mỗi request và gọi phương thức
+        :meth:`dispatch_request` của nó. Nếu lớp view thiết lập
+        :attr:`init_every_request` thành ``False``, cùng một thể hiện sẽ
+        được sử dụng cho mỗi request.
 
-        Except for ``name``, all other arguments passed to this method
-        are forwarded to the view class ``__init__`` method.
+        Ngoại trừ ``name``, tất cả các đối số khác được truyền cho phương thức này
+        đều được chuyển tiếp đến phương thức ``__init__`` của lớp view.
 
         .. versionchanged:: 2.2
-            Added the ``init_every_request`` class attribute.
+            Đã thêm thuộc tính lớp ``init_every_request``.
         """
         if cls.init_every_request:
 
@@ -121,11 +120,11 @@ class View:
             for decorator in cls.decorators:
                 view = decorator(view)
 
-        # We attach the view class to the view function for two reasons:
-        # first of all it allows us to easily figure out what class-based
-        # view this thing came from, secondly it's also used for instantiating
-        # the view class so you can actually replace it with something else
-        # for testing purposes and debugging.
+        # Chúng tôi đính kèm lớp view vào hàm view vì hai lý do:
+        # trước hết nó cho phép chúng tôi dễ dàng tìm ra view dựa trên lớp
+        # này đến từ đâu, thứ hai nó cũng được sử dụng để khởi tạo
+        # lớp view để bạn thực sự có thể thay thế nó bằng một cái gì đó khác
+        # cho mục đích kiểm thử và gỡ lỗi.
         view.view_class = cls  # type: ignore
         view.__name__ = name
         view.__doc__ = cls.__doc__
@@ -136,16 +135,16 @@ class View:
 
 
 class MethodView(View):
-    """Dispatches request methods to the corresponding instance methods.
-    For example, if you implement a ``get`` method, it will be used to
-    handle ``GET`` requests.
+    """Gửi các phương thức request đến các phương thức thể hiện tương ứng.
+    Ví dụ, nếu bạn triển khai một phương thức ``get``, nó sẽ được sử dụng để
+    xử lý các request ``GET``.
 
-    This can be useful for defining a REST API.
+    Điều này có thể hữu ích để định nghĩa một REST API.
 
-    :attr:`methods` is automatically set based on the methods defined on
-    the class.
+    :attr:`methods` được thiết lập tự động dựa trên các phương thức được định nghĩa trên
+    lớp.
 
-    See :doc:`views` for a detailed guide.
+    Xem :doc:`views` để biết hướng dẫn chi tiết.
 
     .. code-block:: python
 
@@ -182,8 +181,8 @@ class MethodView(View):
     def dispatch_request(self, **kwargs: t.Any) -> ft.ResponseReturnValue:
         meth = getattr(self, request.method.lower(), None)
 
-        # If the request method is HEAD and we don't have a handler for it
-        # retry with GET.
+        # Nếu phương thức request là HEAD và chúng ta không có handler cho nó
+        # thử lại với GET.
         if meth is None and request.method == "HEAD":
             meth = getattr(self, "get", None)
 

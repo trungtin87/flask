@@ -14,12 +14,12 @@ if t.TYPE_CHECKING:  # pragma: no cover
 
 @LocalProxy
 def wsgi_errors_stream() -> t.TextIO:
-    """Find the most appropriate error stream for the application. If a request
-    is active, log to ``wsgi.errors``, otherwise use ``sys.stderr``.
+    """Tìm luồng lỗi thích hợp nhất cho ứng dụng. Nếu một request
+    đang hoạt động, ghi log vào ``wsgi.errors``, nếu không sử dụng ``sys.stderr``.
 
-    If you configure your own :class:`logging.StreamHandler`, you may want to
-    use this for the stream. If you are using file or dict configuration and
-    can't import this directly, you can refer to it as
+    Nếu bạn cấu hình :class:`logging.StreamHandler` của riêng mình, bạn có thể muốn
+    sử dụng cái này cho luồng. Nếu bạn đang sử dụng cấu hình tệp hoặc dict và
+    không thể import cái này trực tiếp, bạn có thể tham chiếu đến nó như là
     ``ext://flask.logging.wsgi_errors_stream``.
     """
     if request:
@@ -29,8 +29,8 @@ def wsgi_errors_stream() -> t.TextIO:
 
 
 def has_level_handler(logger: logging.Logger) -> bool:
-    """Check if there is a handler in the logging chain that will handle the
-    given logger's :meth:`effective level <~logging.Logger.getEffectiveLevel>`.
+    """Kiểm tra xem có một handler trong chuỗi logging sẽ xử lý
+    :meth:`effective level <~logging.Logger.getEffectiveLevel>` của logger đã cho hay không.
     """
     level = logger.getEffectiveLevel()
     current = logger
@@ -47,7 +47,7 @@ def has_level_handler(logger: logging.Logger) -> bool:
     return False
 
 
-#: Log messages to :func:`~flask.logging.wsgi_errors_stream` with the format
+#: Ghi log các thông báo vào :func:`~flask.logging.wsgi_errors_stream` với định dạng
 #: ``[%(asctime)s] %(levelname)s in %(module)s: %(message)s``.
 default_handler = logging.StreamHandler(wsgi_errors_stream)  # type: ignore
 default_handler.setFormatter(
@@ -56,17 +56,17 @@ default_handler.setFormatter(
 
 
 def create_logger(app: App) -> logging.Logger:
-    """Get the Flask app's logger and configure it if needed.
+    """Lấy logger của ứng dụng Flask và cấu hình nó nếu cần.
 
-    The logger name will be the same as
+    Tên logger sẽ giống như
     :attr:`app.import_name <flask.Flask.name>`.
 
-    When :attr:`~flask.Flask.debug` is enabled, set the logger level to
-    :data:`logging.DEBUG` if it is not set.
+    Khi :attr:`~flask.Flask.debug` được bật, thiết lập mức logger thành
+    :data:`logging.DEBUG` nếu nó chưa được thiết lập.
 
-    If there is no handler for the logger's effective level, add a
-    :class:`~logging.StreamHandler` for
-    :func:`~flask.logging.wsgi_errors_stream` with a basic format.
+    Nếu không có handler cho mức hiệu quả của logger, thêm một
+    :class:`~logging.StreamHandler` cho
+    :func:`~flask.logging.wsgi_errors_stream` với một định dạng cơ bản.
     """
     logger = logging.getLogger(app.name)
 

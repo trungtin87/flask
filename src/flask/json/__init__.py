@@ -11,14 +11,14 @@ if t.TYPE_CHECKING:  # pragma: no cover
 
 
 def dumps(obj: t.Any, **kwargs: t.Any) -> str:
-    """Serialize data as JSON.
+    """Tuần tự hóa dữ liệu thành JSON.
 
-    If :data:`~flask.current_app` is available, it will use its
+    Nếu :data:`~flask.current_app` có sẵn, nó sẽ sử dụng phương thức
     :meth:`app.json.dumps() <flask.json.provider.JSONProvider.dumps>`
-    method, otherwise it will use :func:`json.dumps`.
+    của nó, nếu không nó sẽ sử dụng :func:`json.dumps`.
 
-    :param obj: The data to serialize.
-    :param kwargs: Arguments passed to the ``dumps`` implementation.
+    :param obj: Dữ liệu để tuần tự hóa.
+    :param kwargs: Các đối số được truyền cho triển khai ``dumps``.
 
     .. versionchanged:: 2.3
         The ``app`` parameter was removed.
@@ -45,16 +45,16 @@ def dumps(obj: t.Any, **kwargs: t.Any) -> str:
 
 
 def dump(obj: t.Any, fp: t.IO[str], **kwargs: t.Any) -> None:
-    """Serialize data as JSON and write to a file.
+    """Tuần tự hóa dữ liệu thành JSON và ghi vào một tệp.
 
-    If :data:`~flask.current_app` is available, it will use its
+    Nếu :data:`~flask.current_app` có sẵn, nó sẽ sử dụng phương thức
     :meth:`app.json.dump() <flask.json.provider.JSONProvider.dump>`
-    method, otherwise it will use :func:`json.dump`.
+    của nó, nếu không nó sẽ sử dụng :func:`json.dump`.
 
-    :param obj: The data to serialize.
-    :param fp: A file opened for writing text. Should use the UTF-8
-        encoding to be valid JSON.
-    :param kwargs: Arguments passed to the ``dump`` implementation.
+    :param obj: Dữ liệu để tuần tự hóa.
+    :param fp: Một tệp được mở để ghi văn bản. Nên sử dụng mã hóa UTF-8
+        để là JSON hợp lệ.
+    :param kwargs: Các đối số được truyền cho triển khai ``dump``.
 
     .. versionchanged:: 2.3
         The ``app`` parameter was removed.
@@ -75,14 +75,14 @@ def dump(obj: t.Any, fp: t.IO[str], **kwargs: t.Any) -> None:
 
 
 def loads(s: str | bytes, **kwargs: t.Any) -> t.Any:
-    """Deserialize data as JSON.
+    """Giải tuần tự hóa dữ liệu thành JSON.
 
-    If :data:`~flask.current_app` is available, it will use its
+    Nếu :data:`~flask.current_app` có sẵn, nó sẽ sử dụng phương thức
     :meth:`app.json.loads() <flask.json.provider.JSONProvider.loads>`
-    method, otherwise it will use :func:`json.loads`.
+    của nó, nếu không nó sẽ sử dụng :func:`json.loads`.
 
-    :param s: Text or UTF-8 bytes.
-    :param kwargs: Arguments passed to the ``loads`` implementation.
+    :param s: Văn bản hoặc byte UTF-8.
+    :param kwargs: Các đối số được truyền cho triển khai ``loads``.
 
     .. versionchanged:: 2.3
         The ``app`` parameter was removed.
@@ -106,14 +106,14 @@ def loads(s: str | bytes, **kwargs: t.Any) -> t.Any:
 
 
 def load(fp: t.IO[t.AnyStr], **kwargs: t.Any) -> t.Any:
-    """Deserialize data as JSON read from a file.
+    """Giải tuần tự hóa dữ liệu thành JSON đọc từ một tệp.
 
-    If :data:`~flask.current_app` is available, it will use its
+    Nếu :data:`~flask.current_app` có sẵn, nó sẽ sử dụng phương thức
     :meth:`app.json.load() <flask.json.provider.JSONProvider.load>`
-    method, otherwise it will use :func:`json.load`.
+    của nó, nếu không nó sẽ sử dụng :func:`json.load`.
 
-    :param fp: A file opened for reading text or UTF-8 bytes.
-    :param kwargs: Arguments passed to the ``load`` implementation.
+    :param fp: Một tệp được mở để đọc văn bản hoặc byte UTF-8.
+    :param kwargs: Các đối số được truyền cho triển khai ``load``.
 
     .. versionchanged:: 2.3
         The ``app`` parameter was removed.
@@ -136,23 +136,23 @@ def load(fp: t.IO[t.AnyStr], **kwargs: t.Any) -> t.Any:
 
 
 def jsonify(*args: t.Any, **kwargs: t.Any) -> Response:
-    """Serialize the given arguments as JSON, and return a
-    :class:`~flask.Response` object with the ``application/json``
-    mimetype. A dict or list returned from a view will be converted to a
-    JSON response automatically without needing to call this.
+    """Tuần tự hóa các đối số đã cho thành JSON, và trả về một
+    đối tượng :class:`~flask.Response` với mimetype ``application/json``.
+    Một dict hoặc list được trả về từ một view sẽ được chuyển đổi thành một
+    phản hồi JSON tự động mà không cần phải gọi cái này.
 
-    This requires an active app context, and calls
+    Điều này yêu cầu một ngữ cảnh ứng dụng đang hoạt động, và gọi
     :meth:`app.json.response() <flask.json.provider.JSONProvider.response>`.
 
-    In debug mode, the output is formatted with indentation to make it
-    easier to read. This may also be controlled by the provider.
+    Trong chế độ debug, đầu ra được định dạng với thụt đầu dòng để làm cho nó
+    dễ đọc hơn. Điều này cũng có thể được kiểm soát bởi provider.
 
-    Either positional or keyword arguments can be given, not both.
-    If no arguments are given, ``None`` is serialized.
+    Hoặc đối số vị trí hoặc đối số từ khóa có thể được đưa ra, không phải cả hai.
+    Nếu không có đối số nào được đưa ra, ``None`` được tuần tự hóa.
 
-    :param args: A single value to serialize, or multiple values to
-        treat as a list to serialize.
-    :param kwargs: Treat as a dict to serialize.
+    :param args: Một giá trị duy nhất để tuần tự hóa, hoặc nhiều giá trị để
+        xử lý như một danh sách để tuần tự hóa.
+    :param kwargs: Xử lý như một dict để tuần tự hóa.
 
     .. versionchanged:: 2.2
         Calls ``current_app.json.response``, allowing an app to override

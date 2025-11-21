@@ -17,7 +17,7 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 def login_required(view):
-    """View decorator that redirects anonymous users to the login page."""
+    """View decorator chuyển hướng người dùng ẩn danh đến trang đăng nhập."""
 
     @functools.wraps(view)
     def wrapped_view(**kwargs):
@@ -31,8 +31,8 @@ def login_required(view):
 
 @bp.before_app_request
 def load_logged_in_user():
-    """If a user id is stored in the session, load the user object from
-    the database into ``g.user``."""
+    """Nếu một user id được lưu trữ trong session, tải đối tượng user từ
+    cơ sở dữ liệu vào ``g.user``."""
     user_id = session.get("user_id")
 
     if user_id is None:
@@ -45,10 +45,10 @@ def load_logged_in_user():
 
 @bp.route("/register", methods=("GET", "POST"))
 def register():
-    """Register a new user.
+    """Đăng ký một người dùng mới.
 
-    Validates that the username is not already taken. Hashes the
-    password for security.
+    Xác thực rằng tên người dùng chưa được sử dụng. Băm
+    mật khẩu để bảo mật.
     """
     if request.method == "POST":
         username = request.form["username"]
@@ -57,9 +57,9 @@ def register():
         error = None
 
         if not username:
-            error = "Username is required."
+            error = "Tên người dùng là bắt buộc."
         elif not password:
-            error = "Password is required."
+            error = "Mật khẩu là bắt buộc."
 
         if error is None:
             try:
@@ -69,11 +69,11 @@ def register():
                 )
                 db.commit()
             except db.IntegrityError:
-                # The username was already taken, which caused the
-                # commit to fail. Show a validation error.
-                error = f"User {username} is already registered."
+                # Tên người dùng đã được sử dụng, điều này gây ra
+                # lỗi commit. Hiển thị một lỗi xác thực.
+                error = f"Người dùng {username} đã được đăng ký."
             else:
-                # Success, go to the login page.
+                # Thành công, đi đến trang đăng nhập.
                 return redirect(url_for("auth.login"))
 
         flash(error)
@@ -83,7 +83,7 @@ def register():
 
 @bp.route("/login", methods=("GET", "POST"))
 def login():
-    """Log in a registered user by adding the user id to the session."""
+    """Đăng nhập một người dùng đã đăng ký bằng cách thêm user id vào session."""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -94,12 +94,12 @@ def login():
         ).fetchone()
 
         if user is None:
-            error = "Incorrect username."
+            error = "Tên người dùng không chính xác."
         elif not check_password_hash(user["password"], password):
-            error = "Incorrect password."
+            error = "Mật khẩu không chính xác."
 
         if error is None:
-            # store the user id in a new session and return to the index
+            # lưu trữ user id trong một session mới và quay lại index
             session.clear()
             session["user_id"] = user["id"]
             return redirect(url_for("index"))
@@ -111,6 +111,6 @@ def login():
 
 @bp.route("/logout")
 def logout():
-    """Clear the current session, including the stored user id."""
+    """Xóa session hiện tại, bao gồm user id đã lưu trữ."""
     session.clear()
     return redirect(url_for("index"))

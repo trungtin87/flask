@@ -1,33 +1,33 @@
 {% extends 'base.html' %}
 
 {% block intro %}
-  <a href="https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch"><code>fetch</code></a>
-  is the <em>modern</em> plain JavaScript way to make requests. It's
-  supported in all modern browsers.
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch"><code>fetch</code></a>
+là cách JavaScript thuần túy <em>hiện đại</em> để thực hiện các yêu cầu. Nó được
+hỗ trợ trong tất cả các trình duyệt hiện đại.
 {% endblock %}
 
 {% block script %}
-  <script>
-    function addSubmit(ev) {
-      ev.preventDefault();
-      fetch({{ url_for('add')|tojson }}, {
-        method: 'POST',
-        body: new FormData(this)
-      })
+<script>
+  function addSubmit(ev) {
+    ev.preventDefault();
+    fetch({{ url_for('add')| tojson }}, {
+    method: 'POST',
+      body: new FormData(this)
+  })
         .then(parseJSON)
-        .then(addShow);
+    .then(addShow);
     }
 
-    function parseJSON(response) {
-      return response.json();
-    }
+  function parseJSON(response) {
+    return response.json();
+  }
 
-    function addShow(data) {
-      var span = document.getElementById('result');
-      span.innerText = data.result;
-    }
+  function addShow(data) {
+    var span = document.getElementById('result');
+    span.innerText = data.result;
+  }
 
-    var form = document.getElementById('calc');
-    form.addEventListener('submit', addSubmit);
-  </script>
+  var form = document.getElementById('calc');
+  form.addEventListener('submit', addSubmit);
+</script>
 {% endblock %}

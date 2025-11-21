@@ -57,167 +57,167 @@ def _make_timedelta(value: timedelta | int | None) -> timedelta | None:
 
 
 class App(Scaffold):
-    """The flask object implements a WSGI application and acts as the central
-    object.  It is passed the name of the module or package of the
-    application.  Once it is created it will act as a central registry for
-    the view functions, the URL rules, template configuration and much more.
+    """Đối tượng flask triển khai một ứng dụng WSGI và đóng vai trò là đối tượng
+    trung tâm. Nó được truyền tên của module hoặc package của
+    ứng dụng. Sau khi được tạo, nó sẽ hoạt động như một sổ đăng ký trung tâm cho
+    các hàm view, quy tắc URL, cấu hình template và nhiều thứ khác.
 
-    The name of the package is used to resolve resources from inside the
-    package or the folder the module is contained in depending on if the
-    package parameter resolves to an actual python package (a folder with
-    an :file:`__init__.py` file inside) or a standard module (just a ``.py`` file).
+    Tên của package được sử dụng để giải quyết các tài nguyên từ bên trong
+    package hoặc thư mục chứa module tùy thuộc vào việc tham số
+    package giải quyết thành một package python thực tế (một thư mục với
+    tệp :file:`__init__.py` bên trong) hay một module tiêu chuẩn (chỉ là một tệp ``.py``).
 
-    For more information about resource loading, see :func:`open_resource`.
+    Để biết thêm thông tin về việc tải tài nguyên, xem :func:`open_resource`.
 
-    Usually you create a :class:`Flask` instance in your main module or
-    in the :file:`__init__.py` file of your package like this::
+    Thông thường bạn tạo một thể hiện :class:`Flask` trong module chính của bạn hoặc
+    trong tệp :file:`__init__.py` của package của bạn như thế này::
 
         from flask import Flask
         app = Flask(__name__)
 
-    .. admonition:: About the First Parameter
+    .. admonition:: Về Tham Số Đầu Tiên
 
-        The idea of the first parameter is to give Flask an idea of what
-        belongs to your application.  This name is used to find resources
-        on the filesystem, can be used by extensions to improve debugging
-        information and a lot more.
+        Ý tưởng của tham số đầu tiên là cung cấp cho Flask một ý tưởng về những gì
+        thuộc về ứng dụng của bạn. Tên này được sử dụng để tìm tài nguyên
+        trên hệ thống tệp, có thể được sử dụng bởi các tiện ích mở rộng để cải thiện thông tin
+        gỡ lỗi và nhiều hơn nữa.
 
-        So it's important what you provide there.  If you are using a single
-        module, `__name__` is always the correct value.  If you however are
-        using a package, it's usually recommended to hardcode the name of
-        your package there.
+        Vì vậy, điều quan trọng là bạn cung cấp gì ở đó. Nếu bạn đang sử dụng một module
+        duy nhất, `__name__` luôn là giá trị chính xác. Tuy nhiên, nếu bạn đang
+        sử dụng một package, thường nên hardcode tên của
+        package của bạn ở đó.
 
-        For example if your application is defined in :file:`yourapplication/app.py`
-        you should create it with one of the two versions below::
+        Ví dụ: nếu ứng dụng của bạn được định nghĩa trong :file:`yourapplication/app.py`
+        bạn nên tạo nó với một trong hai phiên bản dưới đây::
 
             app = Flask('yourapplication')
             app = Flask(__name__.split('.')[0])
 
-        Why is that?  The application will work even with `__name__`, thanks
-        to how resources are looked up.  However it will make debugging more
-        painful.  Certain extensions can make assumptions based on the
-        import name of your application.  For example the Flask-SQLAlchemy
-        extension will look for the code in your application that triggered
-        an SQL query in debug mode.  If the import name is not properly set
-        up, that debugging information is lost.  (For example it would only
-        pick up SQL queries in `yourapplication.app` and not
+        Tại sao lại như vậy? Ứng dụng sẽ hoạt động ngay cả với `__name__`, nhờ
+        vào cách tài nguyên được tra cứu. Tuy nhiên, nó sẽ làm cho việc gỡ lỗi trở nên
+        khó khăn hơn. Một số tiện ích mở rộng có thể đưa ra giả định dựa trên
+        tên import của ứng dụng của bạn. Ví dụ: tiện ích mở rộng Flask-SQLAlchemy
+        sẽ tìm kiếm mã trong ứng dụng của bạn đã kích hoạt
+        một truy vấn SQL trong chế độ debug. Nếu tên import không được thiết lập
+        đúng, thông tin gỡ lỗi đó sẽ bị mất. (Ví dụ: nó sẽ chỉ
+        nhận các truy vấn SQL trong `yourapplication.app` và không phải
         `yourapplication.views.frontend`)
 
     .. versionadded:: 0.7
-       The `static_url_path`, `static_folder`, and `template_folder`
-       parameters were added.
+       Các tham số `static_url_path`, `static_folder`, và `template_folder`
+       đã được thêm vào.
 
     .. versionadded:: 0.8
-       The `instance_path` and `instance_relative_config` parameters were
-       added.
+       Các tham số `instance_path` và `instance_relative_config` đã được
+       thêm vào.
 
     .. versionadded:: 0.11
-       The `root_path` parameter was added.
+       Tham số `root_path` đã được thêm vào.
 
     .. versionadded:: 1.0
-       The ``host_matching`` and ``static_host`` parameters were added.
+       Các tham số ``host_matching`` và ``static_host`` đã được thêm vào.
 
     .. versionadded:: 1.0
-       The ``subdomain_matching`` parameter was added. Subdomain
-       matching needs to be enabled manually now. Setting
-       :data:`SERVER_NAME` does not implicitly enable it.
+       Tham số ``subdomain_matching`` đã được thêm vào. Khớp tên miền phụ
+       cần được bật thủ công ngay bây giờ. Việc thiết lập
+       :data:`SERVER_NAME` không ngầm định kích hoạt nó.
 
-    :param import_name: the name of the application package
-    :param static_url_path: can be used to specify a different path for the
-                            static files on the web.  Defaults to the name
-                            of the `static_folder` folder.
-    :param static_folder: The folder with static files that is served at
-        ``static_url_path``. Relative to the application ``root_path``
-        or an absolute path. Defaults to ``'static'``.
-    :param static_host: the host to use when adding the static route.
-        Defaults to None. Required when using ``host_matching=True``
-        with a ``static_folder`` configured.
-    :param host_matching: set ``url_map.host_matching`` attribute.
-        Defaults to False.
-    :param subdomain_matching: consider the subdomain relative to
-        :data:`SERVER_NAME` when matching routes. Defaults to False.
-    :param template_folder: the folder that contains the templates that should
-                            be used by the application.  Defaults to
-                            ``'templates'`` folder in the root path of the
-                            application.
-    :param instance_path: An alternative instance path for the application.
-                          By default the folder ``'instance'`` next to the
-                          package or module is assumed to be the instance
-                          path.
-    :param instance_relative_config: if set to ``True`` relative filenames
-                                     for loading the config are assumed to
-                                     be relative to the instance path instead
-                                     of the application root.
-    :param root_path: The path to the root of the application files.
-        This should only be set manually when it can't be detected
-        automatically, such as for namespace packages.
+    :param import_name: tên của package ứng dụng
+    :param static_url_path: có thể được sử dụng để chỉ định một đường dẫn khác cho các
+                            tệp tĩnh trên web. Mặc định là tên
+                            của thư mục `static_folder`.
+    :param static_folder: Thư mục chứa các tệp tĩnh được phục vụ tại
+        ``static_url_path``. Tương đối với ``root_path`` của ứng dụng
+        hoặc một đường dẫn tuyệt đối. Mặc định là ``'static'``.
+    :param static_host: host để sử dụng khi thêm route tĩnh.
+        Mặc định là None. Bắt buộc khi sử dụng ``host_matching=True``
+        với một ``static_folder`` được cấu hình.
+    :param host_matching: đặt thuộc tính ``url_map.host_matching``.
+        Mặc định là False.
+    :param subdomain_matching: xem xét tên miền phụ tương đối với
+        :data:`SERVER_NAME` khi khớp các route. Mặc định là False.
+    :param template_folder: thư mục chứa các template nên được
+                            sử dụng bởi ứng dụng. Mặc định là
+                            thư mục ``'templates'`` trong đường dẫn gốc của
+                            ứng dụng.
+    :param instance_path: Một đường dẫn instance thay thế cho ứng dụng.
+                          Theo mặc định, thư mục ``'instance'`` cạnh
+                          package hoặc module được giả định là đường dẫn
+                          instance.
+    :param instance_relative_config: nếu được đặt thành ``True`` các tên tệp tương đối
+                                     để tải cấu hình được giả định
+                                     là tương đối với đường dẫn instance thay vì
+                                     gốc ứng dụng.
+    :param root_path: Đường dẫn đến gốc của các tệp ứng dụng.
+        Điều này chỉ nên được đặt thủ công khi nó không thể được phát hiện
+        tự động, chẳng hạn như đối với các namespace package.
     """
 
-    #: The class of the object assigned to :attr:`aborter`, created by
-    #: :meth:`create_aborter`. That object is called by
-    #: :func:`flask.abort` to raise HTTP errors, and can be
-    #: called directly as well.
+    #: Lớp của đối tượng được gán cho :attr:`aborter`, được tạo bởi
+    #: :meth:`create_aborter`. Đối tượng đó được gọi bởi
+    #: :func:`flask.abort` để ném ra các lỗi HTTP, và cũng có thể được
+    #: gọi trực tiếp.
     #:
-    #: Defaults to :class:`werkzeug.exceptions.Aborter`.
+    #: Mặc định là :class:`werkzeug.exceptions.Aborter`.
     #:
     #: .. versionadded:: 2.2
     aborter_class = Aborter
 
-    #: The class that is used for the Jinja environment.
+    #: Lớp được sử dụng cho môi trường Jinja.
     #:
     #: .. versionadded:: 0.11
     jinja_environment = Environment
 
-    #: The class that is used for the :data:`~flask.g` instance.
+    #: Lớp được sử dụng cho thể hiện :data:`~flask.g`.
     #:
-    #: Example use cases for a custom class:
+    #: Ví dụ về các trường hợp sử dụng cho một lớp tùy chỉnh:
     #:
-    #: 1. Store arbitrary attributes on flask.g.
-    #: 2. Add a property for lazy per-request database connectors.
-    #: 3. Return None instead of AttributeError on unexpected attributes.
-    #: 4. Raise exception if an unexpected attr is set, a "controlled" flask.g.
+    #: 1. Lưu trữ các thuộc tính tùy ý trên flask.g.
+    #: 2. Thêm một thuộc tính cho các kết nối cơ sở dữ liệu lười biếng theo yêu cầu.
+    #: 3. Trả về None thay vì AttributeError trên các thuộc tính không mong đợi.
+    #: 4. Ném ngoại lệ nếu một thuộc tính không mong đợi được đặt, một flask.g "được kiểm soát".
     #:
     #: .. versionadded:: 0.10
-    #:     Renamed from ``request_globals_class`.
+    #:     Đổi tên từ ``request_globals_class`.
     app_ctx_globals_class = _AppCtxGlobals
 
-    #: The class that is used for the ``config`` attribute of this app.
-    #: Defaults to :class:`~flask.Config`.
+    #: Lớp được sử dụng cho thuộc tính ``config`` của ứng dụng này.
+    #: Mặc định là :class:`~flask.Config`.
     #:
-    #: Example use cases for a custom class:
+    #: Ví dụ về các trường hợp sử dụng cho một lớp tùy chỉnh:
     #:
-    #: 1. Default values for certain config options.
-    #: 2. Access to config values through attributes in addition to keys.
+    #: 1. Giá trị mặc định cho một số tùy chọn cấu hình nhất định.
+    #: 2. Truy cập vào các giá trị cấu hình thông qua các thuộc tính ngoài các khóa.
     #:
     #: .. versionadded:: 0.11
     config_class = Config
 
-    #: The testing flag.  Set this to ``True`` to enable the test mode of
-    #: Flask extensions (and in the future probably also Flask itself).
-    #: For example this might activate test helpers that have an
-    #: additional runtime cost which should not be enabled by default.
+    #: Cờ testing. Đặt cờ này thành ``True`` để kích hoạt chế độ test của
+    #: các tiện ích mở rộng Flask (và trong tương lai có thể cả chính Flask).
+    #: Ví dụ: điều này có thể kích hoạt các trình trợ giúp test có
+    #: chi phí thời gian chạy bổ sung mà không nên được bật theo mặc định.
     #:
-    #: If this is enabled and PROPAGATE_EXCEPTIONS is not changed from the
-    #: default it's implicitly enabled.
+    #: Nếu điều này được bật và PROPAGATE_EXCEPTIONS không thay đổi từ
+    #: mặc định, nó sẽ được kích hoạt ngầm.
     #:
-    #: This attribute can also be configured from the config with the
-    #: ``TESTING`` configuration key.  Defaults to ``False``.
+    #: Thuộc tính này cũng có thể được cấu hình từ config với khóa
+    #: cấu hình ``TESTING``. Mặc định là ``False``.
     testing = ConfigAttribute[bool]("TESTING")
 
-    #: If a secret key is set, cryptographic components can use this to
-    #: sign cookies and other things. Set this to a complex random value
-    #: when you want to use the secure cookie for instance.
+    #: Nếu một khóa bí mật được đặt, các thành phần mật mã có thể sử dụng khóa này để
+    #: ký cookie và những thứ khác. Đặt khóa này thành một giá trị ngẫu nhiên phức tạp
+    #: khi bạn muốn sử dụng cookie an toàn chẳng hạn.
     #:
-    #: This attribute can also be configured from the config with the
-    #: :data:`SECRET_KEY` configuration key. Defaults to ``None``.
+    #: Thuộc tính này cũng có thể được cấu hình từ config với khóa
+    #: cấu hình :data:`SECRET_KEY`. Mặc định là ``None``.
     secret_key = ConfigAttribute[str | bytes | None]("SECRET_KEY")
 
-    #: A :class:`~datetime.timedelta` which is used to set the expiration
-    #: date of a permanent session.  The default is 31 days which makes a
-    #: permanent session survive for roughly one month.
+    #: Một :class:`~datetime.timedelta` được sử dụng để đặt ngày hết hạn
+    #: của một phiên vĩnh viễn. Mặc định là 31 ngày, làm cho một
+    #: phiên vĩnh viễn tồn tại trong khoảng một tháng.
     #:
-    #: This attribute can also be configured from the config with the
-    #: ``PERMANENT_SESSION_LIFETIME`` configuration key.  Defaults to
+    #: Thuộc tính này cũng có thể được cấu hình từ config với khóa
+    #: cấu hình ``PERMANENT_SESSION_LIFETIME``. Mặc định là
     #: ``timedelta(days=31)``
     permanent_session_lifetime = ConfigAttribute[timedelta](
         "PERMANENT_SESSION_LIFETIME",
@@ -225,50 +225,50 @@ class App(Scaffold):
     )
 
     json_provider_class: type[JSONProvider] = DefaultJSONProvider
-    """A subclass of :class:`~flask.json.provider.JSONProvider`. An
-    instance is created and assigned to :attr:`app.json` when creating
-    the app.
+    """Một lớp con của :class:`~flask.json.provider.JSONProvider`. Một
+    thể hiện được tạo và gán cho :attr:`app.json` khi tạo
+    ứng dụng.
 
-    The default, :class:`~flask.json.provider.DefaultJSONProvider`, uses
-    Python's built-in :mod:`json` library. A different provider can use
-    a different JSON library.
+    Mặc định, :class:`~flask.json.provider.DefaultJSONProvider`, sử dụng
+    thư viện :mod:`json` tích hợp sẵn của Python. Một provider khác có thể sử dụng
+    một thư viện JSON khác.
 
     .. versionadded:: 2.2
     """
 
-    #: Options that are passed to the Jinja environment in
-    #: :meth:`create_jinja_environment`. Changing these options after
-    #: the environment is created (accessing :attr:`jinja_env`) will
-    #: have no effect.
+    #: Các tùy chọn được truyền cho môi trường Jinja trong
+    #: :meth:`create_jinja_environment`. Thay đổi các tùy chọn này sau khi
+    #: môi trường được tạo (truy cập :attr:`jinja_env`) sẽ
+    #: không có hiệu lực.
     #:
     #: .. versionchanged:: 1.1.0
-    #:     This is a ``dict`` instead of an ``ImmutableDict`` to allow
-    #:     easier configuration.
+    #:     Đây là một ``dict`` thay vì một ``ImmutableDict`` để cho phép
+    #:     cấu hình dễ dàng hơn.
     #:
     jinja_options: dict[str, t.Any] = {}
 
-    #: The rule object to use for URL rules created.  This is used by
-    #: :meth:`add_url_rule`.  Defaults to :class:`werkzeug.routing.Rule`.
+    #: Đối tượng quy tắc để sử dụng cho các quy tắc URL được tạo. Điều này được sử dụng bởi
+    #: :meth:`add_url_rule`. Mặc định là :class:`werkzeug.routing.Rule`.
     #:
     #: .. versionadded:: 0.7
     url_rule_class = Rule
 
-    #: The map object to use for storing the URL rules and routing
-    #: configuration parameters. Defaults to :class:`werkzeug.routing.Map`.
+    #: Đối tượng bản đồ để sử dụng để lưu trữ các quy tắc URL và các tham số
+    #: cấu hình định tuyến. Mặc định là :class:`werkzeug.routing.Map`.
     #:
     #: .. versionadded:: 1.1.0
     url_map_class = Map
 
-    #: The :meth:`test_client` method creates an instance of this test
-    #: client class. Defaults to :class:`~flask.testing.FlaskClient`.
+    #: Phương thức :meth:`test_client` tạo ra một thể hiện của lớp test
+    #: client này. Mặc định là :class:`~flask.testing.FlaskClient`.
     #:
     #: .. versionadded:: 0.7
     test_client_class: type[FlaskClient] | None = None
 
-    #: The :class:`~click.testing.CliRunner` subclass, by default
-    #: :class:`~flask.testing.FlaskCliRunner` that is used by
-    #: :meth:`test_cli_runner`. Its ``__init__`` method should take a
-    #: Flask app object as the first argument.
+    #: Lớp con :class:`~click.testing.CliRunner`, theo mặc định là
+    #: :class:`~flask.testing.FlaskCliRunner` được sử dụng bởi
+    #: :meth:`test_cli_runner`. Phương thức ``__init__`` của nó nên nhận một
+    #: đối tượng ứng dụng Flask làm đối số đầu tiên.
     #:
     #: .. versionadded:: 1.0
     test_cli_runner_class: type[FlaskCliRunner] | None = None
@@ -305,88 +305,88 @@ class App(Scaffold):
                 " A relative path was given instead."
             )
 
-        #: Holds the path to the instance folder.
+        #: Giữ đường dẫn đến thư mục instance.
         #:
         #: .. versionadded:: 0.8
         self.instance_path = instance_path
 
-        #: The configuration dictionary as :class:`Config`.  This behaves
-        #: exactly like a regular dictionary but supports additional methods
-        #: to load a config from files.
+        #: Từ điển cấu hình như :class:`Config`. Điều này hoạt động
+        #: chính xác như một từ điển thông thường nhưng hỗ trợ các phương thức bổ sung
+        #: để tải cấu hình từ các tệp.
         self.config = self.make_config(instance_relative_config)
 
-        #: An instance of :attr:`aborter_class` created by
-        #: :meth:`make_aborter`. This is called by :func:`flask.abort`
-        #: to raise HTTP errors, and can be called directly as well.
+        #: Một thể hiện của :attr:`aborter_class` được tạo bởi
+        #: :meth:`make_aborter`. Điều này được gọi bởi :func:`flask.abort`
+        #: để ném ra các lỗi HTTP, và cũng có thể được gọi trực tiếp.
         #:
         #: .. versionadded:: 2.2
-        #:     Moved from ``flask.abort``, which calls this object.
+        #:     Được chuyển từ ``flask.abort``, gọi đối tượng này.
         self.aborter = self.make_aborter()
 
         self.json: JSONProvider = self.json_provider_class(self)
-        """Provides access to JSON methods. Functions in ``flask.json``
-        will call methods on this provider when the application context
-        is active. Used for handling JSON requests and responses.
+        """Cung cấp quyền truy cập vào các phương thức JSON. Các hàm trong ``flask.json``
+        sẽ gọi các phương thức trên provider này khi ngữ cảnh ứng dụng
+        đang hoạt động. Được sử dụng để xử lý các yêu cầu và phản hồi JSON.
 
-        An instance of :attr:`json_provider_class`. Can be customized by
-        changing that attribute on a subclass, or by assigning to this
-        attribute afterwards.
+        Một thể hiện của :attr:`json_provider_class`. Có thể được tùy chỉnh bằng cách
+        thay đổi thuộc tính đó trên một lớp con, hoặc bằng cách gán cho thuộc tính này
+        sau đó.
 
-        The default, :class:`~flask.json.provider.DefaultJSONProvider`,
-        uses Python's built-in :mod:`json` library. A different provider
-        can use a different JSON library.
+        Mặc định, :class:`~flask.json.provider.DefaultJSONProvider`,
+        sử dụng thư viện :mod:`json` tích hợp sẵn của Python. Một provider khác
+        có thể sử dụng một thư viện JSON khác.
 
         .. versionadded:: 2.2
         """
 
-        #: A list of functions that are called by
-        #: :meth:`handle_url_build_error` when :meth:`.url_for` raises a
-        #: :exc:`~werkzeug.routing.BuildError`. Each function is called
-        #: with ``error``, ``endpoint`` and ``values``. If a function
-        #: returns ``None`` or raises a ``BuildError``, it is skipped.
-        #: Otherwise, its return value is returned by ``url_for``.
+        #: Một danh sách các hàm được gọi bởi
+        #: :meth:`handle_url_build_error` khi :meth:`.url_for` ném ra một
+        #: :exc:`~werkzeug.routing.BuildError`. Mỗi hàm được gọi
+        #: với ``error``, ``endpoint`` và ``values``. Nếu một hàm
+        #: trả về ``None`` hoặc ném ra một ``BuildError``, nó sẽ bị bỏ qua.
+        #: Ngược lại, giá trị trả về của nó được trả về bởi ``url_for``.
         #:
         #: .. versionadded:: 0.9
         self.url_build_error_handlers: list[
             t.Callable[[Exception, str, dict[str, t.Any]], str]
         ] = []
 
-        #: A list of functions that are called when the application context
-        #: is destroyed.  Since the application context is also torn down
-        #: if the request ends this is the place to store code that disconnects
-        #: from databases.
+        #: Một danh sách các hàm được gọi khi ngữ cảnh ứng dụng
+        #: bị hủy. Vì ngữ cảnh ứng dụng cũng bị hủy
+        #: nếu yêu cầu kết thúc, đây là nơi để lưu trữ mã ngắt kết nối
+        #: khỏi cơ sở dữ liệu.
         #:
         #: .. versionadded:: 0.9
         self.teardown_appcontext_funcs: list[ft.TeardownCallable] = []
 
-        #: A list of shell context processor functions that should be run
-        #: when a shell context is created.
+        #: Một danh sách các hàm xử lý ngữ cảnh shell nên được chạy
+        #: khi một ngữ cảnh shell được tạo.
         #:
         #: .. versionadded:: 0.11
         self.shell_context_processors: list[ft.ShellContextProcessorCallable] = []
 
-        #: Maps registered blueprint names to blueprint objects. The
-        #: dict retains the order the blueprints were registered in.
-        #: Blueprints can be registered multiple times, this dict does
-        #: not track how often they were attached.
+        #: Ánh xạ tên blueprint đã đăng ký với các đối tượng blueprint.
+        #: Dict giữ lại thứ tự các blueprint được đăng ký.
+        #: Các blueprint có thể được đăng ký nhiều lần, dict này không
+        #: theo dõi tần suất chúng được đính kèm.
         #:
         #: .. versionadded:: 0.7
         self.blueprints: dict[str, Blueprint] = {}
 
-        #: a place where extensions can store application specific state.  For
-        #: example this is where an extension could store database engines and
-        #: similar things.
+        #: một nơi mà các tiện ích mở rộng có thể lưu trữ trạng thái cụ thể của ứng dụng. Ví dụ
+        #: đây là nơi một tiện ích mở rộng có thể lưu trữ các engine cơ sở dữ liệu và
+        #: những thứ tương tự.
         #:
-        #: The key must match the name of the extension module. For example in
-        #: case of a "Flask-Foo" extension in `flask_foo`, the key would be
+        #: Khóa phải khớp với tên của module tiện ích mở rộng. Ví dụ trong
+        #: trường hợp của một tiện ích mở rộng "Flask-Foo" trong `flask_foo`, khóa sẽ là
         #: ``'foo'``.
         #:
         #: .. versionadded:: 0.7
         self.extensions: dict[str, t.Any] = {}
 
-        #: The :class:`~werkzeug.routing.Map` for this instance.  You can use
-        #: this to change the routing converters after the class was created
-        #: but before any routes are connected.  Example::
+        #: :class:`~werkzeug.routing.Map` cho thể hiện này. Bạn có thể sử dụng
+        #: điều này để thay đổi các bộ chuyển đổi định tuyến sau khi lớp được tạo
+        #: nhưng trước khi bất kỳ route nào được kết nối. Ví dụ::
         #:
         #:    from werkzeug.routing import BaseConverter
         #:
@@ -403,8 +403,8 @@ class App(Scaffold):
 
         self.subdomain_matching = subdomain_matching
 
-        # tracks internally if the application already handled at least one
-        # request.
+        # theo dõi nội bộ nếu ứng dụng đã xử lý ít nhất một
+        # yêu cầu.
         self._got_first_request = False
 
     def _check_setup_finished(self, f_name: str) -> None:
@@ -421,11 +421,11 @@ class App(Scaffold):
 
     @cached_property
     def name(self) -> str:
-        """The name of the application.  This is usually the import name
-        with the difference that it's guessed from the run file if the
-        import name is main.  This name is used as a display name when
-        Flask needs the name of the application.  It can be set and overridden
-        to change the value.
+        """Tên của ứng dụng. Đây thường là tên import
+        với sự khác biệt là nó được đoán từ tệp chạy nếu tên
+        import là main. Tên này được sử dụng làm tên hiển thị khi
+        Flask cần tên của ứng dụng. Nó có thể được đặt và ghi đè
+        để thay đổi giá trị.
 
         .. versionadded:: 0.8
         """
@@ -438,26 +438,26 @@ class App(Scaffold):
 
     @cached_property
     def logger(self) -> logging.Logger:
-        """A standard Python :class:`~logging.Logger` for the app, with
-        the same name as :attr:`name`.
+        """Một :class:`~logging.Logger` Python tiêu chuẩn cho ứng dụng, với
+        cùng tên như :attr:`name`.
 
-        In debug mode, the logger's :attr:`~logging.Logger.level` will
-        be set to :data:`~logging.DEBUG`.
+        Trong chế độ debug, :attr:`~logging.Logger.level` của logger sẽ
+        được đặt thành :data:`~logging.DEBUG`.
 
-        If there are no handlers configured, a default handler will be
-        added. See :doc:`/logging` for more information.
+        Nếu không có trình xử lý nào được cấu hình, một trình xử lý mặc định sẽ được
+        thêm vào. Xem :doc:`/logging` để biết thêm thông tin.
 
         .. versionchanged:: 1.1.0
-            The logger takes the same name as :attr:`name` rather than
-            hard-coding ``"flask.app"``.
+            Logger lấy cùng tên như :attr:`name` thay vì
+            hard-code ``"flask.app"``.
 
         .. versionchanged:: 1.0.0
-            Behavior was simplified. The logger is always named
-            ``"flask.app"``. The level is only set during configuration,
-            it doesn't check ``app.debug`` each time. Only one format is
-            used, not different ones depending on ``app.debug``. No
-            handlers are removed, and a handler is only added if no
-            handlers are already configured.
+            Hành vi đã được đơn giản hóa. Logger luôn được đặt tên là
+            ``"flask.app"``. Mức độ chỉ được đặt trong quá trình cấu hình,
+            nó không kiểm tra ``app.debug`` mỗi lần. Chỉ một định dạng được
+            sử dụng, không phải các định dạng khác nhau tùy thuộc vào ``app.debug``. Không có
+            trình xử lý nào bị xóa, và một trình xử lý chỉ được thêm vào nếu không có
+            trình xử lý nào đã được cấu hình.
 
         .. versionadded:: 0.3
         """
@@ -465,11 +465,11 @@ class App(Scaffold):
 
     @cached_property
     def jinja_env(self) -> Environment:
-        """The Jinja environment used to load templates.
+        """Môi trường Jinja được sử dụng để tải các template.
 
-        The environment is created the first time this property is
-        accessed. Changing :attr:`jinja_options` after that will have no
-        effect.
+        Môi trường được tạo lần đầu tiên thuộc tính này được
+        truy cập. Thay đổi :attr:`jinja_options` sau đó sẽ không có
+        hiệu lực.
         """
         return self.create_jinja_environment()
 
@@ -477,11 +477,11 @@ class App(Scaffold):
         raise NotImplementedError()
 
     def make_config(self, instance_relative: bool = False) -> Config:
-        """Used to create the config attribute by the Flask constructor.
-        The `instance_relative` parameter is passed in from the constructor
-        of Flask (there named `instance_relative_config`) and indicates if
-        the config should be relative to the instance path or the root path
-        of the application.
+        """Được sử dụng để tạo thuộc tính config bởi hàm tạo Flask.
+        Tham số `instance_relative` được truyền vào từ hàm tạo
+        của Flask (ở đó có tên `instance_relative_config`) và chỉ ra liệu
+        cấu hình có nên tương đối với đường dẫn instance hay đường dẫn gốc
+        của ứng dụng.
 
         .. versionadded:: 0.8
         """
@@ -493,22 +493,22 @@ class App(Scaffold):
         return self.config_class(root_path, defaults)
 
     def make_aborter(self) -> Aborter:
-        """Create the object to assign to :attr:`aborter`. That object
-        is called by :func:`flask.abort` to raise HTTP errors, and can
-        be called directly as well.
+        """Tạo đối tượng để gán cho :attr:`aborter`. Đối tượng đó
+        được gọi bởi :func:`flask.abort` để ném ra các lỗi HTTP, và có thể
+        được gọi trực tiếp.
 
-        By default, this creates an instance of :attr:`aborter_class`,
-        which defaults to :class:`werkzeug.exceptions.Aborter`.
+        Mặc định, điều này tạo ra một thể hiện của :attr:`aborter_class`,
+        mặc định là :class:`werkzeug.exceptions.Aborter`.
 
         .. versionadded:: 2.2
         """
         return self.aborter_class()
 
     def auto_find_instance_path(self) -> str:
-        """Tries to locate the instance path if it was not provided to the
-        constructor of the application class.  It will basically calculate
-        the path to a folder named ``instance`` next to your main file or
-        the package.
+        """Cố gắng định vị đường dẫn instance nếu nó không được cung cấp cho
+        hàm tạo của lớp ứng dụng. Về cơ bản nó sẽ tính toán
+        đường dẫn đến một thư mục có tên ``instance`` cạnh tệp chính của bạn hoặc
+        package.
 
         .. versionadded:: 0.8
         """
@@ -518,24 +518,24 @@ class App(Scaffold):
         return os.path.join(prefix, "var", f"{self.name}-instance")
 
     def create_global_jinja_loader(self) -> DispatchingJinjaLoader:
-        """Creates the loader for the Jinja environment.  Can be used to
-        override just the loader and keeping the rest unchanged.  It's
-        discouraged to override this function.  Instead one should override
-        the :meth:`jinja_loader` function instead.
+        """Tạo loader cho môi trường Jinja. Có thể được sử dụng để
+        ghi đè chỉ loader và giữ nguyên phần còn lại. Không khuyến khích
+        ghi đè hàm này. Thay vào đó, người ta nên ghi đè
+        hàm :meth:`jinja_loader`.
 
-        The global loader dispatches between the loaders of the application
-        and the individual blueprints.
+        Loader toàn cục phân phối giữa các loader của ứng dụng
+        và các blueprint riêng lẻ.
 
         .. versionadded:: 0.7
         """
         return DispatchingJinjaLoader(self)
 
     def select_jinja_autoescape(self, filename: str) -> bool:
-        """Returns ``True`` if autoescaping should be active for the given
-        template name. If no template name is given, returns `True`.
+        """Trả về ``True`` nếu autoescaping nên được kích hoạt cho tên
+        template đã cho. Nếu không có tên template nào được đưa ra, trả về `True`.
 
         .. versionchanged:: 2.2
-            Autoescaping is now enabled by default for ``.svg`` files.
+            Autoescaping hiện được bật theo mặc định cho các tệp ``.svg``.
 
         .. versionadded:: 0.5
         """
@@ -545,14 +545,14 @@ class App(Scaffold):
 
     @property
     def debug(self) -> bool:
-        """Whether debug mode is enabled. When using ``flask run`` to start the
-        development server, an interactive debugger will be shown for unhandled
-        exceptions, and the server will be reloaded when code changes. This maps to the
-        :data:`DEBUG` config key. It may not behave as expected if set late.
+        """Liệu chế độ debug có được bật hay không. Khi sử dụng ``flask run`` để bắt đầu
+        máy chủ phát triển, một trình gỡ lỗi tương tác sẽ được hiển thị cho các ngoại lệ
+        không được xử lý, và máy chủ sẽ được tải lại khi mã thay đổi. Điều này ánh xạ tới
+        khóa cấu hình :data:`DEBUG`. Nó có thể không hoạt động như mong đợi nếu được đặt muộn.
 
-        **Do not enable debug mode when deploying in production.**
+        **Không bật chế độ debug khi triển khai trong sản xuất.**
 
-        Default: ``False``
+        Mặc định: ``False``
         """
         return self.config["DEBUG"]  # type: ignore[no-any-return]
 
@@ -565,34 +565,34 @@ class App(Scaffold):
 
     @setupmethod
     def register_blueprint(self, blueprint: Blueprint, **options: t.Any) -> None:
-        """Register a :class:`~flask.Blueprint` on the application. Keyword
-        arguments passed to this method will override the defaults set on the
+        """Đăng ký một :class:`~flask.Blueprint` trên ứng dụng. Các đối số
+        từ khóa được truyền cho phương thức này sẽ ghi đè các mặc định được đặt trên
         blueprint.
 
-        Calls the blueprint's :meth:`~flask.Blueprint.register` method after
-        recording the blueprint in the application's :attr:`blueprints`.
+        Gọi phương thức :meth:`~flask.Blueprint.register` của blueprint sau khi
+        ghi lại blueprint trong :attr:`blueprints` của ứng dụng.
 
-        :param blueprint: The blueprint to register.
-        :param url_prefix: Blueprint routes will be prefixed with this.
-        :param subdomain: Blueprint routes will match on this subdomain.
-        :param url_defaults: Blueprint routes will use these default values for
-            view arguments.
-        :param options: Additional keyword arguments are passed to
-            :class:`~flask.blueprints.BlueprintSetupState`. They can be
-            accessed in :meth:`~flask.Blueprint.record` callbacks.
+        :param blueprint: Blueprint để đăng ký.
+        :param url_prefix: Các route của Blueprint sẽ được thêm tiền tố này.
+        :param subdomain: Các route của Blueprint sẽ khớp trên tên miền phụ này.
+        :param url_defaults: Các route của Blueprint sẽ sử dụng các giá trị mặc định này cho
+            các đối số view.
+        :param options: Các đối số từ khóa bổ sung được truyền cho
+            :class:`~flask.blueprints.BlueprintSetupState`. Chúng có thể được
+            truy cập trong các callback :meth:`~flask.Blueprint.record`.
 
         .. versionchanged:: 2.0.1
-            The ``name`` option can be used to change the (pre-dotted)
-            name the blueprint is registered with. This allows the same
-            blueprint to be registered multiple times with unique names
-            for ``url_for``.
+            Tùy chọn ``name`` có thể được sử dụng để thay đổi tên (trước khi có dấu chấm)
+            mà blueprint được đăng ký. Điều này cho phép cùng một
+            blueprint được đăng ký nhiều lần với các tên duy nhất
+            cho ``url_for``.
 
         .. versionadded:: 0.7
         """
         blueprint.register(self, options)
 
     def iter_blueprints(self) -> t.ValuesView[Blueprint]:
-        """Iterates over all blueprints by the order they were registered.
+        """Lặp qua tất cả các blueprint theo thứ tự chúng được đăng ký.
 
         .. versionadded:: 0.11
         """
@@ -667,8 +667,8 @@ class App(Scaffold):
     def template_filter(
         self, name: T_template_filter | str | None = None
     ) -> T_template_filter | t.Callable[[T_template_filter], T_template_filter]:
-        """Decorate a function to register it as a custom Jinja filter. The name
-        is optional. The decorator may be used without parentheses.
+        """Trang trí một hàm để đăng ký nó như một bộ lọc Jinja tùy chỉnh. Tên
+        là tùy chọn. Decorator có thể được sử dụng mà không cần dấu ngoặc đơn.
 
         .. code-block:: python
 
@@ -676,11 +676,11 @@ class App(Scaffold):
             def reverse_filter(s):
                 return reversed(s)
 
-        The :meth:`add_template_filter` method may be used to register a
-        function later rather than decorating.
+        Phương thức :meth:`add_template_filter` có thể được sử dụng để đăng ký một
+        hàm sau đó thay vì trang trí.
 
-        :param name: The name to register the filter as. If not given, uses the
-            function's name.
+        :param name: Tên để đăng ký bộ lọc. Nếu không được đưa ra, sử dụng
+            tên của hàm.
         """
         if callable(name):
             self.add_template_filter(name)
@@ -696,14 +696,14 @@ class App(Scaffold):
     def add_template_filter(
         self, f: ft.TemplateFilterCallable, name: str | None = None
     ) -> None:
-        """Register a function to use as a custom Jinja filter.
+        """Đăng ký một hàm để sử dụng như một bộ lọc Jinja tùy chỉnh.
 
-        The :meth:`template_filter` decorator can be used to register a function
-        by decorating instead.
+        Decorator :meth:`template_filter` có thể được sử dụng để đăng ký một hàm
+        bằng cách trang trí thay thế.
 
-        :param f: The function to register.
-        :param name: The name to register the filter as. If not given, uses the
-            function's name.
+        :param f: Hàm để đăng ký.
+        :param name: Tên để đăng ký bộ lọc. Nếu không được đưa ra, sử dụng
+            tên của hàm.
         """
         self.jinja_env.filters[name or f.__name__] = f
 
@@ -717,8 +717,8 @@ class App(Scaffold):
     def template_test(
         self, name: T_template_test | str | None = None
     ) -> T_template_test | t.Callable[[T_template_test], T_template_test]:
-        """Decorate a function to register it as a custom Jinja test. The name
-        is optional. The decorator may be used without parentheses.
+        """Trang trí một hàm để đăng ký nó như một test Jinja tùy chỉnh. Tên
+        là tùy chọn. Decorator có thể được sử dụng mà không cần dấu ngoặc đơn.
 
         .. code-block:: python
 
@@ -731,11 +731,11 @@ class App(Scaffold):
                         return False
               return True
 
-        The :meth:`add_template_test` method may be used to register a function
-        later rather than decorating.
+        Phương thức :meth:`add_template_test` có thể được sử dụng để đăng ký một hàm
+        sau đó thay vì trang trí.
 
-        :param name: The name to register the filter as. If not given, uses the
-            function's name.
+        :param name: Tên để đăng ký bộ lọc. Nếu không được đưa ra, sử dụng
+            tên của hàm.
 
         .. versionadded:: 0.10
         """
@@ -753,14 +753,14 @@ class App(Scaffold):
     def add_template_test(
         self, f: ft.TemplateTestCallable, name: str | None = None
     ) -> None:
-        """Register a function to use as a custom Jinja test.
+        """Đăng ký một hàm để sử dụng như một test Jinja tùy chỉnh.
 
-        The :meth:`template_test` decorator can be used to register a function
-        by decorating instead.
+        Decorator :meth:`template_test` có thể được sử dụng để đăng ký một hàm
+        bằng cách trang trí thay thế.
 
-        :param f: The function to register.
-        :param name: The name to register the test as. If not given, uses the
-            function's name.
+        :param f: Hàm để đăng ký.
+        :param name: Tên để đăng ký test. Nếu không được đưa ra, sử dụng
+            tên của hàm.
 
         .. versionadded:: 0.10
         """
@@ -776,8 +776,8 @@ class App(Scaffold):
     def template_global(
         self, name: T_template_global | str | None = None
     ) -> T_template_global | t.Callable[[T_template_global], T_template_global]:
-        """Decorate a function to register it as a custom Jinja global. The name
-        is optional. The decorator may be used without parentheses.
+        """Trang trí một hàm để đăng ký nó như một global Jinja tùy chỉnh. Tên
+        là tùy chọn. Decorator có thể được sử dụng mà không cần dấu ngoặc đơn.
 
         .. code-block:: python
 
@@ -785,11 +785,11 @@ class App(Scaffold):
             def double(n):
                 return 2 * n
 
-        The :meth:`add_template_global` method may be used to register a
-        function later rather than decorating.
+        Phương thức :meth:`add_template_global` có thể được sử dụng để đăng ký một
+        hàm sau đó thay vì trang trí.
 
-        :param name: The name to register the global as. If not given, uses the
-            function's name.
+        :param name: Tên để đăng ký global. Nếu không được đưa ra, sử dụng
+            tên của hàm.
 
         .. versionadded:: 0.10
         """
@@ -807,14 +807,14 @@ class App(Scaffold):
     def add_template_global(
         self, f: ft.TemplateGlobalCallable, name: str | None = None
     ) -> None:
-        """Register a function to use as a custom Jinja global.
+        """Đăng ký một hàm để sử dụng như một global Jinja tùy chỉnh.
 
-        The :meth:`template_global` decorator can be used to register a function
-        by decorating instead.
+        Decorator :meth:`template_global` có thể được sử dụng để đăng ký một hàm
+        bằng cách trang trí thay thế.
 
-        :param f: The function to register.
-        :param name: The name to register the global as. If not given, uses the
-            function's name.
+        :param f: Hàm để đăng ký.
+        :param name: Tên để đăng ký global. Nếu không được đưa ra, sử dụng
+            tên của hàm.
 
         .. versionadded:: 0.10
         """
@@ -822,29 +822,28 @@ class App(Scaffold):
 
     @setupmethod
     def teardown_appcontext(self, f: T_teardown) -> T_teardown:
-        """Registers a function to be called when the app context is popped. The
-        context is popped at the end of a request, CLI command, or manual ``with``
-        block.
+        """Đăng ký một hàm để được gọi khi ngữ cảnh ứng dụng bị pop. Ngữ cảnh
+        được pop vào cuối một yêu cầu, lệnh CLI, hoặc khối ``with`` thủ công.
 
         .. code-block:: python
 
             with app.app_context():
                 ...
 
-        When the ``with`` block exits (or ``ctx.pop()`` is called), the
-        teardown functions are called just before the app context is
-        made inactive.
+        Khi khối ``with`` thoát (hoặc ``ctx.pop()`` được gọi), các
+        hàm teardown được gọi ngay trước khi ngữ cảnh ứng dụng
+        trở nên không hoạt động.
 
-        When a teardown function was called because of an unhandled
-        exception it will be passed an error object. If an
-        :meth:`errorhandler` is registered, it will handle the exception
-        and the teardown will not receive it.
+        Khi một hàm teardown được gọi vì một ngoại lệ không được xử lý
+        nó sẽ được truyền một đối tượng lỗi. Nếu một
+        :meth:`errorhandler` được đăng ký, nó sẽ xử lý ngoại lệ
+        và teardown sẽ không nhận được nó.
 
-        Teardown functions must avoid raising exceptions. If they
-        execute code that might fail they must surround that code with a
-        ``try``/``except`` block and log any errors.
+        Các hàm teardown phải tránh ném ngoại lệ. Nếu chúng
+        thực thi mã có thể thất bại, chúng phải bao quanh mã đó bằng một
+        khối ``try``/``except`` và ghi lại bất kỳ lỗi nào.
 
-        The return values of teardown functions are ignored.
+        Các giá trị trả về của các hàm teardown bị bỏ qua.
 
         .. versionadded:: 0.9
         """
@@ -855,7 +854,7 @@ class App(Scaffold):
     def shell_context_processor(
         self, f: T_shell_context_processor
     ) -> T_shell_context_processor:
-        """Registers a shell context processor function.
+        """Đăng ký một hàm xử lý ngữ cảnh shell.
 
         .. versionadded:: 0.11
         """
@@ -865,10 +864,10 @@ class App(Scaffold):
     def _find_error_handler(
         self, e: Exception, blueprints: list[str]
     ) -> ft.ErrorHandlerCallable | None:
-        """Return a registered error handler for an exception in this order:
-        blueprint handler for a specific code, app handler for a specific code,
-        blueprint handler for an exception class, app handler for an exception
-        class, or ``None`` if a suitable handler is not found.
+        """Trả về một trình xử lý lỗi đã đăng ký cho một ngoại lệ theo thứ tự này:
+        trình xử lý blueprint cho một mã cụ thể, trình xử lý ứng dụng cho một mã cụ thể,
+        trình xử lý blueprint cho một lớp ngoại lệ, trình xử lý ứng dụng cho một lớp
+        ngoại lệ, hoặc ``None`` nếu không tìm thấy trình xử lý phù hợp.
         """
         exc_class, code = self._get_exc_class_and_code(type(e))
         names = (*blueprints, None)
@@ -888,19 +887,19 @@ class App(Scaffold):
         return None
 
     def trap_http_exception(self, e: Exception) -> bool:
-        """Checks if an HTTP exception should be trapped or not.  By default
-        this will return ``False`` for all exceptions except for a bad request
-        key error if ``TRAP_BAD_REQUEST_ERRORS`` is set to ``True``.  It
-        also returns ``True`` if ``TRAP_HTTP_EXCEPTIONS`` is set to ``True``.
+        """Kiểm tra xem một ngoại lệ HTTP có nên bị bẫy hay không. Theo mặc định
+        điều này sẽ trả về ``False`` cho tất cả các ngoại lệ ngoại trừ lỗi bad request
+        key nếu ``TRAP_BAD_REQUEST_ERRORS`` được đặt thành ``True``. Nó
+        cũng trả về ``True`` nếu ``TRAP_HTTP_EXCEPTIONS`` được đặt thành ``True``.
 
-        This is called for all HTTP exceptions raised by a view function.
-        If it returns ``True`` for any exception the error handler for this
-        exception is not called and it shows up as regular exception in the
-        traceback.  This is helpful for debugging implicitly raised HTTP
-        exceptions.
+        Điều này được gọi cho tất cả các ngoại lệ HTTP được ném ra bởi một hàm view.
+        Nếu nó trả về ``True`` cho bất kỳ ngoại lệ nào, trình xử lý lỗi cho ngoại lệ này
+        không được gọi và nó hiển thị như một ngoại lệ thông thường trong
+        traceback. Điều này hữu ích để gỡ lỗi các ngoại lệ HTTP được ném ra
+        ngầm định.
 
         .. versionchanged:: 1.0
-            Bad request errors are not trapped by default in debug mode.
+            Lỗi bad request không bị bẫy theo mặc định trong chế độ debug.
 
         .. versionadded:: 0.8
         """
@@ -923,26 +922,26 @@ class App(Scaffold):
         return False
 
     def should_ignore_error(self, error: BaseException | None) -> bool:
-        """This is called to figure out if an error should be ignored
-        or not as far as the teardown system is concerned.  If this
-        function returns ``True`` then the teardown handlers will not be
-        passed the error.
+        """Điều này được gọi để tìm ra liệu một lỗi có nên bị bỏ qua
+        hay không theo như hệ thống teardown quan tâm. Nếu hàm này
+        trả về ``True`` thì các trình xử lý teardown sẽ không được
+        truyền lỗi.
 
         .. versionadded:: 0.10
         """
         return False
 
     def redirect(self, location: str, code: int = 302) -> BaseResponse:
-        """Create a redirect response object.
+        """Tạo một đối tượng phản hồi chuyển hướng.
 
-        This is called by :func:`flask.redirect`, and can be called
-        directly as well.
+        Điều này được gọi bởi :func:`flask.redirect`, và có thể được gọi
+        trực tiếp.
 
-        :param location: The URL to redirect to.
-        :param code: The status code for the redirect.
+        :param location: URL để chuyển hướng đến.
+        :param code: Mã trạng thái cho chuyển hướng.
 
         .. versionadded:: 2.2
-            Moved from ``flask.redirect``, which calls this method.
+            Được chuyển từ ``flask.redirect``, gọi phương thức này.
         """
         return _wz_redirect(
             location,
@@ -951,9 +950,9 @@ class App(Scaffold):
         )
 
     def inject_url_defaults(self, endpoint: str, values: dict[str, t.Any]) -> None:
-        """Injects the URL defaults for the given endpoint directly into
-        the values dictionary passed.  This is used internally and
-        automatically called on URL building.
+        """Tiêm các giá trị mặc định URL cho endpoint đã cho trực tiếp vào
+        từ điển values được truyền. Điều này được sử dụng nội bộ và
+        tự động được gọi khi xây dựng URL.
 
         .. versionadded:: 0.7
         """
@@ -974,19 +973,19 @@ class App(Scaffold):
     def handle_url_build_error(
         self, error: BuildError, endpoint: str, values: dict[str, t.Any]
     ) -> str:
-        """Called by :meth:`.url_for` if a
-        :exc:`~werkzeug.routing.BuildError` was raised. If this returns
-        a value, it will be returned by ``url_for``, otherwise the error
-        will be re-raised.
+        """Được gọi bởi :meth:`.url_for` nếu một
+        :exc:`~werkzeug.routing.BuildError` được ném ra. Nếu điều này trả về
+        một giá trị, nó sẽ được trả về bởi ``url_for``, nếu không lỗi
+        sẽ được ném lại.
 
-        Each function in :attr:`url_build_error_handlers` is called with
-        ``error``, ``endpoint`` and ``values``. If a function returns
-        ``None`` or raises a ``BuildError``, it is skipped. Otherwise,
-        its return value is returned by ``url_for``.
+        Mỗi hàm trong :attr:`url_build_error_handlers` được gọi với
+        ``error``, ``endpoint`` và ``values``. Nếu một hàm trả về
+        ``None`` hoặc ném ra một ``BuildError``, nó sẽ bị bỏ qua. Ngược lại,
+        giá trị trả về của nó được trả về bởi ``url_for``.
 
-        :param error: The active ``BuildError`` being handled.
-        :param endpoint: The endpoint being built.
-        :param values: The keyword arguments passed to ``url_for``.
+        :param error: ``BuildError`` đang hoạt động đang được xử lý.
+        :param endpoint: Endpoint đang được xây dựng.
+        :param values: Các đối số từ khóa được truyền cho ``url_for``.
         """
         for handler in self.url_build_error_handlers:
             try:

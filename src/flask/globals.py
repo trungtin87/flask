@@ -17,8 +17,8 @@ if t.TYPE_CHECKING:  # pragma: no cover
     class ProxyMixin(t.Protocol[T]):
         def _get_current_object(self) -> T: ...
 
-    # These subclasses inform type checkers that the proxy objects look like the
-    # proxied type along with the _get_current_object method.
+    # Các lớp con này thông báo cho trình kiểm tra kiểu rằng các đối tượng proxy trông giống như
+    # loại được proxy cùng với phương thức _get_current_object.
     class FlaskProxy(ProxyMixin[Flask], Flask): ...
 
     class AppContextProxy(ProxyMixin[AppContext], AppContext): ...
@@ -31,11 +31,11 @@ if t.TYPE_CHECKING:  # pragma: no cover
 
 
 _no_app_msg = """\
-Working outside of application context.
+Đang làm việc bên ngoài ngữ cảnh ứng dụng.
 
-Attempted to use functionality that expected a current application to be set. To
-solve this, set up an app context using 'with app.app_context()'. See the
-documentation on app context for more information.\
+Đã cố gắng sử dụng chức năng mong đợi một ứng dụng hiện tại được thiết lập. Để
+giải quyết vấn đề này, hãy thiết lập một ngữ cảnh ứng dụng bằng cách sử dụng 'with app.app_context()'. Xem
+tài liệu về ngữ cảnh ứng dụng để biết thêm thông tin.\
 """
 _cv_app: ContextVar[AppContext] = ContextVar("flask.app_ctx")
 app_ctx: AppContextProxy = LocalProxy(  # type: ignore[assignment]
@@ -49,10 +49,10 @@ g: _AppCtxGlobalsProxy = LocalProxy(  # type: ignore[assignment]
 )
 
 _no_req_msg = """\
-Working outside of request context.
+Đang làm việc bên ngoài ngữ cảnh request.
 
-Attempted to use functionality that expected an active HTTP request. See the
-documentation on request context for more information.\
+Đã cố gắng sử dụng chức năng mong đợi một HTTP request đang hoạt động. Xem
+tài liệu về ngữ cảnh request để biết thêm thông tin.\
 """
 request: RequestProxy = LocalProxy(  # type: ignore[assignment]
     _cv_app, "request", unbound_message=_no_req_msg
@@ -67,8 +67,8 @@ def __getattr__(name: str) -> t.Any:
 
     if name == "request_ctx":
         warnings.warn(
-            "'request_ctx' has merged with 'app_ctx', and will be removed"
-            " in Flask 4.0. Use 'app_ctx' instead.",
+            "'request_ctx' đã hợp nhất với 'app_ctx', và sẽ bị xóa"
+            " trong Flask 4.0. Sử dụng 'app_ctx' thay thế.",
             DeprecationWarning,
             stacklevel=2,
         )

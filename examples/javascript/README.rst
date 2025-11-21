@@ -1,10 +1,10 @@
-JavaScript Ajax Example
+Ví dụ JavaScript Ajax
 =======================
 
-Demonstrates how to post form data and process a JSON response using
-JavaScript. This allows making requests without navigating away from the
-page. Demonstrates using |fetch|_, |XMLHttpRequest|_,  and
-|jQuery.ajax|_. See the `Flask docs`_ about JavaScript and Ajax.
+Minh họa cách gửi dữ liệu biểu mẫu và xử lý phản hồi JSON bằng
+JavaScript. Điều này cho phép thực hiện các yêu cầu mà không cần điều hướng khỏi
+trang. Minh họa việc sử dụng |fetch|_, |XMLHttpRequest|_, và
+|jQuery.ajax|_. Xem `tài liệu Flask`_ về JavaScript và Ajax.
 
 .. |fetch| replace:: ``fetch``
 .. _fetch: https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch
@@ -15,10 +15,10 @@ page. Demonstrates using |fetch|_, |XMLHttpRequest|_,  and
 .. |jQuery.ajax| replace:: ``jQuery.ajax``
 .. _jQuery.ajax: https://api.jquery.com/jQuery.ajax/
 
-.. _Flask docs: https://flask.palletsprojects.com/patterns/javascript/
+.. _tài liệu Flask: https://flask.palletsprojects.com/patterns/javascript/
 
 
-Install
+Cài đặt
 -------
 
 .. code-block:: text
@@ -28,18 +28,18 @@ Install
     $ pip install -e .
 
 
-Run
----
+Chạy
+----
 
 .. code-block:: text
 
     $ flask --app js_example run
 
-Open http://127.0.0.1:5000 in a browser.
+Mở http://127.0.0.1:5000 trong trình duyệt.
 
 
-Test
-----
+Kiểm thử
+--------
 
 .. code-block:: text
 

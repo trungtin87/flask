@@ -74,100 +74,100 @@ def _make_timedelta(value: timedelta | int | None) -> timedelta | None:
 
 
 class Flask(App):
-    """The flask object implements a WSGI application and acts as the central
-    object.  It is passed the name of the module or package of the
-    application.  Once it is created it will act as a central registry for
-    the view functions, the URL rules, template configuration and much more.
+    """Đối tượng flask triển khai một ứng dụng WSGI và đóng vai trò là đối tượng
+    trung tâm. Nó được truyền tên của module hoặc package của
+    ứng dụng. Sau khi được tạo, nó sẽ hoạt động như một sổ đăng ký trung tâm cho
+    các hàm view, các quy tắc URL, cấu hình template và nhiều thứ khác.
 
-    The name of the package is used to resolve resources from inside the
-    package or the folder the module is contained in depending on if the
-    package parameter resolves to an actual python package (a folder with
-    an :file:`__init__.py` file inside) or a standard module (just a ``.py`` file).
+    Tên của package được sử dụng để giải quyết các tài nguyên từ bên trong
+    package hoặc thư mục chứa module tùy thuộc vào việc tham số
+    package giải quyết thành một package python thực sự (một thư mục với
+    tệp :file:`__init__.py` bên trong) hay một module chuẩn (chỉ là một tệp ``.py``).
 
-    For more information about resource loading, see :func:`open_resource`.
+    Để biết thêm thông tin về việc tải tài nguyên, xem :func:`open_resource`.
 
-    Usually you create a :class:`Flask` instance in your main module or
-    in the :file:`__init__.py` file of your package like this::
+    Thông thường bạn tạo một thể hiện :class:`Flask` trong module chính của bạn hoặc
+    trong tệp :file:`__init__.py` của package của bạn như thế này::
 
         from flask import Flask
         app = Flask(__name__)
 
-    .. admonition:: About the First Parameter
+    .. admonition:: Về tham số đầu tiên
 
-        The idea of the first parameter is to give Flask an idea of what
-        belongs to your application.  This name is used to find resources
-        on the filesystem, can be used by extensions to improve debugging
-        information and a lot more.
+        Ý tưởng của tham số đầu tiên là cung cấp cho Flask một ý tưởng về những gì
+        thuộc về ứng dụng của bạn. Tên này được sử dụng để tìm tài nguyên
+        trên hệ thống tệp, có thể được sử dụng bởi các tiện ích mở rộng để cải thiện thông tin
+        gỡ lỗi và nhiều thứ khác.
 
-        So it's important what you provide there.  If you are using a single
-        module, `__name__` is always the correct value.  If you however are
-        using a package, it's usually recommended to hardcode the name of
-        your package there.
+        Vì vậy, điều quan trọng là những gì bạn cung cấp ở đó. Nếu bạn đang sử dụng một
+        module đơn lẻ, `__name__` luôn là giá trị chính xác. Tuy nhiên, nếu bạn đang
+        sử dụng một package, thường nên hardcode tên của
+        package của bạn ở đó.
 
-        For example if your application is defined in :file:`yourapplication/app.py`
-        you should create it with one of the two versions below::
+        Ví dụ: nếu ứng dụng của bạn được định nghĩa trong :file:`yourapplication/app.py`
+        bạn nên tạo nó với một trong hai phiên bản dưới đây::
 
             app = Flask('yourapplication')
             app = Flask(__name__.split('.')[0])
 
-        Why is that?  The application will work even with `__name__`, thanks
-        to how resources are looked up.  However it will make debugging more
-        painful.  Certain extensions can make assumptions based on the
-        import name of your application.  For example the Flask-SQLAlchemy
-        extension will look for the code in your application that triggered
-        an SQL query in debug mode.  If the import name is not properly set
-        up, that debugging information is lost.  (For example it would only
-        pick up SQL queries in `yourapplication.app` and not
+        Tại sao lại như vậy? Ứng dụng sẽ hoạt động ngay cả với `__name__`, nhờ
+        cách các tài nguyên được tra cứu. Tuy nhiên, nó sẽ làm cho việc gỡ lỗi trở nên
+        đau đớn hơn. Một số tiện ích mở rộng nhất định có thể đưa ra các giả định dựa trên
+        tên import của ứng dụng của bạn. Ví dụ: tiện ích mở rộng Flask-SQLAlchemy
+        sẽ tìm mã trong ứng dụng của bạn đã kích hoạt
+        truy vấn SQL trong chế độ gỡ lỗi. Nếu tên import không được thiết lập đúng
+        cách, thông tin gỡ lỗi đó sẽ bị mất. (Ví dụ: nó sẽ chỉ
+        nhận các truy vấn SQL trong `yourapplication.app` và không phải
         `yourapplication.views.frontend`)
 
     .. versionadded:: 0.7
-       The `static_url_path`, `static_folder`, and `template_folder`
-       parameters were added.
+       Các tham số `static_url_path`, `static_folder`, và `template_folder`
+       đã được thêm vào.
 
     .. versionadded:: 0.8
-       The `instance_path` and `instance_relative_config` parameters were
-       added.
+       Các tham số `instance_path` và `instance_relative_config` đã được
+       thêm vào.
 
     .. versionadded:: 0.11
-       The `root_path` parameter was added.
+       Tham số `root_path` đã được thêm vào.
 
     .. versionadded:: 1.0
-       The ``host_matching`` and ``static_host`` parameters were added.
+       Các tham số ``host_matching`` và ``static_host`` đã được thêm vào.
 
     .. versionadded:: 1.0
-       The ``subdomain_matching`` parameter was added. Subdomain
-       matching needs to be enabled manually now. Setting
-       :data:`SERVER_NAME` does not implicitly enable it.
+       Tham số ``subdomain_matching`` đã được thêm vào. Khớp subdomain
+       cần được kích hoạt thủ công ngay bây giờ. Thiết lập
+       :data:`SERVER_NAME` không ngầm kích hoạt nó.
 
-    :param import_name: the name of the application package
-    :param static_url_path: can be used to specify a different path for the
-                            static files on the web.  Defaults to the name
-                            of the `static_folder` folder.
-    :param static_folder: The folder with static files that is served at
-        ``static_url_path``. Relative to the application ``root_path``
-        or an absolute path. Defaults to ``'static'``.
-    :param static_host: the host to use when adding the static route.
-        Defaults to None. Required when using ``host_matching=True``
-        with a ``static_folder`` configured.
-    :param host_matching: set ``url_map.host_matching`` attribute.
-        Defaults to False.
-    :param subdomain_matching: consider the subdomain relative to
-        :data:`SERVER_NAME` when matching routes. Defaults to False.
-    :param template_folder: the folder that contains the templates that should
-                            be used by the application.  Defaults to
-                            ``'templates'`` folder in the root path of the
-                            application.
-    :param instance_path: An alternative instance path for the application.
-                          By default the folder ``'instance'`` next to the
-                          package or module is assumed to be the instance
-                          path.
-    :param instance_relative_config: if set to ``True`` relative filenames
-                                     for loading the config are assumed to
-                                     be relative to the instance path instead
-                                     of the application root.
-    :param root_path: The path to the root of the application files.
-        This should only be set manually when it can't be detected
-        automatically, such as for namespace packages.
+    :param import_name: tên của package ứng dụng
+    :param static_url_path: có thể được sử dụng để chỉ định một đường dẫn khác cho
+                            các tệp tĩnh trên web. Mặc định là tên
+                            của thư mục `static_folder`.
+    :param static_folder: Thư mục chứa các tệp tĩnh được phục vụ tại
+        ``static_url_path``. Tương đối với ``root_path`` của ứng dụng
+        hoặc một đường dẫn tuyệt đối. Mặc định là ``'static'``.
+    :param static_host: host để sử dụng khi thêm route tĩnh.
+        Mặc định là None. Bắt buộc khi sử dụng ``host_matching=True``
+        với một ``static_folder`` được cấu hình.
+    :param host_matching: thiết lập thuộc tính ``url_map.host_matching``.
+        Mặc định là False.
+    :param subdomain_matching: xem xét subdomain tương đối với
+        :data:`SERVER_NAME` khi khớp các route. Mặc định là False.
+    :param template_folder: thư mục chứa các template nên
+                            được sử dụng bởi ứng dụng. Mặc định là
+                            thư mục ``'templates'`` trong đường dẫn gốc của
+                            ứng dụng.
+    :param instance_path: Một đường dẫn instance thay thế cho ứng dụng.
+                          Theo mặc định, thư mục ``'instance'`` bên cạnh
+                          package hoặc module được giả định là đường dẫn
+                          instance.
+    :param instance_relative_config: nếu được đặt thành ``True`` các tên tệp tương đối
+                                     để tải cấu hình được giả định là
+                                     tương đối với đường dẫn instance thay vì
+                                     gốc ứng dụng.
+    :param root_path: Đường dẫn đến gốc của các tệp ứng dụng.
+        Điều này chỉ nên được thiết lập thủ công khi nó không thể được phát hiện
+        tự động, chẳng hạn như đối với các namespace package.
     """
 
     default_config = ImmutableDict(
@@ -204,16 +204,16 @@ class Flask(App):
         }
     )
 
-    #: The class that is used for request objects.  See :class:`~flask.Request`
-    #: for more information.
+    #: Lớp được sử dụng cho các đối tượng request. Xem :class:`~flask.Request`
+    #: để biết thêm thông tin.
     request_class: type[Request] = Request
 
-    #: The class that is used for response objects.  See
-    #: :class:`~flask.Response` for more information.
+    #: Lớp được sử dụng cho các đối tượng response. Xem
+    #: :class:`~flask.Response` để biết thêm thông tin.
     response_class: type[Response] = Response
 
-    #: the session interface to use.  By default an instance of
-    #: :class:`~flask.sessions.SecureCookieSessionInterface` is used here.
+    #: giao diện session để sử dụng. Theo mặc định, một thể hiện của
+    #: :class:`~flask.sessions.SecureCookieSessionInterface` được sử dụng ở đây.
     #:
     #: .. versionadded:: 0.8
     session_interface: SessionInterface = SecureCookieSessionInterface()
@@ -244,27 +244,27 @@ class Flask(App):
             root_path=root_path,
         )
 
-        #: The Click command group for registering CLI commands for this
-        #: object. The commands are available from the ``flask`` command
-        #: once the application has been discovered and blueprints have
-        #: been registered.
+        #: Nhóm lệnh Click để đăng ký các lệnh CLI cho đối tượng
+        #: này. Các lệnh có sẵn từ lệnh ``flask``
+        #: sau khi ứng dụng đã được phát hiện và các blueprint đã
+        #: được đăng ký.
         self.cli = cli.AppGroup()
 
-        # Set the name of the Click group in case someone wants to add
-        # the app's commands to another CLI tool.
+        # Đặt tên của nhóm Click trong trường hợp ai đó muốn thêm
+        # các lệnh của ứng dụng vào một công cụ CLI khác.
         self.cli.name = self.name
 
-        # Add a static route using the provided static_url_path, static_host,
-        # and static_folder if there is a configured static_folder.
-        # Note we do this without checking if static_folder exists.
-        # For one, it might be created while the server is running (e.g. during
-        # development). Also, Google App Engine stores static files somewhere
+        # Thêm một route tĩnh sử dụng static_url_path, static_host,
+        # và static_folder được cung cấp nếu có một static_folder được cấu hình.
+        # Lưu ý chúng tôi làm điều này mà không kiểm tra xem static_folder có tồn tại hay không.
+        # Một là, nó có thể được tạo trong khi server đang chạy (ví dụ: trong quá trình
+        # phát triển). Ngoài ra, Google App Engine lưu trữ các tệp tĩnh ở đâu đó
         if self.has_static_folder:
             assert bool(static_host) == host_matching, (
                 "Invalid static_host/host_matching combination"
             )
-            # Use a weakref to avoid creating a reference cycle between the app
-            # and the view function (see #3761).
+            # Sử dụng weakref để tránh tạo vòng tham chiếu giữa app
+            # và hàm view (xem #3761).
             self_ref = weakref.ref(self)
             self.add_url_rule(
                 f"{self.static_url_path}/<path:filename>",
@@ -274,19 +274,18 @@ class Flask(App):
             )
 
     def get_send_file_max_age(self, filename: str | None) -> int | None:
-        """Used by :func:`send_file` to determine the ``max_age`` cache
-        value for a given file path if it wasn't passed.
+        """Được sử dụng bởi :func:`send_file` để xác định giá trị cache ``max_age``
+        cho một đường dẫn tệp nhất định nếu nó không được truyền.
 
-        By default, this returns :data:`SEND_FILE_MAX_AGE_DEFAULT` from
-        the configuration of :data:`~flask.current_app`. This defaults
-        to ``None``, which tells the browser to use conditional requests
-        instead of a timed cache, which is usually preferable.
+        Theo mặc định, điều này trả về :data:`SEND_FILE_MAX_AGE_DEFAULT` từ
+        cấu hình của :data:`~flask.current_app`. Điều này mặc định
+        là ``None``, điều này bảo trình duyệt sử dụng các request có điều kiện
+        thay vì cache theo thời gian, điều này thường được ưu tiên hơn.
 
-        Note this is a duplicate of the same method in the Flask
-        class.
+        Lưu ý đây là bản sao của cùng một phương thức trong lớp Flask.
 
         .. versionchanged:: 2.0
-            The default configuration is ``None`` instead of 12 hours.
+            Cấu hình mặc định là ``None`` thay vì 12 giờ.
 
         .. versionadded:: 0.9
         """
@@ -301,13 +300,12 @@ class Flask(App):
         return value  # type: ignore[no-any-return]
 
     def send_static_file(self, filename: str) -> Response:
-        """The view function used to serve files from
-        :attr:`static_folder`. A route is automatically registered for
-        this view at :attr:`static_url_path` if :attr:`static_folder` is
-        set.
+        """Hàm view được sử dụng để phục vụ các tệp từ
+        :attr:`static_folder`. Một route được tự động đăng ký cho
+        view này tại :attr:`static_url_path` nếu :attr:`static_folder` được
+        thiết lập.
 
-        Note this is a duplicate of the same method in the Flask
-        class.
+        Lưu ý đây là bản sao của cùng một phương thức trong lớp Flask.
 
         .. versionadded:: 0.5
 
@@ -315,8 +313,8 @@ class Flask(App):
         if not self.has_static_folder:
             raise RuntimeError("'static_folder' must be set to serve static_files.")
 
-        # send_file only knows to call get_send_file_max_age on the app,
-        # call it here so it works for blueprints too.
+        # send_file chỉ biết gọi get_send_file_max_age trên app,
+        # gọi nó ở đây để nó cũng hoạt động cho các blueprint.
         max_age = self.get_send_file_max_age(filename)
         return send_from_directory(
             t.cast(str, self.static_folder), filename, max_age=max_age
@@ -325,25 +323,25 @@ class Flask(App):
     def open_resource(
         self, resource: str, mode: str = "rb", encoding: str | None = None
     ) -> t.IO[t.AnyStr]:
-        """Open a resource file relative to :attr:`root_path` for reading.
+        """Mở một tệp tài nguyên tương đối với :attr:`root_path` để đọc.
 
-        For example, if the file ``schema.sql`` is next to the file
-        ``app.py`` where the ``Flask`` app is defined, it can be opened
-        with:
+        Ví dụ, nếu tệp ``schema.sql`` nằm cạnh tệp
+        ``app.py`` nơi ứng dụng ``Flask`` được định nghĩa, nó có thể được mở
+        với:
 
         .. code-block:: python
 
             with app.open_resource("schema.sql") as f:
                 conn.executescript(f.read())
 
-        :param resource: Path to the resource relative to :attr:`root_path`.
-        :param mode: Open the file in this mode. Only reading is supported,
-            valid values are ``"r"`` (or ``"rt"``) and ``"rb"``.
-        :param encoding: Open the file with this encoding when opening in text
-            mode. This is ignored when opening in binary mode.
+        :param resource: Đường dẫn đến tài nguyên tương đối với :attr:`root_path`.
+        :param mode: Mở tệp ở chế độ này. Chỉ hỗ trợ đọc,
+            các giá trị hợp lệ là ``"r"`` (hoặc ``"rt"``) và ``"rb"``.
+        :param encoding: Mở tệp với mã hóa này khi mở ở chế độ văn bản.
+            Điều này bị bỏ qua khi mở ở chế độ nhị phân.
 
         .. versionchanged:: 3.1
-            Added the ``encoding`` parameter.
+            Đã thêm tham số ``encoding``.
         """
         if mode not in {"r", "rt", "rb"}:
             raise ValueError("Resources can only be opened for reading.")
@@ -358,17 +356,17 @@ class Flask(App):
     def open_instance_resource(
         self, resource: str, mode: str = "rb", encoding: str | None = "utf-8"
     ) -> t.IO[t.AnyStr]:
-        """Open a resource file relative to the application's instance folder
-        :attr:`instance_path`. Unlike :meth:`open_resource`, files in the
-        instance folder can be opened for writing.
+        """Mở một tệp tài nguyên tương đối với thư mục instance của ứng dụng
+        :attr:`instance_path`. Không giống như :meth:`open_resource`, các tệp trong
+        thư mục instance có thể được mở để ghi.
 
-        :param resource: Path to the resource relative to :attr:`instance_path`.
-        :param mode: Open the file in this mode.
-        :param encoding: Open the file with this encoding when opening in text
-            mode. This is ignored when opening in binary mode.
+        :param resource: Đường dẫn đến tài nguyên tương đối với :attr:`instance_path`.
+        :param mode: Mở tệp ở chế độ này.
+        :param encoding: Mở tệp với mã hóa này khi mở ở chế độ văn bản.
+            Điều này bị bỏ qua khi mở ở chế độ nhị phân.
 
         .. versionchanged:: 3.1
-            Added the ``encoding`` parameter.
+            Đã thêm tham số ``encoding``.
         """
         path = os.path.join(self.instance_path, resource)
 
@@ -378,14 +376,14 @@ class Flask(App):
         return open(path, mode, encoding=encoding)
 
     def create_jinja_environment(self) -> Environment:
-        """Create the Jinja environment based on :attr:`jinja_options`
-        and the various Jinja-related methods of the app. Changing
-        :attr:`jinja_options` after this will have no effect. Also adds
-        Flask-related globals and filters to the environment.
+        """Tạo môi trường Jinja dựa trên :attr:`jinja_options`
+        và các phương thức liên quan đến Jinja khác nhau của ứng dụng. Thay đổi
+        :attr:`jinja_options` sau điều này sẽ không có hiệu lực. Cũng thêm
+        các biến toàn cục và bộ lọc liên quan đến Flask vào môi trường.
 
         .. versionchanged:: 0.11
-           ``Environment.auto_reload`` set in accordance with
-           ``TEMPLATES_AUTO_RELOAD`` configuration option.
+           ``Environment.auto_reload`` được thiết lập phù hợp với
+           tùy chọn cấu hình ``TEMPLATES_AUTO_RELOAD``.
 
         .. versionadded:: 0.5
         """
@@ -407,9 +405,9 @@ class Flask(App):
             url_for=self.url_for,
             get_flashed_messages=get_flashed_messages,
             config=self.config,
-            # request, session and g are normally added with the
-            # context processor for efficiency reasons but for imported
-            # templates we also want the proxies in there.
+            # request, session và g thường được thêm vào với
+            # context processor vì lý do hiệu quả nhưng đối với các template
+            # được import, chúng tôi cũng muốn các proxy ở đó.
             request=request,
             session=session,
             g=g,
@@ -418,22 +416,22 @@ class Flask(App):
         return rv
 
     def create_url_adapter(self, request: Request | None) -> MapAdapter | None:
-        """Creates a URL adapter for the given request. The URL adapter
-        is created at a point where the request context is not yet set
-        up so the request is passed explicitly.
+        """Tạo một bộ chuyển đổi URL cho request đã cho. Bộ chuyển đổi URL
+        được tạo tại một thời điểm mà ngữ cảnh request chưa được thiết lập
+        nên request được truyền một cách rõ ràng.
 
         .. versionchanged:: 3.1
-            If :data:`SERVER_NAME` is set, it does not restrict requests to
-            only that domain, for both ``subdomain_matching`` and
+            Nếu :data:`SERVER_NAME` được thiết lập, nó không hạn chế các request chỉ
+            đến domain đó, cho cả ``subdomain_matching`` và
             ``host_matching``.
 
         .. versionchanged:: 1.0
-            :data:`SERVER_NAME` no longer implicitly enables subdomain
-            matching. Use :attr:`subdomain_matching` instead.
+            :data:`SERVER_NAME` không còn ngầm kích hoạt khớp subdomain.
+            Sử dụng :attr:`subdomain_matching` thay thế.
 
         .. versionchanged:: 0.9
-           This can be called outside a request when the URL adapter is created
-           for an application context.
+           Điều này có thể được gọi bên ngoài một request khi bộ chuyển đổi URL được tạo
+           cho một ngữ cảnh ứng dụng.
 
         .. versionadded:: 0.6
         """
@@ -441,26 +439,26 @@ class Flask(App):
             if (trusted_hosts := self.config["TRUSTED_HOSTS"]) is not None:
                 request.trusted_hosts = trusted_hosts
 
-            # Check trusted_hosts here until bind_to_environ does.
+            # Kiểm tra trusted_hosts ở đây cho đến khi bind_to_environ thực hiện.
             request.host = get_host(request.environ, request.trusted_hosts)  # pyright: ignore
             subdomain = None
             server_name = self.config["SERVER_NAME"]
 
             if self.url_map.host_matching:
-                # Don't pass SERVER_NAME, otherwise it's used and the actual
-                # host is ignored, which breaks host matching.
+                # Không truyền SERVER_NAME, nếu không nó sẽ được sử dụng và host thực tế
+                # sẽ bị bỏ qua, điều này làm hỏng khớp host.
                 server_name = None
             elif not self.subdomain_matching:
-                # Werkzeug doesn't implement subdomain matching yet. Until then,
-                # disable it by forcing the current subdomain to the default, or
-                # the empty string.
+                # Werkzeug chưa triển khai khớp subdomain. Cho đến lúc đó,
+                # vô hiệu hóa nó bằng cách buộc subdomain hiện tại thành mặc định, hoặc
+                # chuỗi rỗng.
                 subdomain = self.url_map.default_subdomain or ""
 
             return self.url_map.bind_to_environ(
                 request.environ, server_name=server_name, subdomain=subdomain
             )
 
-        # Need at least SERVER_NAME to match/build outside a request.
+        # Cần ít nhất SERVER_NAME để khớp/xây dựng bên ngoài một request.
         if self.config["SERVER_NAME"] is not None:
             return self.url_map.bind(
                 self.config["SERVER_NAME"],
@@ -471,17 +469,17 @@ class Flask(App):
         return None
 
     def raise_routing_exception(self, request: Request) -> t.NoReturn:
-        """Intercept routing exceptions and possibly do something else.
+        """Chặn các ngoại lệ định tuyến và có thể làm điều gì đó khác.
 
-        In debug mode, intercept a routing redirect and replace it with
-        an error if the body will be discarded.
+        Trong chế độ gỡ lỗi, chặn một chuyển hướng định tuyến và thay thế nó bằng
+        một lỗi nếu phần thân sẽ bị loại bỏ.
 
-        With modern Werkzeug this shouldn't occur, since it now uses a
-        308 status which tells the browser to resend the method and
-        body.
+        Với Werkzeug hiện đại, điều này không nên xảy ra, vì nó hiện sử dụng
+        trạng thái 308 để bảo trình duyệt gửi lại phương thức và
+        phần thân.
 
         .. versionchanged:: 2.1
-            Don't intercept 307 and 308 redirects.
+            Không chặn các chuyển hướng 307 và 308.
 
         :meta private:
         :internal:
@@ -499,24 +497,24 @@ class Flask(App):
         raise FormDataRoutingRedirect(request)
 
     def update_template_context(self, context: dict[str, t.Any]) -> None:
-        """Update the template context with some commonly used variables.
-        This injects request, session, config and g into the template
-        context as well as everything template context processors want
-        to inject.  Note that the as of Flask 0.6, the original values
-        in the context will not be overridden if a context processor
-        decides to return a value with the same key.
+        """Cập nhật ngữ cảnh template với một số biến thường được sử dụng.
+        Điều này tiêm request, session, config và g vào ngữ cảnh template
+        cũng như mọi thứ mà các bộ xử lý ngữ cảnh template muốn
+        tiêm vào. Lưu ý rằng kể từ Flask 0.6, các giá trị ban đầu
+        trong ngữ cảnh sẽ không bị ghi đè nếu một bộ xử lý ngữ cảnh
+        quyết định trả về một giá trị với cùng một khóa.
 
-        :param context: the context as a dictionary that is updated in place
-                        to add extra variables.
+        :param context: ngữ cảnh dưới dạng từ điển được cập nhật tại chỗ
+                        để thêm các biến bổ sung.
         """
         names: t.Iterable[str | None] = (None,)
 
-        # A template may be rendered outside a request context.
+        # Một template có thể được render bên ngoài một ngữ cảnh request.
         if (ctx := _cv_app.get(None)) is not None and ctx.has_request:
             names = chain(names, reversed(ctx.request.blueprints))
 
-        # The values passed to render_template take precedence. Keep a
-        # copy to re-apply after all context functions.
+        # Các giá trị được truyền cho render_template được ưu tiên. Giữ một
+        # bản sao để áp dụng lại sau tất cả các hàm ngữ cảnh.
         orig_ctx = context.copy()
 
         for name in names:
@@ -527,9 +525,8 @@ class Flask(App):
         context.update(orig_ctx)
 
     def make_shell_context(self) -> dict[str, t.Any]:
-        """Returns the shell context for an interactive shell for this
-        application.  This runs all the registered shell context
-        processors.
+        """Trả về ngữ cảnh shell cho một shell tương tác cho ứng dụng
+        này. Điều này chạy tất cả các bộ xử lý ngữ cảnh shell đã đăng ký.
 
         .. versionadded:: 0.11
         """
@@ -546,63 +543,62 @@ class Flask(App):
         load_dotenv: bool = True,
         **options: t.Any,
     ) -> None:
-        """Runs the application on a local development server.
+        """Chạy ứng dụng trên một server phát triển cục bộ.
 
-        Do not use ``run()`` in a production setting. It is not intended to
-        meet security and performance requirements for a production server.
-        Instead, see :doc:`/deploying/index` for WSGI server recommendations.
+        Không sử dụng ``run()`` trong môi trường sản xuất. Nó không được thiết kế để
+        đáp ứng các yêu cầu về bảo mật và hiệu suất cho một server sản xuất.
+        Thay vào đó, xem :doc:`/deploying/index` để biết các khuyến nghị về server WSGI.
 
-        If the :attr:`debug` flag is set the server will automatically reload
-        for code changes and show a debugger in case an exception happened.
+        Nếu cờ :attr:`debug` được thiết lập, server sẽ tự động tải lại
+        khi có thay đổi mã và hiển thị trình gỡ lỗi trong trường hợp xảy ra ngoại lệ.
 
-        If you want to run the application in debug mode, but disable the
-        code execution on the interactive debugger, you can pass
-        ``use_evalex=False`` as parameter.  This will keep the debugger's
-        traceback screen active, but disable code execution.
+        Nếu bạn muốn chạy ứng dụng trong chế độ gỡ lỗi, nhưng vô hiệu hóa
+        việc thực thi mã trên trình gỡ lỗi tương tác, bạn có thể truyền
+        ``use_evalex=False`` làm tham số. Điều này sẽ giữ màn hình traceback
+        của trình gỡ lỗi hoạt động, nhưng vô hiệu hóa việc thực thi mã.
 
-        It is not recommended to use this function for development with
-        automatic reloading as this is badly supported.  Instead you should
-        be using the :command:`flask` command line script's ``run`` support.
+        Không khuyến khích sử dụng hàm này để phát triển với
+        tự động tải lại vì điều này được hỗ trợ kém. Thay vào đó bạn nên
+        sử dụng hỗ trợ ``run`` của script dòng lệnh :command:`flask`.
 
-        .. admonition:: Keep in Mind
+        .. admonition:: Hãy nhớ rằng
 
-           Flask will suppress any server error with a generic error page
-           unless it is in debug mode.  As such to enable just the
-           interactive debugger without the code reloading, you have to
-           invoke :meth:`run` with ``debug=True`` and ``use_reloader=False``.
-           Setting ``use_debugger`` to ``True`` without being in debug mode
-           won't catch any exceptions because there won't be any to
-           catch.
+           Flask sẽ chặn mọi lỗi server với một trang lỗi chung
+           trừ khi nó ở chế độ gỡ lỗi. Do đó, để chỉ kích hoạt
+           trình gỡ lỗi tương tác mà không tải lại mã, bạn phải
+           gọi :meth:`run` với ``debug=True`` và ``use_reloader=False``.
+           Thiết lập ``use_debugger`` thành ``True`` mà không ở chế độ gỡ lỗi
+           sẽ không bắt được bất kỳ ngoại lệ nào vì sẽ không có ngoại lệ nào để
+           bắt.
 
-        :param host: the hostname to listen on. Set this to ``'0.0.0.0'`` to
-            have the server available externally as well. Defaults to
-            ``'127.0.0.1'`` or the host in the ``SERVER_NAME`` config variable
-            if present.
-        :param port: the port of the webserver. Defaults to ``5000`` or the
-            port defined in the ``SERVER_NAME`` config variable if present.
-        :param debug: if given, enable or disable debug mode. See
+        :param host: hostname để lắng nghe. Đặt thành ``'0.0.0.0'`` để
+            server có sẵn bên ngoài. Mặc định là
+            ``'127.0.0.1'`` hoặc host trong biến cấu hình ``SERVER_NAME``
+            nếu có.
+        :param port: cổng của webserver. Mặc định là ``5000`` hoặc
+            cổng được định nghĩa trong biến cấu hình ``SERVER_NAME`` nếu có.
+        :param debug: nếu được đưa ra, kích hoạt hoặc vô hiệu hóa chế độ gỡ lỗi. Xem
             :attr:`debug`.
-        :param load_dotenv: Load the nearest :file:`.env` and :file:`.flaskenv`
-            files to set environment variables. Will also change the working
-            directory to the directory containing the first file found.
-        :param options: the options to be forwarded to the underlying Werkzeug
-            server. See :func:`werkzeug.serving.run_simple` for more
-            information.
+        :param load_dotenv: Tải các tệp :file:`.env` và :file:`.flaskenv` gần nhất
+            để thiết lập các biến môi trường. Cũng sẽ thay đổi thư mục
+            làm việc sang thư mục chứa tệp đầu tiên được tìm thấy.
+        :param options: các tùy chọn được chuyển tiếp đến server Werkzeug
+            cơ bản. Xem :func:`werkzeug.serving.run_simple` để biết thêm
+            thông tin.
 
         .. versionchanged:: 1.0
-            If installed, python-dotenv will be used to load environment
-            variables from :file:`.env` and :file:`.flaskenv` files.
+            Nếu được cài đặt, python-dotenv sẽ được sử dụng để tải các biến
+            môi trường từ các tệp :file:`.env` và :file:`.flaskenv`.
 
-            The :envvar:`FLASK_DEBUG` environment variable will override :attr:`debug`.
+            Biến môi trường :envvar:`FLASK_DEBUG` sẽ ghi đè :attr:`debug`.
 
-            Threaded mode is enabled by default.
+            Chế độ luồng được kích hoạt theo mặc định.
 
         .. versionchanged:: 0.10
-            The default port is now picked from the ``SERVER_NAME``
-            variable.
+            Cổng mặc định hiện được chọn từ biến ``SERVER_NAME``.
         """
-        # Ignore this call so that it doesn't start another server if
-        # the 'flask run' command is used.
+        # Bỏ qua cuộc gọi này để nó không khởi động một server khác nếu
+        # lệnh 'flask run' được sử dụng.
         if os.environ.get("FLASK_RUN_FROM_CLI") == "true":
             if not is_running_from_reloader():
                 click.secho(
@@ -618,11 +614,11 @@ class Flask(App):
         if get_load_dotenv(load_dotenv):
             cli.load_dotenv()
 
-            # if set, env var overrides existing value
+            # nếu được thiết lập, biến môi trường ghi đè giá trị hiện có
             if "FLASK_DEBUG" in os.environ:
                 self.debug = get_debug_flag()
 
-        # debug passed to method overrides all other sources
+        # debug được truyền cho phương thức ghi đè tất cả các nguồn khác
         if debug is not None:
             self.debug = bool(debug)
 
@@ -656,37 +652,37 @@ class Flask(App):
         try:
             run_simple(t.cast(str, host), port, self, **options)
         finally:
-            # reset the first request information if the development server
-            # reset normally.  This makes it possible to restart the server
-            # without reloader and that stuff from an interactive shell.
+            # reset thông tin request đầu tiên nếu server phát triển
+            # reset bình thường. Điều này làm cho việc khởi động lại server
+            # mà không có reloader và những thứ đó từ một shell tương tác trở nên khả thi.
             self._got_first_request = False
 
     def test_client(self, use_cookies: bool = True, **kwargs: t.Any) -> FlaskClient:
-        """Creates a test client for this application.  For information
-        about unit testing head over to :doc:`/testing`.
+        """Tạo một test client cho ứng dụng này. Để biết thông tin
+        về unit testing hãy xem :doc:`/testing`.
 
-        Note that if you are testing for assertions or exceptions in your
-        application code, you must set ``app.testing = True`` in order for the
-        exceptions to propagate to the test client.  Otherwise, the exception
-        will be handled by the application (not visible to the test client) and
-        the only indication of an AssertionError or other exception will be a
-        500 status code response to the test client.  See the :attr:`testing`
-        attribute.  For example::
+        Lưu ý rằng nếu bạn đang kiểm tra các assertion hoặc ngoại lệ trong
+        mã ứng dụng của bạn, bạn phải đặt ``app.testing = True`` để
+        các ngoại lệ lan truyền đến test client. Nếu không, ngoại lệ
+        sẽ được xử lý bởi ứng dụng (không hiển thị cho test client) và
+        chỉ báo duy nhất về một AssertionError hoặc ngoại lệ khác sẽ là một
+        phản hồi mã trạng thái 500 cho test client. Xem thuộc tính :attr:`testing`.
+        Ví dụ::
 
             app.testing = True
             client = app.test_client()
 
-        The test client can be used in a ``with`` block to defer the closing down
-        of the context until the end of the ``with`` block.  This is useful if
-        you want to access the context locals for testing::
+        Test client có thể được sử dụng trong một khối ``with`` để hoãn việc đóng
+        ngữ cảnh cho đến khi kết thúc khối ``with``. Điều này hữu ích nếu
+        bạn muốn truy cập các biến cục bộ ngữ cảnh để kiểm tra::
 
             with app.test_client() as c:
                 rv = c.get('/?vodka=42')
                 assert request.args['vodka'] == '42'
 
-        Additionally, you may pass optional keyword arguments that will then
-        be passed to the application's :attr:`test_client_class` constructor.
-        For example::
+        Ngoài ra, bạn có thể truyền các đối số từ khóa tùy chọn sẽ được
+        truyền cho hàm tạo :attr:`test_client_class` của ứng dụng.
+        Ví dụ::
 
             from flask.testing import FlaskClient
 
@@ -698,19 +694,19 @@ class Flask(App):
             app.test_client_class = CustomClient
             client = app.test_client(authentication='Basic ....')
 
-        See :class:`~flask.testing.FlaskClient` for more information.
+        Xem :class:`~flask.testing.FlaskClient` để biết thêm thông tin.
 
         .. versionchanged:: 0.4
-           added support for ``with`` block usage for the client.
+           đã thêm hỗ trợ cho việc sử dụng khối ``with`` cho client.
 
         .. versionadded:: 0.7
-           The `use_cookies` parameter was added as well as the ability
-           to override the client to be used by setting the
-           :attr:`test_client_class` attribute.
+           Tham số `use_cookies` đã được thêm vào cũng như khả năng
+           ghi đè client được sử dụng bằng cách thiết lập
+           thuộc tính :attr:`test_client_class`.
 
         .. versionchanged:: 0.11
-           Added `**kwargs` to support passing additional keyword arguments to
-           the constructor of :attr:`test_client_class`.
+           Đã thêm `**kwargs` để hỗ trợ truyền các đối số từ khóa bổ sung cho
+           hàm tạo của :attr:`test_client_class`.
         """
         cls = self.test_client_class
         if cls is None:
@@ -720,12 +716,12 @@ class Flask(App):
         )
 
     def test_cli_runner(self, **kwargs: t.Any) -> FlaskCliRunner:
-        """Create a CLI runner for testing CLI commands.
-        See :ref:`testing-cli`.
+        """Tạo một trình chạy CLI để kiểm tra các lệnh CLI.
+        Xem :ref:`testing-cli`.
 
-        Returns an instance of :attr:`test_cli_runner_class`, by default
-        :class:`~flask.testing.FlaskCliRunner`. The Flask app object is
-        passed as the first argument.
+        Trả về một thể hiện của :attr:`test_cli_runner_class`, theo mặc định
+        :class:`~flask.testing.FlaskCliRunner`. Đối tượng ứng dụng Flask được
+        truyền làm đối số đầu tiên.
 
         .. versionadded:: 1.0
         """
@@ -739,30 +735,30 @@ class Flask(App):
     def handle_http_exception(
         self, e: HTTPException
     ) -> HTTPException | ft.ResponseReturnValue:
-        """Handles an HTTP exception.  By default this will invoke the
-        registered error handlers and fall back to returning the
-        exception as response.
+        """Xử lý một ngoại lệ HTTP. Theo mặc định, điều này sẽ gọi các
+        trình xử lý lỗi đã đăng ký và quay lại trả về
+        ngoại lệ dưới dạng phản hồi.
 
         .. versionchanged:: 1.0.3
-            ``RoutingException``, used internally for actions such as
-             slash redirects during routing, is not passed to error
-             handlers.
+            ``RoutingException``, được sử dụng nội bộ cho các hành động như
+             chuyển hướng dấu gạch chéo trong quá trình định tuyến, không được truyền cho các trình xử lý
+             lỗi.
 
         .. versionchanged:: 1.0
-            Exceptions are looked up by code *and* by MRO, so
-            ``HTTPException`` subclasses can be handled with a catch-all
-            handler for the base ``HTTPException``.
+            Các ngoại lệ được tra cứu theo mã *và* theo MRO, vì vậy
+            các lớp con ``HTTPException`` có thể được xử lý bằng một trình xử lý
+            bắt tất cả cho ``HTTPException`` cơ sở.
 
         .. versionadded:: 0.3
         """
-        # Proxy exceptions don't have error codes.  We want to always return
-        # those unchanged as errors
+        # Các ngoại lệ proxy không có mã lỗi. Chúng tôi muốn luôn trả về
+        # chúng không thay đổi dưới dạng lỗi
         if e.code is None:
             return e
 
-        # RoutingExceptions are used internally to trigger routing
-        # actions, such as slash redirects raising RequestRedirect. They
-        # are not raised or handled in user code.
+        # RoutingExceptions được sử dụng nội bộ để kích hoạt các hành động
+        # định tuyến, chẳng hạn như chuyển hướng dấu gạch chéo gây ra RequestRedirect. Chúng
+        # không được ném ra hoặc xử lý trong mã người dùng.
         if isinstance(e, RoutingException):
             return e
 
@@ -774,17 +770,17 @@ class Flask(App):
     def handle_user_exception(
         self, e: Exception
     ) -> HTTPException | ft.ResponseReturnValue:
-        """This method is called whenever an exception occurs that
-        should be handled. A special case is :class:`~werkzeug
-        .exceptions.HTTPException` which is forwarded to the
-        :meth:`handle_http_exception` method. This function will either
-        return a response value or reraise the exception with the same
+        """Phương thức này được gọi bất cứ khi nào một ngoại lệ xảy ra mà
+        cần được xử lý. Một trường hợp đặc biệt là :class:`~werkzeug
+        .exceptions.HTTPException` được chuyển tiếp đến
+        phương thức :meth:`handle_http_exception`. Hàm này sẽ trả về
+        một giá trị phản hồi hoặc ném lại ngoại lệ với cùng một
         traceback.
 
         .. versionchanged:: 1.0
-            Key errors raised from request data like ``form`` show the
-            bad key in debug mode rather than a generic bad request
-            message.
+            Các lỗi khóa được ném ra từ dữ liệu request như ``form`` hiển thị
+            khóa sai trong chế độ gỡ lỗi thay vì một thông báo bad request
+            chung chung.
 
         .. versionadded:: 0.7
         """
@@ -804,30 +800,30 @@ class Flask(App):
         return self.ensure_sync(handler)(e)  # type: ignore[no-any-return]
 
     def handle_exception(self, e: Exception) -> Response:
-        """Handle an exception that did not have an error handler
-        associated with it, or that was raised from an error handler.
-        This always causes a 500 ``InternalServerError``.
+        """Xử lý một ngoại lệ không có trình xử lý lỗi
+        liên kết với nó, hoặc được ném ra từ một trình xử lý lỗi.
+        Điều này luôn gây ra lỗi 500 ``InternalServerError``.
 
-        Always sends the :data:`got_request_exception` signal.
+        Luôn gửi tín hiệu :data:`got_request_exception`.
 
-        If :data:`PROPAGATE_EXCEPTIONS` is ``True``, such as in debug
-        mode, the error will be re-raised so that the debugger can
-        display it. Otherwise, the original exception is logged, and
-        an :exc:`~werkzeug.exceptions.InternalServerError` is returned.
+        Nếu :data:`PROPAGATE_EXCEPTIONS` là ``True``, chẳng hạn như trong chế độ
+        gỡ lỗi, lỗi sẽ được ném lại để trình gỡ lỗi có thể
+        hiển thị nó. Nếu không, ngoại lệ ban đầu được ghi log, và
+        một :exc:`~werkzeug.exceptions.InternalServerError` được trả về.
 
-        If an error handler is registered for ``InternalServerError`` or
-        ``500``, it will be used. For consistency, the handler will
-        always receive the ``InternalServerError``. The original
-        unhandled exception is available as ``e.original_exception``.
-
-        .. versionchanged:: 1.1.0
-            Always passes the ``InternalServerError`` instance to the
-            handler, setting ``original_exception`` to the unhandled
-            error.
+        Nếu một trình xử lý lỗi được đăng ký cho ``InternalServerError`` hoặc
+        ``500``, nó sẽ được sử dụng. Để nhất quán, trình xử lý sẽ
+        luôn nhận được ``InternalServerError``. Ngoại lệ ban đầu
+        không được xử lý có sẵn dưới dạng ``e.original_exception``.
 
         .. versionchanged:: 1.1.0
-            ``after_request`` functions and other finalization is done
-            even for the default 500 response when there is no handler.
+            Luôn truyền thể hiện ``InternalServerError`` cho
+            trình xử lý, thiết lập ``original_exception`` thành lỗi không được
+            xử lý.
+
+        .. versionchanged:: 1.1.0
+            Các hàm ``after_request`` và các bước hoàn thiện khác được thực hiện
+            ngay cả đối với phản hồi 500 mặc định khi không có trình xử lý.
 
         .. versionadded:: 0.3
         """
@@ -839,8 +835,8 @@ class Flask(App):
             propagate = self.testing or self.debug
 
         if propagate:
-            # Re-raise if called with an active exception, otherwise
-            # raise the passed in exception.
+            # Ném lại nếu được gọi với một ngoại lệ đang hoạt động, nếu không
+            # ném ngoại lệ được truyền vào.
             if exc_info[1] is e:
                 raise
 
@@ -860,9 +856,9 @@ class Flask(App):
         self,
         exc_info: (tuple[type, BaseException, TracebackType] | tuple[None, None, None]),
     ) -> None:
-        """Logs an exception.  This is called by :meth:`handle_exception`
-        if debugging is disabled and right before the handler is called.
-        The default implementation logs the exception as error on the
+        """Ghi log một ngoại lệ. Điều này được gọi bởi :meth:`handle_exception`
+        nếu gỡ lỗi bị vô hiệu hóa và ngay trước khi trình xử lý được gọi.
+        Triển khai mặc định ghi log ngoại lệ dưới dạng lỗi trên
         :attr:`logger`.
 
         .. versionadded:: 0.8
@@ -872,35 +868,35 @@ class Flask(App):
         )
 
     def dispatch_request(self) -> ft.ResponseReturnValue:
-        """Does the request dispatching.  Matches the URL and returns the
-        return value of the view or error handler.  This does not have to
-        be a response object.  In order to convert the return value to a
-        proper response object, call :func:`make_response`.
+        """Thực hiện việc điều phối request. Khớp URL và trả về
+        giá trị trả về của view hoặc trình xử lý lỗi. Điều này không nhất thiết phải
+        là một đối tượng phản hồi. Để chuyển đổi giá trị trả về thành một
+        đối tượng phản hồi thích hợp, hãy gọi :func:`make_response`.
 
         .. versionchanged:: 0.7
-           This no longer does the exception handling, this code was
-           moved to the new :meth:`full_dispatch_request`.
+           Điều này không còn thực hiện xử lý ngoại lệ, mã này đã được
+           chuyển sang :meth:`full_dispatch_request` mới.
         """
         req = _cv_app.get().request
 
         if req.routing_exception is not None:
             self.raise_routing_exception(req)
         rule: Rule = req.url_rule  # type: ignore[assignment]
-        # if we provide automatic options for this URL and the
-        # request came with the OPTIONS method, reply automatically
+        # nếu chúng tôi cung cấp các tùy chọn tự động cho URL này và
+        # request đi kèm với phương thức OPTIONS, trả lời tự động
         if (
             getattr(rule, "provide_automatic_options", False)
             and req.method == "OPTIONS"
         ):
             return self.make_default_options_response()
-        # otherwise dispatch to the handler for that endpoint
+        # nếu không thì điều phối đến trình xử lý cho endpoint đó
         view_args: dict[str, t.Any] = req.view_args  # type: ignore[assignment]
         return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
 
     def full_dispatch_request(self) -> Response:
-        """Dispatches the request and on top of that performs request
-        pre and postprocessing as well as HTTP exception catching and
-        error handling.
+        """Điều phối request và trên hết thực hiện tiền xử lý và hậu xử lý
+        request cũng như bắt ngoại lệ HTTP và
+        xử lý lỗi.
 
         .. versionadded:: 0.7
         """
@@ -920,15 +916,15 @@ class Flask(App):
         rv: ft.ResponseReturnValue | HTTPException,
         from_error_handler: bool = False,
     ) -> Response:
-        """Given the return value from a view function this finalizes
-        the request by converting it into a response and invoking the
-        postprocessing functions.  This is invoked for both normal
-        request dispatching as well as error handlers.
+        """Với giá trị trả về từ một hàm view, điều này hoàn thiện
+        request bằng cách chuyển đổi nó thành một phản hồi và gọi các
+        hàm hậu xử lý. Điều này được gọi cho cả điều phối request
+        bình thường cũng như các trình xử lý lỗi.
 
-        Because this means that it might be called as a result of a
-        failure a special safe mode is available which can be enabled
-        with the `from_error_handler` flag.  If enabled, failures in
-        response processing will be logged and otherwise ignored.
+        Bởi vì điều này có nghĩa là nó có thể được gọi là kết quả của một
+        thất bại, một chế độ an toàn đặc biệt có sẵn có thể được kích hoạt
+        với cờ `from_error_handler`. Nếu được kích hoạt, các thất bại trong
+        xử lý phản hồi sẽ được ghi log và nếu không sẽ bị bỏ qua.
 
         :internal:
         """
@@ -947,9 +943,9 @@ class Flask(App):
         return response
 
     def make_default_options_response(self) -> Response:
-        """This method is called to create the default ``OPTIONS`` response.
-        This can be changed through subclassing to change the default
-        behavior of ``OPTIONS`` responses.
+        """Phương thức này được gọi để tạo phản hồi ``OPTIONS`` mặc định.
+        Điều này có thể được thay đổi thông qua phân lớp để thay đổi hành vi
+        mặc định của các phản hồi ``OPTIONS``.
 
         .. versionadded:: 0.7
         """
@@ -960,11 +956,11 @@ class Flask(App):
         return rv
 
     def ensure_sync(self, func: t.Callable[..., t.Any]) -> t.Callable[..., t.Any]:
-        """Ensure that the function is synchronous for WSGI workers.
-        Plain ``def`` functions are returned as-is. ``async def``
-        functions are wrapped to run and wait for the response.
+        """Đảm bảo rằng hàm là đồng bộ cho các worker WSGI.
+        Các hàm ``def`` thông thường được trả về nguyên trạng. Các hàm ``async def``
+        được bao bọc để chạy và chờ phản hồi.
 
-        Override this method to change how the app runs async views.
+        Ghi đè phương thức này để thay đổi cách ứng dụng chạy các view async.
 
         .. versionadded:: 2.0
         """
@@ -976,14 +972,14 @@ class Flask(App):
     def async_to_sync(
         self, func: t.Callable[..., t.Coroutine[t.Any, t.Any, t.Any]]
     ) -> t.Callable[..., t.Any]:
-        """Return a sync function that will run the coroutine function.
+        """Trả về một hàm đồng bộ sẽ chạy hàm coroutine.
 
         .. code-block:: python
 
             result = app.async_to_sync(func)(*args, **kwargs)
 
-        Override this method to change how the app converts async code
-        to be synchronously callable.
+        Ghi đè phương thức này để thay đổi cách ứng dụng chuyển đổi mã async
+        để có thể gọi đồng bộ.
 
         .. versionadded:: 2.0
         """
@@ -1007,72 +1003,72 @@ class Flask(App):
         _external: bool | None = None,
         **values: t.Any,
     ) -> str:
-        """Generate a URL to the given endpoint with the given values.
+        """Tạo một URL đến endpoint đã cho với các giá trị đã cho.
 
-        This is called by :func:`flask.url_for`, and can be called
-        directly as well.
+        Điều này được gọi bởi :func:`flask.url_for`, và cũng có thể được gọi
+        trực tiếp.
 
-        An *endpoint* is the name of a URL rule, usually added with
-        :meth:`@app.route() <route>`, and usually the same name as the
-        view function. A route defined in a :class:`~flask.Blueprint`
-        will prepend the blueprint's name separated by a ``.`` to the
+        Một *endpoint* là tên của một quy tắc URL, thường được thêm vào với
+        :meth:`@app.route() <route>`, và thường cùng tên với
+        hàm view. Một route được định nghĩa trong một :class:`~flask.Blueprint`
+        sẽ thêm tên của blueprint được phân tách bằng dấu ``.`` vào
         endpoint.
 
-        In some cases, such as email messages, you want URLs to include
-        the scheme and domain, like ``https://example.com/hello``. When
-        not in an active request, URLs will be external by default, but
-        this requires setting :data:`SERVER_NAME` so Flask knows what
-        domain to use. :data:`APPLICATION_ROOT` and
-        :data:`PREFERRED_URL_SCHEME` should also be configured as
-        needed. This config is only used when not in an active request.
+        Trong một số trường hợp, chẳng hạn như tin nhắn email, bạn muốn URL bao gồm
+        scheme và domain, như ``https://example.com/hello``. Khi
+        không ở trong một request đang hoạt động, các URL sẽ là bên ngoài theo mặc định, nhưng
+        điều này yêu cầu thiết lập :data:`SERVER_NAME` để Flask biết
+        domain nào để sử dụng. :data:`APPLICATION_ROOT` và
+        :data:`PREFERRED_URL_SCHEME` cũng nên được cấu hình khi
+        cần thiết. Cấu hình này chỉ được sử dụng khi không ở trong một request đang hoạt động.
 
-        Functions can be decorated with :meth:`url_defaults` to modify
-        keyword arguments before the URL is built.
+        Các hàm có thể được trang trí với :meth:`url_defaults` để sửa đổi
+        các đối số từ khóa trước khi URL được xây dựng.
 
-        If building fails for some reason, such as an unknown endpoint
-        or incorrect values, the app's :meth:`handle_url_build_error`
-        method is called. If that returns a string, that is returned,
-        otherwise a :exc:`~werkzeug.routing.BuildError` is raised.
+        Nếu việc xây dựng thất bại vì lý do nào đó, chẳng hạn như endpoint không xác định
+        hoặc giá trị không chính xác, phương thức :meth:`handle_url_build_error`
+        của ứng dụng được gọi. Nếu nó trả về một chuỗi, chuỗi đó được trả về,
+        nếu không một :exc:`~werkzeug.routing.BuildError` được ném ra.
 
-        :param endpoint: The endpoint name associated with the URL to
-            generate. If this starts with a ``.``, the current blueprint
-            name (if any) will be used.
-        :param _anchor: If given, append this as ``#anchor`` to the URL.
-        :param _method: If given, generate the URL associated with this
-            method for the endpoint.
-        :param _scheme: If given, the URL will have this scheme if it
-            is external.
-        :param _external: If given, prefer the URL to be internal
-            (False) or require it to be external (True). External URLs
-            include the scheme and domain. When not in an active
-            request, URLs are external by default.
-        :param values: Values to use for the variable parts of the URL
-            rule. Unknown keys are appended as query string arguments,
-            like ``?a=b&c=d``.
+        :param endpoint: Tên endpoint liên kết với URL để
+            tạo. Nếu nó bắt đầu bằng ``.``, tên blueprint hiện tại
+            (nếu có) sẽ được sử dụng.
+        :param _anchor: Nếu được đưa ra, thêm cái này dưới dạng ``#anchor`` vào URL.
+        :param _method: Nếu được đưa ra, tạo URL liên kết với phương thức này
+            cho endpoint.
+        :param _scheme: Nếu được đưa ra, URL sẽ có scheme này nếu nó
+            là bên ngoài.
+        :param _external: Nếu được đưa ra, ưu tiên URL là nội bộ
+            (False) hoặc yêu cầu nó là bên ngoài (True). Các URL bên ngoài
+            bao gồm scheme và domain. Khi không ở trong một request đang
+            hoạt động, các URL là bên ngoài theo mặc định.
+        :param values: Các giá trị để sử dụng cho các phần biến của quy tắc
+            URL. Các khóa không xác định được thêm vào dưới dạng đối số chuỗi truy vấn,
+            như ``?a=b&c=d``.
 
         .. versionadded:: 2.2
-            Moved from ``flask.url_for``, which calls this method.
+            Được chuyển từ ``flask.url_for``, gọi phương thức này.
         """
         if (ctx := _cv_app.get(None)) is not None and ctx.has_request:
             url_adapter = ctx.url_adapter
             blueprint_name = ctx.request.blueprint
 
-            # If the endpoint starts with "." and the request matches a
-            # blueprint, the endpoint is relative to the blueprint.
+            # Nếu endpoint bắt đầu bằng "." và request khớp với một
+            # blueprint, endpoint là tương đối với blueprint.
             if endpoint[:1] == ".":
                 if blueprint_name is not None:
                     endpoint = f"{blueprint_name}{endpoint}"
                 else:
                     endpoint = endpoint[1:]
 
-            # When in a request, generate a URL without scheme and
-            # domain by default, unless a scheme is given.
+            # Khi ở trong một request, tạo một URL không có scheme và
+            # domain theo mặc định, trừ khi một scheme được đưa ra.
             if _external is None:
                 _external = _scheme is not None
         else:
-            # If called by helpers.url_for, an app context is active,
-            # use its url_adapter. Otherwise, app.url_for was called
-            # directly, build an adapter.
+            # Nếu được gọi bởi helpers.url_for, một ngữ cảnh ứng dụng đang hoạt động,
+            # sử dụng url_adapter của nó. Nếu không, app.url_for đã được gọi
+            # trực tiếp, xây dựng một bộ chuyển đổi.
             if ctx is not None:
                 url_adapter = ctx.url_adapter
             else:
@@ -1086,13 +1082,13 @@ class Flask(App):
                     " needed."
                 )
 
-            # When outside a request, generate a URL with scheme and
-            # domain by default.
+            # Khi bên ngoài một request, tạo một URL với scheme và
+            # domain theo mặc định.
             if _external is None:
                 _external = True
 
-        # It is an error to set _scheme when _external=False, in order
-        # to avoid accidental insecure URLs.
+        # Sẽ là lỗi nếu thiết lập _scheme khi _external=False, để
+        # tránh các URL không an toàn ngẫu nhiên.
         if _scheme is not None and not _external:
             raise ValueError("When specifying '_scheme', '_external' must be True.")
 
@@ -1119,79 +1115,79 @@ class Flask(App):
         return rv
 
     def make_response(self, rv: ft.ResponseReturnValue) -> Response:
-        """Convert the return value from a view function to an instance of
+        """Chuyển đổi giá trị trả về từ một hàm view thành một thể hiện của
         :attr:`response_class`.
 
-        :param rv: the return value from the view function. The view function
-            must return a response. Returning ``None``, or the view ending
-            without returning, is not allowed. The following types are allowed
-            for ``view_rv``:
+        :param rv: giá trị trả về từ hàm view. Hàm view
+            phải trả về một phản hồi. Trả về ``None``, hoặc view kết thúc
+            mà không trả về, là không được phép. Các loại sau được phép
+            cho ``view_rv``:
 
             ``str``
-                A response object is created with the string encoded to UTF-8
-                as the body.
+                Một đối tượng phản hồi được tạo với chuỗi được mã hóa thành UTF-8
+                làm phần thân.
 
             ``bytes``
-                A response object is created with the bytes as the body.
+                Một đối tượng phản hồi được tạo với các byte làm phần thân.
 
             ``dict``
-                A dictionary that will be jsonify'd before being returned.
+                Một từ điển sẽ được jsonify trước khi được trả về.
 
             ``list``
-                A list that will be jsonify'd before being returned.
+                Một danh sách sẽ được jsonify trước khi được trả về.
 
-            ``generator`` or ``iterator``
-                A generator that returns ``str`` or ``bytes`` to be
-                streamed as the response.
+            ``generator`` hoặc ``iterator``
+                Một generator trả về ``str`` hoặc ``bytes`` để được
+                stream dưới dạng phản hồi.
 
             ``tuple``
-                Either ``(body, status, headers)``, ``(body, status)``, or
-                ``(body, headers)``, where ``body`` is any of the other types
-                allowed here, ``status`` is a string or an integer, and
-                ``headers`` is a dictionary or a list of ``(key, value)``
-                tuples. If ``body`` is a :attr:`response_class` instance,
-                ``status`` overwrites the exiting value and ``headers`` are
-                extended.
+                Hoặc ``(body, status, headers)``, ``(body, status)``, hoặc
+                ``(body, headers)``, trong đó ``body`` là bất kỳ loại nào khác
+                được phép ở đây, ``status`` là một chuỗi hoặc một số nguyên, và
+                ``headers`` là một từ điển hoặc một danh sách các tuple ``(key, value)``.
+                Nếu ``body`` là một thể hiện :attr:`response_class`,
+                ``status`` ghi đè giá trị hiện có và ``headers`` được
+                mở rộng.
 
             :attr:`response_class`
-                The object is returned unchanged.
+                Đối tượng được trả về không thay đổi.
 
-            other :class:`~werkzeug.wrappers.Response` class
-                The object is coerced to :attr:`response_class`.
+            lớp :class:`~werkzeug.wrappers.Response` khác
+                Đối tượng được ép kiểu thành :attr:`response_class`.
 
             :func:`callable`
-                The function is called as a WSGI application. The result is
-                used to create a response object.
+                Hàm được gọi như một ứng dụng WSGI. Kết quả được
+                sử dụng để tạo một đối tượng phản hồi.
 
         .. versionchanged:: 2.2
-            A generator will be converted to a streaming response.
-            A list will be converted to a JSON response.
+            Một generator sẽ được chuyển đổi thành một phản hồi streaming.
+            Một danh sách sẽ được chuyển đổi thành một phản hồi JSON.
 
         .. versionchanged:: 1.1
-            A dict will be converted to a JSON response.
+            Một dict sẽ được chuyển đổi thành một phản hồi JSON.
 
         .. versionchanged:: 0.9
-           Previously a tuple was interpreted as the arguments for the
-           response object.
+           Trước đây một tuple được hiểu là các đối số cho
+           đối tượng phản hồi.
         """
 
         status: int | None = None
         headers: HeadersValue | None = None
 
-        # unpack tuple returns
+        # giải nén tuple trả về
         if isinstance(rv, tuple):
             len_rv = len(rv)
 
-            # a 3-tuple is unpacked directly
+            # một tuple 3 phần tử được giải nén trực tiếp
             if len_rv == 3:
                 rv, status, headers = rv  # type: ignore[misc]
-            # decide if a 2-tuple has status or headers
+            # quyết định xem tuple 2 phần tử có status hay headers
             elif len_rv == 2:
                 if isinstance(rv[1], (Headers, dict, tuple, list)):
                     rv, headers = rv  # pyright: ignore
                 else:
                     rv, status = rv  # type: ignore[assignment,misc]
-            # other sized tuples are not allowed
+            # các tuple kích thước khác không được phép
             else:
                 raise TypeError(
                     "The view function did not return a valid response tuple."
@@ -1199,7 +1195,7 @@ class Flask(App):
                     " (body, status), or (body, headers)."
                 )
 
-        # the body must not be None
+        # phần thân không được là None
         if rv is None:
             raise TypeError(
                 f"The view function for {request.endpoint!r} did not"
@@ -1207,12 +1203,12 @@ class Flask(App):
                 " None or ended without a return statement."
             )
 
-        # make sure the body is an instance of the response class
+        # đảm bảo phần thân là một thể hiện của lớp phản hồi
         if not isinstance(rv, self.response_class):
             if isinstance(rv, (str, bytes, bytearray)) or isinstance(rv, cabc.Iterator):
-                # let the response class set the status and headers instead of
-                # waiting to do it manually, so that the class can handle any
-                # special logic
+                # để lớp phản hồi thiết lập status và headers thay vì
+                # chờ đợi để làm thủ công, để lớp có thể xử lý bất kỳ
+                # logic đặc biệt nào
                 rv = self.response_class(
                     rv,  # pyright: ignore
                     status=status,
@@ -1222,8 +1218,8 @@ class Flask(App):
             elif isinstance(rv, (dict, list)):
                 rv = self.json.response(rv)
             elif isinstance(rv, BaseResponse) or callable(rv):
-                # evaluate a WSGI callable, or coerce a different response
-                # class to the correct type
+                # đánh giá một WSGI callable, hoặc ép kiểu một lớp phản hồi
+                # khác thành đúng loại
                 try:
                     rv = self.response_class.force_type(
                         rv,  # type: ignore[arg-type]
@@ -1247,28 +1243,28 @@ class Flask(App):
                 )
 
         rv = t.cast(Response, rv)
-        # prefer the status if it was provided
+        # ưu tiên status nếu nó được cung cấp
         if status is not None:
             if isinstance(status, (str, bytes, bytearray)):
                 rv.status = status
             else:
                 rv.status_code = status
 
-        # extend existing headers with provided headers
+        # mở rộng headers hiện có với headers được cung cấp
         if headers:
             rv.headers.update(headers)
 
         return rv
 
     def preprocess_request(self) -> ft.ResponseReturnValue | None:
-        """Called before the request is dispatched. Calls
-        :attr:`url_value_preprocessors` registered with the app and the
-        current blueprint (if any). Then calls :attr:`before_request_funcs`
-        registered with the app and the blueprint.
+        """Được gọi trước khi request được điều phối. Gọi
+        :attr:`url_value_preprocessors` đã đăng ký với ứng dụng và
+        blueprint hiện tại (nếu có). Sau đó gọi :attr:`before_request_funcs`
+        đã đăng ký với ứng dụng và blueprint.
 
-        If any :meth:`before_request` handler returns a non-None value, the
-        value is handled as if it was the return value from the view, and
-        further request handling is stopped.
+        Nếu bất kỳ trình xử lý :meth:`before_request` nào trả về giá trị khác None,
+        giá trị đó được xử lý như thể nó là giá trị trả về từ view, và
+        việc xử lý request tiếp theo bị dừng lại.
         """
         req = _cv_app.get().request
         names = (None, *reversed(req.blueprints))
@@ -1289,17 +1285,17 @@ class Flask(App):
         return None
 
     def process_response(self, response: Response) -> Response:
-        """Can be overridden in order to modify the response object
-        before it's sent to the WSGI server.  By default this will
-        call all the :meth:`after_request` decorated functions.
+        """Có thể được ghi đè để sửa đổi đối tượng phản hồi
+        trước khi nó được gửi đến server WSGI. Theo mặc định, điều này sẽ
+        gọi tất cả các hàm được trang trí :meth:`after_request`.
 
         .. versionchanged:: 0.5
-           As of Flask 0.5 the functions registered for after request
-           execution are called in reverse order of registration.
+           Kể từ Flask 0.5 các hàm được đăng ký để thực thi sau request
+           được gọi theo thứ tự ngược lại với thứ tự đăng ký.
 
-        :param response: a :attr:`response_class` object.
-        :return: a new response object or the same, has to be an
-                 instance of :attr:`response_class`.
+        :param response: một đối tượng :attr:`response_class`.
+        :return: một đối tượng phản hồi mới hoặc giống nhau, phải là một
+                 thể hiện của :attr:`response_class`.
         """
         ctx = _cv_app.get()
 
@@ -1317,19 +1313,19 @@ class Flask(App):
         return response
 
     def do_teardown_request(self, exc: BaseException | None = None) -> None:
-        """Called after the request is dispatched and the response is finalized,
-        right before the request context is popped. Called by
+        """Được gọi sau khi request được điều phối và phản hồi được hoàn thiện,
+        ngay trước khi ngữ cảnh request bị pop. Được gọi bởi
         :meth:`.AppContext.pop`.
 
-        This calls all functions decorated with :meth:`teardown_request`, and
-        :meth:`Blueprint.teardown_request` if a blueprint handled the request.
-        Finally, the :data:`request_tearing_down` signal is sent.
+        Điều này gọi tất cả các hàm được trang trí với :meth:`teardown_request`, và
+        :meth:`Blueprint.teardown_request` nếu một blueprint xử lý request.
+        Cuối cùng, tín hiệu :data:`request_tearing_down` được gửi đi.
 
-        :param exc: An unhandled exception raised while dispatching the request.
-            Passed to each teardown function.
+        :param exc: Một ngoại lệ không được xử lý được ném ra trong khi điều phối request.
+            Được truyền cho mỗi hàm teardown.
 
         .. versionchanged:: 0.9
-            Added the ``exc`` argument.
+            Đã thêm đối số ``exc``.
         """
         req = _cv_app.get().request
 
@@ -1341,14 +1337,14 @@ class Flask(App):
         request_tearing_down.send(self, _async_wrapper=self.ensure_sync, exc=exc)
 
     def do_teardown_appcontext(self, exc: BaseException | None = None) -> None:
-        """Called right before the application context is popped. Called by
+        """Được gọi ngay trước khi ngữ cảnh ứng dụng bị pop. Được gọi bởi
         :meth:`.AppContext.pop`.
 
-        This calls all functions decorated with :meth:`teardown_appcontext`.
-        Then the :data:`appcontext_tearing_down` signal is sent.
+        Điều này gọi tất cả các hàm được trang trí với :meth:`teardown_appcontext`.
+        Sau đó tín hiệu :data:`appcontext_tearing_down` được gửi đi.
 
-        :param exc: An unhandled exception raised while the context was active.
-            Passed to each teardown function.
+        :param exc: Một ngoại lệ không được xử lý được ném ra trong khi ngữ cảnh đang hoạt động.
+            Được truyền cho mỗi hàm teardown.
 
         .. versionadded:: 0.9
         """
@@ -1358,77 +1354,77 @@ class Flask(App):
         appcontext_tearing_down.send(self, _async_wrapper=self.ensure_sync, exc=exc)
 
     def app_context(self) -> AppContext:
-        """Create an :class:`.AppContext`. When the context is pushed,
-        :data:`.current_app` and :data:`.g` become available.
+        """Tạo một :class:`.AppContext`. Khi ngữ cảnh được push,
+        :data:`.current_app` và :data:`.g` trở nên khả dụng.
 
-        A context is automatically pushed when handling each request, and when
-        running any ``flask`` CLI command. Use this as a ``with`` block to
-        manually push a context outside of those situations, such as during
-        setup or testing.
+        Một ngữ cảnh được tự động push khi xử lý mỗi request, và khi
+        chạy bất kỳ lệnh CLI ``flask`` nào. Sử dụng cái này như một khối ``with`` để
+        push thủ công một ngữ cảnh bên ngoài những tình huống đó, chẳng hạn như trong quá trình
+        thiết lập hoặc kiểm tra.
 
         .. code-block:: python
 
             with app.app_context():
                 init_db()
 
-        See :doc:`/appcontext`.
+        Xem :doc:`/appcontext`.
 
         .. versionadded:: 0.9
         """
         return AppContext(self)
 
     def request_context(self, environ: WSGIEnvironment) -> AppContext:
-        """Create an :class:`.AppContext` with request information representing
-        the given WSGI environment. A context is automatically pushed when
-        handling each request. When the context is pushed, :data:`.request`,
-        :data:`.session`, :data:`g:, and :data:`.current_app` become available.
+        """Tạo một :class:`.AppContext` với thông tin request đại diện cho
+        môi trường WSGI đã cho. Một ngữ cảnh được tự động push khi
+        xử lý mỗi request. Khi ngữ cảnh được push, :data:`.request`,
+        :data:`.session`, :data:`g:, và :data:`.current_app` trở nên khả dụng.
 
-        This method should not be used in your own code. Creating a valid WSGI
-        environ is not trivial. Use :meth:`test_request_context` to correctly
-        create a WSGI environ and request context instead.
+        Phương thức này không nên được sử dụng trong mã của riêng bạn. Tạo một WSGI
+        environ hợp lệ không phải là tầm thường. Sử dụng :meth:`test_request_context` để
+        tạo chính xác một WSGI environ và ngữ cảnh request thay thế.
 
-        See :doc:`/appcontext`.
+        Xem :doc:`/appcontext`.
 
-        :param environ: A WSGI environment.
+        :param environ: Một môi trường WSGI.
         """
         return AppContext.from_environ(self, environ)
 
     def test_request_context(self, *args: t.Any, **kwargs: t.Any) -> AppContext:
-        """Create an :class:`.AppContext` with request information created from
-        the given arguments. When the context is pushed, :data:`.request`,
-        :data:`.session`, :data:`g:, and :data:`.current_app` become available.
+        """Tạo một :class:`.AppContext` với thông tin request được tạo từ
+        các đối số đã cho. Khi ngữ cảnh được push, :data:`.request`,
+        :data:`.session`, :data:`g:, và :data:`.current_app` trở nên khả dụng.
 
-        This is useful during testing to run a function that uses request data
-        without dispatching a full request. Use this as a ``with`` block to push
-        a context.
+        Điều này hữu ích trong quá trình kiểm tra để chạy một hàm sử dụng dữ liệu request
+        mà không cần điều phối một request đầy đủ. Sử dụng cái này như một khối ``with`` để push
+        một ngữ cảnh.
 
         .. code-block:: python
 
             with app.test_request_context(...):
                 generate_report()
 
-        See :doc:`/appcontext`.
+        Xem :doc:`/appcontext`.
 
-        Takes the same arguments as Werkzeug's
-        :class:`~werkzeug.test.EnvironBuilder`, with some defaults from
-        the application. See the linked Werkzeug docs for most of the
-        available arguments. Flask-specific behavior is listed here.
+        Nhận các đối số giống như :class:`~werkzeug.test.EnvironBuilder` của
+        Werkzeug, với một số mặc định từ
+        ứng dụng. Xem tài liệu Werkzeug được liên kết để biết hầu hết các
+        đối số có sẵn. Hành vi cụ thể của Flask được liệt kê ở đây.
 
-        :param path: URL path being requested.
-        :param base_url: Base URL where the app is being served, which
-            ``path`` is relative to. If not given, built from
+        :param path: Đường dẫn URL đang được yêu cầu.
+        :param base_url: URL cơ sở nơi ứng dụng đang được phục vụ, mà
+            ``path`` là tương đối với nó. Nếu không được đưa ra, được xây dựng từ
             :data:`PREFERRED_URL_SCHEME`, ``subdomain``, :data:`SERVER_NAME`,
-            and :data:`APPLICATION_ROOT`.
-        :param subdomain: Subdomain name to prepend to :data:`SERVER_NAME`.
-        :param url_scheme: Scheme to use instead of
+            và :data:`APPLICATION_ROOT`.
+        :param subdomain: Tên subdomain để thêm vào trước :data:`SERVER_NAME`.
+        :param url_scheme: Scheme để sử dụng thay vì
             :data:`PREFERRED_URL_SCHEME`.
-        :param data: The request body text or bytes,or a dict of form data.
-        :param json: If given, this is serialized as JSON and passed as
-            ``data``. Also defaults ``content_type`` to
+        :param data: Văn bản hoặc byte phần thân request, hoặc một dict dữ liệu form.
+        :param json: Nếu được đưa ra, cái này được tuần tự hóa thành JSON và được truyền dưới dạng
+            ``data``. Cũng mặc định ``content_type`` thành
             ``application/json``.
-        :param args: Other positional arguments passed to
+        :param args: Các đối số vị trí khác được truyền cho
             :class:`~werkzeug.test.EnvironBuilder`.
-        :param kwargs: Other keyword arguments passed to
+        :param kwargs: Các đối số từ khóa khác được truyền cho
             :class:`~werkzeug.test.EnvironBuilder`.
         """
         from .testing import EnvironBuilder
@@ -1445,28 +1441,28 @@ class Flask(App):
     def wsgi_app(
         self, environ: WSGIEnvironment, start_response: StartResponse
     ) -> cabc.Iterable[bytes]:
-        """The actual WSGI application. This is not implemented in
-        :meth:`__call__` so that middlewares can be applied without
-        losing a reference to the app object. Instead of doing this::
+        """Ứng dụng WSGI thực tế. Điều này không được triển khai trong
+        :meth:`__call__` để các middleware có thể được áp dụng mà không
+        làm mất tham chiếu đến đối tượng app. Thay vì làm điều này::
 
             app = MyMiddleware(app)
 
-        It's a better idea to do this instead::
+        Tốt hơn là làm điều này thay thế::
 
             app.wsgi_app = MyMiddleware(app.wsgi_app)
 
-        Then you still have the original application object around and
-        can continue to call methods on it.
+        Sau đó, bạn vẫn có đối tượng ứng dụng ban đầu xung quanh và
+        có thể tiếp tục gọi các phương thức trên nó.
 
         .. versionchanged:: 0.7
-            Teardown events for the request and app contexts are called
-            even if an unhandled error occurs. Other events may not be
-            called depending on when an error occurs during dispatch.
+            Các sự kiện teardown cho request và ngữ cảnh ứng dụng được gọi
+            ngay cả khi xảy ra lỗi không được xử lý. Các sự kiện khác có thể không được
+            gọi tùy thuộc vào thời điểm xảy ra lỗi trong quá trình điều phối.
 
-        :param environ: A WSGI environment.
-        :param start_response: A callable accepting a status code,
-            a list of headers, and an optional exception context to
-            start the response.
+        :param environ: Một môi trường WSGI.
+        :param start_response: Một callable chấp nhận mã trạng thái,
+            một danh sách các header, và một ngữ cảnh ngoại lệ tùy chọn để
+            bắt đầu phản hồi.
         """
         ctx = self.request_context(environ)
         error: BaseException | None = None
@@ -1493,8 +1489,8 @@ class Flask(App):
     def __call__(
         self, environ: WSGIEnvironment, start_response: StartResponse
     ) -> cabc.Iterable[bytes]:
-        """The WSGI server calls the Flask application object as the
-        WSGI application. This calls :meth:`wsgi_app`, which can be
-        wrapped to apply middleware.
+        """Server WSGI gọi đối tượng ứng dụng Flask như là
+        ứng dụng WSGI. Điều này gọi :meth:`wsgi_app`, có thể được
+        bao bọc để áp dụng middleware.
         """
         return self.wsgi_app(environ, start_response)

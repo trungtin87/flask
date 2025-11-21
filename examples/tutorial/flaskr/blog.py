@@ -15,7 +15,7 @@ bp = Blueprint("blog", __name__)
 
 @bp.route("/")
 def index():
-    """Show all the posts, most recent first."""
+    """Hiển thị tất cả các bài viết, mới nhất trước."""
     db = get_db()
     posts = db.execute(
         "SELECT p.id, title, body, created, author_id, username"
@@ -26,16 +26,16 @@ def index():
 
 
 def get_post(id, check_author=True):
-    """Get a post and its author by id.
+    """Lấy một bài viết và tác giả của nó theo id.
 
-    Checks that the id exists and optionally that the current user is
-    the author.
+    Kiểm tra xem id có tồn tại không và tùy chọn kiểm tra xem người dùng hiện tại có phải là
+    tác giả không.
 
-    :param id: id of post to get
-    :param check_author: require the current user to be the author
-    :return: the post with author information
-    :raise 404: if a post with the given id doesn't exist
-    :raise 403: if the current user isn't the author
+    :param id: id của bài viết cần lấy
+    :param check_author: yêu cầu người dùng hiện tại phải là tác giả
+    :return: bài viết với thông tin tác giả
+    :raise 404: nếu một bài viết với id đã cho không tồn tại
+    :raise 403: nếu người dùng hiện tại không phải là tác giả
     """
     post = (
         get_db()
@@ -49,7 +49,7 @@ def get_post(id, check_author=True):
     )
 
     if post is None:
-        abort(404, f"Post id {id} doesn't exist.")
+        abort(404, f"Bài viết id {id} không tồn tại.")
 
     if check_author and post["author_id"] != g.user["id"]:
         abort(403)
@@ -60,14 +60,14 @@ def get_post(id, check_author=True):
 @bp.route("/create", methods=("GET", "POST"))
 @login_required
 def create():
-    """Create a new post for the current user."""
+    """Tạo một bài viết mới cho người dùng hiện tại."""
     if request.method == "POST":
         title = request.form["title"]
         body = request.form["body"]
         error = None
 
         if not title:
-            error = "Title is required."
+            error = "Tiêu đề là bắt buộc."
 
         if error is not None:
             flash(error)
@@ -86,7 +86,7 @@ def create():
 @bp.route("/<int:id>/update", methods=("GET", "POST"))
 @login_required
 def update(id):
-    """Update a post if the current user is the author."""
+    """Cập nhật một bài viết nếu người dùng hiện tại là tác giả."""
     post = get_post(id)
 
     if request.method == "POST":
@@ -95,7 +95,7 @@ def update(id):
         error = None
 
         if not title:
-            error = "Title is required."
+            error = "Tiêu đề là bắt buộc."
 
         if error is not None:
             flash(error)
@@ -113,10 +113,10 @@ def update(id):
 @bp.route("/<int:id>/delete", methods=("POST",))
 @login_required
 def delete(id):
-    """Delete a post.
+    """Xóa một bài viết.
 
-    Ensures that the post exists and that the logged in user is the
-    author of the post.
+    Đảm bảo rằng bài viết tồn tại và người dùng đã đăng nhập là
+    tác giả của bài viết.
     """
     get_post(id)
     db = get_db()

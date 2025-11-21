@@ -1,108 +1,111 @@
 <!doctype html>
 <html>
+
 <head>
   <meta charset=UTF-8>
-  <title>Celery Example</title>
+  <title>Ví dụ Celery</title>
 </head>
+
 <body>
-<h2>Celery Example</h2>
-Execute background tasks with Celery. Submits tasks and shows results using JavaScript.
+  <h2>Ví dụ Celery</h2>
+  Thực thi các tác vụ nền với Celery. Gửi các tác vụ và hiển thị kết quả bằng JavaScript.
 
-<hr>
-<h4>Add</h4>
-<p>Start a task to add two numbers, then poll for the result.
-<form id=add method=post action="{{ url_for("tasks.add") }}">
-  <label>A <input type=number name=a value=4></label><br>
-  <label>B <input type=number name=b value=2></label><br>
-  <input type=submit>
-</form>
-<p>Result: <span id=add-result></span></p>
+  <hr>
+  <h4>Cộng</h4>
+  <p>Bắt đầu một tác vụ để cộng hai số, sau đó thăm dò kết quả.
+  <form id=add method=post action="{{ url_for(" tasks.add") }}">
+    <label>A <input type=number name=a value=4></label><br>
+    <label>B <input type=number name=b value=2></label><br>
+    <input type=submit>
+  </form>
+  <p>Kết quả: <span id=add-result></span></p>
 
-<hr>
-<h4>Block</h4>
-<p>Start a task that takes 5 seconds. However, the response will return immediately.
-<form id=block method=post action="{{ url_for("tasks.block") }}">
-  <input type=submit>
-</form>
-<p id=block-result></p>
+  <hr>
+  <h4>Chặn</h4>
+  <p>Bắt đầu một tác vụ mất 5 giây. Tuy nhiên, phản hồi sẽ trả về ngay lập tức.
+  <form id=block method=post action="{{ url_for(" tasks.block") }}">
+    <input type=submit>
+  </form>
+  <p id=block-result></p>
 
-<hr>
-<h4>Process</h4>
-<p>Start a task that counts, waiting one second each time, showing progress.
-<form id=process method=post action="{{ url_for("tasks.process") }}">
-  <label>Total <input type=number name=total value="10"></label><br>
-  <input type=submit>
-</form>
-<p id=process-result></p>
+  <hr>
+  <h4>Xử lý</h4>
+  <p>Bắt đầu một tác vụ đếm, đợi một giây mỗi lần, hiển thị tiến trình.
+  <form id=process method=post action="{{ url_for(" tasks.process") }}">
+    <label>Tổng cộng <input type=number name=total value="10"></label><br>
+    <input type=submit>
+  </form>
+  <p id=process-result></p>
 
-<script>
-  const taskForm = (formName, doPoll, report) => {
-    document.forms[formName].addEventListener("submit", (event) => {
-      event.preventDefault()
-      fetch(event.target.action, {
-        method: "POST",
-        body: new FormData(event.target)
-      })
-        .then(response => response.json())
-        .then(data => {
-          report(null)
-
-          const poll = () => {
-            fetch(`/tasks/result/${data["result_id"]}`)
-              .then(response => response.json())
-              .then(data => {
-                report(data)
-
-                if (!data["ready"]) {
-                  setTimeout(poll, 500)
-                } else if (!data["successful"]) {
-                  console.error(formName, data)
-                }
-              })
-          }
-
-          if (doPoll) {
-            poll()
-          }
+  <script>
+    const taskForm = (formName, doPoll, report) => {
+      document.forms[formName].addEventListener("submit", (event) => {
+        event.preventDefault()
+        fetch(event.target.action, {
+          method: "POST",
+          body: new FormData(event.target)
         })
+          .then(response => response.json())
+          .then(data => {
+            report(null)
+
+            const poll = () => {
+              fetch(`/tasks/result/${data["result_id"]}`)
+                .then(response => response.json())
+                .then(data => {
+                  report(data)
+
+                  if (!data["ready"]) {
+                    setTimeout(poll, 500)
+                  } else if (!data["successful"]) {
+                    console.error(formName, data)
+                  }
+                })
+            }
+
+            if (doPoll) {
+              poll()
+            }
+          })
+      })
+    }
+
+    taskForm("add", true, data => {
+      const el = document.getElementById("add-result")
+
+      if (data === null) {
+        el.innerText = "đã gửi"
+      } else if (!data["ready"]) {
+        el.innerText = "đang đợi"
+      } else if (!data["successful"]) {
+        el.innerText = "lỗi, kiểm tra console"
+      } else {
+        el.innerText = data["value"]
+      }
     })
-  }
 
-  taskForm("add", true, data => {
-    const el = document.getElementById("add-result")
+    taskForm("block", false, data => {
+      document.getElementById("block-result").innerText = (
+        "yêu cầu đã hoàn tất, kiểm tra nhật ký celery để xem tác vụ hoàn thành trong 5 giây"
+      )
+    })
 
-    if (data === null) {
-      el.innerText = "submitted"
-    } else if (!data["ready"]) {
-      el.innerText = "waiting"
-    } else if (!data["successful"]) {
-      el.innerText = "error, check console"
-    } else {
-      el.innerText = data["value"]
-    }
-  })
+    taskForm("process", true, data => {
+      const el = document.getElementById("process-result")
 
-  taskForm("block", false, data => {
-    document.getElementById("block-result").innerText = (
-      "request finished, check celery log to see task finish in 5 seconds"
-    )
-  })
+      if (data === null) {
+        el.innerText = "đã gửi"
+      } else if (!data["ready"]) {
+        el.innerText = `${data["value"]["current"]} / ${data["value"]["total"]}`
+      } else if (!data["successful"]) {
+        el.innerText = "lỗi, kiểm tra console"
+      } else {
+        el.innerText = "✅ hoàn tất"
+      }
+      console.log(data)
+    })
 
-  taskForm("process", true, data => {
-    const el = document.getElementById("process-result")
-
-    if (data === null) {
-      el.innerText = "submitted"
-    } else if (!data["ready"]) {
-      el.innerText = `${data["value"]["current"]} / ${data["value"]["total"]}`
-    } else if (!data["successful"]) {
-      el.innerText = "error, check console"
-    } else {
-      el.innerText = "✅ done"
-    }
-    console.log(data)
-  })
-
-</script>
+  </script>
 </body>
+
 </html>

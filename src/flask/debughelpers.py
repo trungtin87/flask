@@ -15,31 +15,31 @@ if t.TYPE_CHECKING:
 
 
 class UnexpectedUnicodeError(AssertionError, UnicodeError):
-    """Raised in places where we want some better error reporting for
-    unexpected unicode or binary data.
+    """Được ném ra ở những nơi chúng ta muốn báo cáo lỗi tốt hơn cho
+    dữ liệu unicode hoặc nhị phân không mong muốn.
     """
 
 
 class DebugFilesKeyError(KeyError, AssertionError):
-    """Raised from request.files during debugging.  The idea is that it can
-    provide a better error message than just a generic KeyError/BadRequest.
+    """Được ném ra từ request.files trong quá trình debug. Ý tưởng là nó có thể
+    cung cấp một thông báo lỗi tốt hơn chỉ là một KeyError/BadRequest chung chung.
     """
 
     def __init__(self, request: Request, key: str) -> None:
         form_matches = request.form.getlist(key)
         buf = [
-            f"You tried to access the file {key!r} in the request.files"
-            " dictionary but it does not exist. The mimetype for the"
-            f" request is {request.mimetype!r} instead of"
-            " 'multipart/form-data' which means that no file contents"
-            " were transmitted. To fix this error you should provide"
-            ' enctype="multipart/form-data" in your form.'
+            f"Bạn đã cố gắng truy cập tệp {key!r} trong từ điển request.files"
+            " nhưng nó không tồn tại. Mimetype cho"
+            f" request là {request.mimetype!r} thay vì"
+            " 'multipart/form-data' có nghĩa là không có nội dung tệp nào"
+            " được truyền đi. Để sửa lỗi này bạn nên cung cấp"
+            ' enctype="multipart/form-data" trong form của bạn.'
         ]
         if form_matches:
             names = ", ".join(repr(x) for x in form_matches)
             buf.append(
-                "\n\nThe browser instead transmitted some file names. "
-                f"This was submitted: {names}"
+                "\n\nThay vào đó trình duyệt đã truyền một số tên tệp. "
+                f"Cái này đã được gửi: {names}"
             )
         self.msg = "".join(buf)
 
@@ -48,41 +48,41 @@ class DebugFilesKeyError(KeyError, AssertionError):
 
 
 class FormDataRoutingRedirect(AssertionError):
-    """This exception is raised in debug mode if a routing redirect
-    would cause the browser to drop the method or body. This happens
-    when method is not GET, HEAD or OPTIONS and the status code is not
-    307 or 308.
+    """Ngoại lệ này được ném ra trong chế độ debug nếu một chuyển hướng routing
+    sẽ khiến trình duyệt bỏ phương thức hoặc body. Điều này xảy ra
+    khi phương thức không phải là GET, HEAD hoặc OPTIONS và mã trạng thái không phải là
+    307 hoặc 308.
     """
 
     def __init__(self, request: Request) -> None:
         exc = request.routing_exception
         assert isinstance(exc, RequestRedirect)
         buf = [
-            f"A request was sent to '{request.url}', but routing issued"
-            f" a redirect to the canonical URL '{exc.new_url}'."
+            f"Một request đã được gửi đến '{request.url}', nhưng routing đã phát hành"
+            f" một chuyển hướng đến URL chính tắc '{exc.new_url}'."
         ]
 
         if f"{request.base_url}/" == exc.new_url.partition("?")[0]:
             buf.append(
-                " The URL was defined with a trailing slash. Flask"
-                " will redirect to the URL with a trailing slash if it"
-                " was accessed without one."
+                " URL được định nghĩa với một dấu gạch chéo ở cuối. Flask"
+                " sẽ chuyển hướng đến URL với một dấu gạch chéo ở cuối nếu nó"
+                " được truy cập mà không có nó."
             )
 
         buf.append(
-            " Send requests to the canonical URL, or use 307 or 308 for"
-            " routing redirects. Otherwise, browsers will drop form"
-            " data.\n\n"
-            "This exception is only raised in debug mode."
-        )
+                " Gửi các request đến URL chính tắc, hoặc sử dụng 307 hoặc 308 cho"
+                " các chuyển hướng routing. Nếu không, các trình duyệt sẽ bỏ dữ liệu"
+                " form.\n\n"
+                "Ngoại lệ này chỉ được ném ra trong chế độ debug."
+            )
         super().__init__("".join(buf))
 
 
 def attach_enctype_error_multidict(request: Request) -> None:
-    """Patch ``request.files.__getitem__`` to raise a descriptive error
-    about ``enctype=multipart/form-data``.
+    """Vá ``request.files.__getitem__`` để ném ra một lỗi mô tả
+    về ``enctype=multipart/form-data``.
 
-    :param request: The request to patch.
+    :param request: Request để vá.
     :meta private:
     """
     oldcls = request.files.__class__
@@ -132,8 +132,8 @@ def explain_template_loading_attempts(
         ]
     ],
 ) -> None:
-    """This should help developers understand what failed"""
-    info = [f"Locating template {template!r}:"]
+    """Điều này sẽ giúp các nhà phát triển hiểu cái gì đã thất bại"""
+    info = [f"Đang định vị template {template!r}:"]
     total_found = 0
     blueprint = None
 
@@ -142,38 +142,38 @@ def explain_template_loading_attempts(
 
     for idx, (loader, srcobj, triple) in enumerate(attempts):
         if isinstance(srcobj, App):
-            src_info = f"application {srcobj.import_name!r}"
+            src_info = f"ứng dụng {srcobj.import_name!r}"
         elif isinstance(srcobj, Blueprint):
             src_info = f"blueprint {srcobj.name!r} ({srcobj.import_name})"
         else:
             src_info = repr(srcobj)
 
-        info.append(f"{idx + 1:5}: trying loader of {src_info}")
+        info.append(f"{idx + 1:5}: đang thử loader của {src_info}")
 
         for line in _dump_loader_info(loader):
             info.append(f"       {line}")
 
         if triple is None:
-            detail = "no match"
+            detail = "không khớp"
         else:
-            detail = f"found ({triple[1] or '<string>'!r})"
+            detail = f"đã tìm thấy ({triple[1] or '<string>'!r})"
             total_found += 1
         info.append(f"       -> {detail}")
 
     seems_fishy = False
     if total_found == 0:
-        info.append("Error: the template could not be found.")
+        info.append("Lỗi: không thể tìm thấy template.")
         seems_fishy = True
     elif total_found > 1:
-        info.append("Warning: multiple loaders returned a match for the template.")
+        info.append("Cảnh báo: nhiều loader trả về một kết quả khớp cho template.")
         seems_fishy = True
 
     if blueprint is not None and seems_fishy:
         info.append(
-            "  The template was looked up from an endpoint that belongs"
-            f" to the blueprint {blueprint!r}."
+            "  Template đã được tra cứu từ một endpoint thuộc về"
+            f" blueprint {blueprint!r}."
         )
-        info.append("  Maybe you did not place a template in the right folder?")
-        info.append("  See https://flask.palletsprojects.com/blueprints/#templates")
+        info.append("  Có lẽ bạn đã không đặt một template trong đúng thư mục?")
+        info.append("  Xem https://flask.palletsprojects.com/blueprints/#templates")
 
     app.logger.info("\n".join(info))

@@ -3,1637 +3,1623 @@ Version 3.2.0
 
 Unreleased
 
--   Drop support for Python 3.9. :pr:`5730`
--   Remove previously deprecated code: ``__version__``. :pr:`5648`
--   ``RequestContext`` has merged with ``AppContext``. ``RequestContext`` is now
-    a deprecated alias. If an app context is already pushed, it is not reused
-    when dispatching a request. This greatly simplifies the internal code for tracking
-    the active context. :issue:`5639`
--   ``template_filter``, ``template_test``, and ``template_global`` decorators
-    can be used without parentheses. :issue:`5729`
+-   Ngừng hỗ trợ cho Python 3.9. :pr:`5730`
+-   Xóa mã đã bị phản đối trước đó: ``__version__``. :pr:`5648`
+-   ``RequestContext`` đã được hợp nhất với ``AppContext``. ``RequestContext`` hiện là
+    một bí danh bị phản đối. Nếu một ngữ cảnh ứng dụng (app context) đã được đẩy (pushed), nó sẽ không được sử dụng lại
+    khi điều phối một yêu cầu. Điều này đơn giản hóa đáng kể mã nội bộ để theo dõi
+    ngữ cảnh hoạt động. :issue:`5639`
+-   Các decorator ``template_filter``, ``template_test``, và ``template_global``
+    có thể được sử dụng mà không cần dấu ngoặc đơn. :issue:`5729`
 
 
 Version 3.1.2
 -------------
 
-Released 2025-08-19
+Đã phát hành 2025-08-19
 
--   ``stream_with_context`` does not fail inside async views. :issue:`5774`
--   When using ``follow_redirects`` in the test client, the final state
-    of ``session`` is correct. :issue:`5786`
--   Relax type hint for passing bytes IO to ``send_file``. :issue:`5776`
+-   ``stream_with_context`` không bị lỗi bên trong các view bất đồng bộ (async views). :issue:`5774`
+-   Khi sử dụng ``follow_redirects`` trong test client, trạng thái cuối cùng
+    của ``session`` là chính xác. :issue:`5786`
+-   Nới lỏng gợi ý kiểu (type hint) cho việc truyền bytes IO vào ``send_file``. :issue:`5776`
 
 
 Version 3.1.1
 -------------
 
-Released 2025-05-13
+Đã phát hành 2025-05-13
 
--   Fix signing key selection order when key rotation is enabled via
+-   Sửa thứ tự chọn khóa ký (signing key) khi xoay vòng khóa được bật thông qua
     ``SECRET_KEY_FALLBACKS``. :ghsa:`4grg-w6v8-c28g`
--   Fix type hint for ``cli_runner.invoke``. :issue:`5645`
--   ``flask --help`` loads the app and plugins first to make sure all commands
-    are shown. :issue:`5673`
--   Mark sans-io base class as being able to handle views that return
-    ``AsyncIterable``. This is not accurate for Flask, but makes typing easier
-    for Quart. :pr:`5659`
+-   Sửa gợi ý kiểu cho ``cli_runner.invoke``. :issue:`5645`
+-   ``flask --help`` tải ứng dụng và các plugin trước để đảm bảo tất cả các lệnh
+    đều được hiển thị. :issue:`5673`
+-   Đánh dấu lớp cơ sở sans-io là có khả năng xử lý các view trả về
+    ``AsyncIterable``. Điều này không chính xác đối với Flask, nhưng giúp việc gõ kiểu dễ dàng hơn
+    cho Quart. :pr:`5659`
 
 
 Version 3.1.0
 -------------
 
-Released 2024-11-13
+Đã phát hành 2024-11-13
 
--   Drop support for Python 3.8. :pr:`5623`
--   Update minimum dependency versions to latest feature releases.
+-   Ngừng hỗ trợ cho Python 3.8. :pr:`5623`
+-   Cập nhật phiên bản phụ thuộc tối thiểu lên các bản phát hành tính năng mới nhất.
     Werkzeug >= 3.1, ItsDangerous >= 2.2, Blinker >= 1.9. :pr:`5624,5633`
--   Provide a configuration option to control automatic option
-    responses. :pr:`5496`
--   ``Flask.open_resource``/``open_instance_resource`` and
-    ``Blueprint.open_resource`` take an ``encoding`` parameter to use when
-    opening in text mode. It defaults to ``utf-8``. :issue:`5504`
--   ``Request.max_content_length`` can be customized per-request instead of only
-    through the ``MAX_CONTENT_LENGTH`` config. Added
-    ``MAX_FORM_MEMORY_SIZE`` and ``MAX_FORM_PARTS`` config. Added documentation
-    about resource limits to the security page. :issue:`5625`
--   Add support for the ``Partitioned`` cookie attribute (CHIPS), with the
-    ``SESSION_COOKIE_PARTITIONED`` config. :issue:`5472`
--   ``-e path`` takes precedence over default ``.env`` and ``.flaskenv`` files.
-    ``load_dotenv`` loads default files in addition to a path unless
-    ``load_defaults=False`` is passed. :issue:`5628`
--   Support key rotation with the ``SECRET_KEY_FALLBACKS`` config, a list of old
-    secret keys that can still be used for unsigning. Extensions will need to
-    add support. :issue:`5621`
--   Fix how setting ``host_matching=True`` or ``subdomain_matching=False``
-    interacts with ``SERVER_NAME``. Setting ``SERVER_NAME`` no longer restricts
-    requests to only that domain. :issue:`5553`
--   ``Request.trusted_hosts`` is checked during routing, and can be set through
-    the ``TRUSTED_HOSTS`` config. :issue:`5636`
+-   Cung cấp một tùy chọn cấu hình để kiểm soát các phản hồi
+    tự động cho phương thức OPTIONS. :pr:`5496`
+-   ``Flask.open_resource``/``open_instance_resource`` và
+    ``Blueprint.open_resource`` nhận tham số ``encoding`` để sử dụng khi
+    mở ở chế độ văn bản. Mặc định là ``utf-8``. :issue:`5504`
+-   ``Request.max_content_length`` có thể được tùy chỉnh theo từng yêu cầu thay vì chỉ
+    thông qua cấu hình ``MAX_CONTENT_LENGTH``. Đã thêm cấu hình
+    ``MAX_FORM_MEMORY_SIZE`` và ``MAX_FORM_PARTS``. Đã thêm tài liệu
+    về giới hạn tài nguyên vào trang bảo mật. :issue:`5625`
+-   Thêm hỗ trợ cho thuộc tính cookie ``Partitioned`` (CHIPS), với cấu hình
+    ``SESSION_COOKIE_PARTITIONED``. :issue:`5472`
+-   ``-e path`` được ưu tiên hơn các tệp mặc định ``.env`` và ``.flaskenv``.
+    ``load_dotenv`` tải các tệp mặc định cùng với đường dẫn trừ khi
+    ``load_defaults=False`` được truyền vào. :issue:`5628`
+-   Hỗ trợ xoay vòng khóa với cấu hình ``SECRET_KEY_FALLBACKS``, một danh sách các
+    khóa bí mật cũ vẫn có thể được sử dụng để hủy ký (unsigning). Các tiện ích mở rộng sẽ cần
+    thêm hỗ trợ. :issue:`5621`
+-   Sửa cách thiết lập ``host_matching=True`` hoặc ``subdomain_matching=False``
+    tương tác với ``SERVER_NAME``. Thiết lập ``SERVER_NAME`` không còn hạn chế
+    các yêu cầu chỉ đến miền đó. :issue:`5553`
+-   ``Request.trusted_hosts`` được kiểm tra trong quá trình định tuyến, và có thể được thiết lập thông qua
+    cấu hình ``TRUSTED_HOSTS``. :issue:`5636`
 
 
 Version 3.0.3
 -------------
 
-Released 2024-04-07
+Đã phát hành 2024-04-07
 
--   The default ``hashlib.sha1`` may not be available in FIPS builds. Don't
-    access it at import time so the developer has time to change the default.
+-   Mặc định ``hashlib.sha1`` có thể không khả dụng trong các bản build FIPS. Không
+    truy cập nó tại thời điểm import để nhà phát triển có thời gian thay đổi mặc định.
     :issue:`5448`
--   Don't initialize the ``cli`` attribute in the sansio scaffold, but rather in
-    the ``Flask`` concrete class. :pr:`5270`
+-   Không khởi tạo thuộc tính ``cli`` trong khung sansio, mà thay vào đó là trong
+    lớp cụ thể ``Flask``. :pr:`5270`
 
 
 Version 3.0.2
 -------------
 
-Released 2024-02-03
+Đã phát hành 2024-02-03
 
--   Correct type for ``jinja_loader`` property. :issue:`5388`
--   Fix error with ``--extra-files`` and ``--exclude-patterns`` CLI options.
+-   Sửa kiểu cho thuộc tính ``jinja_loader``. :issue:`5388`
+-   Sửa lỗi với các tùy chọn CLI ``--extra-files`` và ``--exclude-patterns``.
     :issue:`5391`
 
 
 Version 3.0.1
 -------------
 
-Released 2024-01-18
+Đã phát hành 2024-01-18
 
--   Correct type for ``path`` argument to ``send_file``. :issue:`5336`
--   Fix a typo in an error message for the ``flask run --key`` option. :pr:`5344`
--   Session data is untagged without relying on the built-in ``json.loads``
-    ``object_hook``. This allows other JSON providers that don't implement that.
+-   Sửa kiểu cho tham số ``path`` của ``send_file``. :issue:`5336`
+-   Sửa lỗi chính tả trong thông báo lỗi cho tùy chọn ``flask run --key``. :pr:`5344`
+-   Dữ liệu phiên (session) được bỏ gắn thẻ (untagged) mà không dựa vào ``object_hook`` của
+    ``json.loads`` tích hợp sẵn. Điều này cho phép các nhà cung cấp JSON khác không triển khai điều đó.
     :issue:`5381`
--   Address more type findings when using mypy strict mode. :pr:`5383`
+-   Giải quyết nhiều phát hiện về kiểu hơn khi sử dụng chế độ nghiêm ngặt của mypy. :pr:`5383`
 
 
 Version 3.0.0
 -------------
 
-Released 2023-09-30
+Đã phát hành 2023-09-30
 
--   Remove previously deprecated code. :pr:`5223`
--   Deprecate the ``__version__`` attribute. Use feature detection, or
-    ``importlib.metadata.version("flask")``, instead. :issue:`5230`
--   Restructure the code such that the Flask (app) and Blueprint
-    classes have Sans-IO bases. :pr:`5127`
--   Allow self as an argument to url_for. :pr:`5264`
--   Require Werkzeug >= 3.0.0.
+-   Xóa mã đã bị phản đối trước đó. :pr:`5223`
+-   Phản đối thuộc tính ``__version__``. Sử dụng phát hiện tính năng, hoặc
+    ``importlib.metadata.version("flask")`` thay thế. :issue:`5230`
+-   Cấu trúc lại mã sao cho các lớp Flask (app) và Blueprint
+    có các cơ sở Sans-IO. :pr:`5127`
+-   Cho phép self là một tham số cho url_for. :pr:`5264`
+-   Yêu cầu Werkzeug >= 3.0.0.
 
 
 Version 2.3.3
 -------------
 
-Released 2023-08-21
+Đã phát hành 2023-08-21
 
--   Python 3.12 compatibility.
--   Require Werkzeug >= 2.3.7.
--   Use ``flit_core`` instead of ``setuptools`` as build backend.
--   Refactor how an app's root and instance paths are determined. :issue:`5160`
+-   Tương thích với Python 3.12.
+-   Yêu cầu Werkzeug >= 2.3.7.
+-   Sử dụng ``flit_core`` thay vì ``setuptools`` làm backend xây dựng.
+-   Tái cấu trúc cách xác định đường dẫn gốc và đường dẫn instance của ứng dụng. :issue:`5160`
 
 
 Version 2.3.2
 -------------
 
-Released 2023-05-01
+Đã phát hành 2023-05-01
 
--   Set ``Vary: Cookie`` header when the session is accessed, modified, or refreshed.
--   Update Werkzeug requirement to >=2.3.3 to apply recent bug fixes.
+-   Thiết lập header ``Vary: Cookie`` khi session được truy cập, sửa đổi, hoặc làm mới.
+-   Cập nhật yêu cầu Werkzeug lên >=2.3.3 để áp dụng các bản sửa lỗi gần đây.
     :ghsa:`m2qf-hxjv-5gpq`
 
 
 Version 2.3.1
 -------------
 
-Released 2023-04-25
+Đã phát hành 2023-04-25
 
--   Restore deprecated ``from flask import Markup``. :issue:`5084`
+-   Khôi phục ``from flask import Markup`` đã bị phản đối. :issue:`5084`
 
 
 Version 2.3.0
 -------------
 
-Released 2023-04-25
+Đã phát hành 2023-04-25
 
--   Drop support for Python 3.7. :pr:`5072`
--   Update minimum requirements to the latest versions: Werkzeug>=2.3.0, Jinja2>3.1.2,
+-   Ngừng hỗ trợ cho Python 3.7. :pr:`5072`
+-   Cập nhật các yêu cầu tối thiểu lên các phiên bản mới nhất: Werkzeug>=2.3.0, Jinja2>3.1.2,
     itsdangerous>=2.1.2, click>=8.1.3.
--   Remove previously deprecated code. :pr:`4995`
+-   Xóa mã đã bị phản đối trước đó. :pr:`4995`
 
-    -   The ``push`` and ``pop`` methods of the deprecated ``_app_ctx_stack`` and
-        ``_request_ctx_stack`` objects are removed. ``top`` still exists to give
-        extensions more time to update, but it will be removed.
-    -   The ``FLASK_ENV`` environment variable, ``ENV`` config key, and ``app.env``
-        property are removed.
-    -   The ``session_cookie_name``, ``send_file_max_age_default``, ``use_x_sendfile``,
-        ``propagate_exceptions``, and ``templates_auto_reload`` properties on ``app``
-        are removed.
-    -   The ``JSON_AS_ASCII``, ``JSON_SORT_KEYS``, ``JSONIFY_MIMETYPE``, and
-        ``JSONIFY_PRETTYPRINT_REGULAR`` config keys are removed.
-    -   The ``app.before_first_request`` and ``bp.before_app_first_request`` decorators
-        are removed.
-    -   ``json_encoder`` and ``json_decoder`` attributes on app and blueprint, and the
-        corresponding ``json.JSONEncoder`` and ``JSONDecoder`` classes, are removed.
-    -   The ``json.htmlsafe_dumps`` and ``htmlsafe_dump`` functions are removed.
-    -   Calling setup methods on blueprints after registration is an error instead of a
-        warning. :pr:`4997`
+    -   Các phương thức ``push`` và ``pop`` của các đối tượng ``_app_ctx_stack`` và
+        ``_request_ctx_stack`` bị phản đối đã bị xóa. ``top`` vẫn tồn tại để cung cấp
+        cho các tiện ích mở rộng thêm thời gian để cập nhật, nhưng nó sẽ bị xóa.
+    -   Biến môi trường ``FLASK_ENV``, khóa cấu hình ``ENV``, và thuộc tính ``app.env``
+        đã bị xóa.
+    -   Các thuộc tính ``session_cookie_name``, ``send_file_max_age_default``, ``use_x_sendfile``,
+        ``propagate_exceptions``, và ``templates_auto_reload`` trên ``app``
+        đã bị xóa.
+    -   Các khóa cấu hình ``JSON_AS_ASCII``, ``JSON_SORT_KEYS``, ``JSONIFY_MIMETYPE``, và
+        ``JSONIFY_PRETTYPRINT_REGULAR`` đã bị xóa.
+    -   Các decorator ``app.before_first_request`` và ``bp.before_app_first_request``
+        đã bị xóa.
+    -   Các thuộc tính ``json_encoder`` và ``json_decoder`` trên app và blueprint, và
+        các lớp ``json.JSONEncoder`` và ``JSONDecoder`` tương ứng, đã bị xóa.
+    -   Các hàm ``json.htmlsafe_dumps`` và ``htmlsafe_dump`` đã bị xóa.
+    -   Gọi các phương thức thiết lập trên blueprint sau khi đăng ký là một lỗi thay vì
+        cảnh báo. :pr:`4997`
 
--   Importing ``escape`` and ``Markup`` from ``flask`` is deprecated. Import them
-    directly from ``markupsafe`` instead. :pr:`4996`
--   The ``app.got_first_request`` property is deprecated. :pr:`4997`
--   The ``locked_cached_property`` decorator is deprecated. Use a lock inside the
-    decorated function if locking is needed. :issue:`4993`
--   Signals are always available. ``blinker>=1.6.2`` is a required dependency. The
-    ``signals_available`` attribute is deprecated. :issue:`5056`
--   Signals support ``async`` subscriber functions. :pr:`5049`
--   Remove uses of locks that could cause requests to block each other very briefly.
+-   Việc import ``escape`` và ``Markup`` từ ``flask`` bị phản đối. Hãy import chúng
+    trực tiếp từ ``markupsafe``. :pr:`4996`
+-   Thuộc tính ``app.got_first_request`` bị phản đối. :pr:`4997`
+-   Decorator ``locked_cached_property`` bị phản đối. Sử dụng một khóa bên trong
+    hàm được decorate nếu cần khóa. :issue:`4993`
+-   Signals luôn có sẵn. ``blinker>=1.6.2`` là một phụ thuộc bắt buộc. Thuộc tính
+    ``signals_available`` bị phản đối. :issue:`5056`
+-   Signals hỗ trợ các hàm subscriber ``async``. :pr:`5049`
+-   Xóa việc sử dụng các khóa có thể khiến các yêu cầu chặn nhau trong thời gian rất ngắn.
     :issue:`4993`
--   Use modern packaging metadata with ``pyproject.toml`` instead of ``setup.cfg``.
+-   Sử dụng metadata đóng gói hiện đại với ``pyproject.toml`` thay vì ``setup.cfg``.
     :pr:`4947`
--   Ensure subdomains are applied with nested blueprints. :issue:`4834`
--   ``config.from_file`` can use ``text=False`` to indicate that the parser wants a
-    binary file instead. :issue:`4989`
--   If a blueprint is created with an empty name it raises a ``ValueError``.
+-   Đảm bảo các tên miền phụ được áp dụng với các blueprint lồng nhau. :issue:`4834`
+-   ``config.from_file`` có thể sử dụng ``text=False`` để chỉ ra rằng bộ phân tích cú pháp muốn một
+    tệp nhị phân. :issue:`4989`
+-   Nếu một blueprint được tạo với tên trống, nó sẽ ném ra ``ValueError``.
     :issue:`5010`
--   ``SESSION_COOKIE_DOMAIN`` does not fall back to ``SERVER_NAME``. The default is not
-    to set the domain, which modern browsers interpret as an exact match rather than
-    a subdomain match. Warnings about ``localhost`` and IP addresses are also removed.
+-   ``SESSION_COOKIE_DOMAIN`` không quay trở lại ``SERVER_NAME``. Mặc định là không
+    thiết lập miền, điều mà các trình duyệt hiện đại hiểu là khớp chính xác thay vì
+    khớp tên miền phụ. Các cảnh báo về ``localhost`` và địa chỉ IP cũng bị xóa.
     :issue:`5051`
--   The ``routes`` command shows each rule's ``subdomain`` or ``host`` when domain
-    matching is in use. :issue:`5004`
--   Use postponed evaluation of annotations. :pr:`5071`
+-   Lệnh ``routes`` hiển thị ``subdomain`` hoặc ``host`` của mỗi quy tắc khi
+    khớp miền được sử dụng. :issue:`5004`
+-   Sử dụng đánh giá hoãn lại (postponed evaluation) của các chú thích (annotations). :pr:`5071`
 
 
 Version 2.2.5
 -------------
 
-Released 2023-05-02
+Đã phát hành 2023-05-02
 
--   Update for compatibility with Werkzeug 2.3.3.
--   Set ``Vary: Cookie`` header when the session is accessed, modified, or refreshed.
+-   Cập nhật để tương thích với Werkzeug 2.3.3.
+-   Thiết lập header ``Vary: Cookie`` khi session được truy cập, sửa đổi, hoặc làm mới.
 
 
 Version 2.2.4
 -------------
 
-Released 2023-04-25
+Đã phát hành 2023-04-25
 
--   Update for compatibility with Werkzeug 2.3.
+-   Cập nhật để tương thích với Werkzeug 2.3.
 
 
 Version 2.2.3
 -------------
 
-Released 2023-02-15
+Đã phát hành 2023-02-15
 
--   Autoescape is enabled by default for ``.svg`` template files. :issue:`4831`
--   Fix the type of ``template_folder`` to accept ``pathlib.Path``. :issue:`4892`
--   Add ``--debug`` option to the ``flask run`` command. :issue:`4777`
+-   Autoescape được bật theo mặc định cho các tệp mẫu ``.svg``. :issue:`4831`
+-   Sửa kiểu của ``template_folder`` để chấp nhận ``pathlib.Path``. :issue:`4892`
+-   Thêm tùy chọn ``--debug`` vào lệnh ``flask run``. :issue:`4777`
 
 
 Version 2.2.2
 -------------
 
-Released 2022-08-08
+Đã phát hành 2022-08-08
 
--   Update Werkzeug dependency to >= 2.2.2. This includes fixes related
-    to the new faster router, header parsing, and the development
-    server. :pr:`4754`
--   Fix the default value for ``app.env`` to be ``"production"``. This
-    attribute remains deprecated. :issue:`4740`
+-   Cập nhật phụ thuộc Werkzeug lên >= 2.2.2. Điều này bao gồm các bản sửa lỗi liên quan
+    đến bộ định tuyến mới nhanh hơn, phân tích cú pháp header, và máy chủ phát triển.
+    :pr:`4754`
+-   Sửa giá trị mặc định cho ``app.env`` thành ``"production"``. Thuộc tính này
+    vẫn bị phản đối. :issue:`4740`
 
 
 Version 2.2.1
 -------------
 
-Released 2022-08-03
+Đã phát hành 2022-08-03
 
--   Setting or accessing ``json_encoder`` or ``json_decoder`` raises a
-    deprecation warning. :issue:`4732`
+-   Thiết lập hoặc truy cập ``json_encoder`` hoặc ``json_decoder`` sẽ ném ra
+    cảnh báo phản đối. :issue:`4732`
 
 
 Version 2.2.0
 -------------
 
-Released 2022-08-01
+Đã phát hành 2022-08-01
 
--   Remove previously deprecated code. :pr:`4667`
+-   Xóa mã đã bị phản đối trước đó. :pr:`4667`
 
-    -   Old names for some ``send_file`` parameters have been removed.
-        ``download_name`` replaces ``attachment_filename``, ``max_age``
-        replaces ``cache_timeout``, and ``etag`` replaces ``add_etags``.
-        Additionally, ``path`` replaces ``filename`` in
+    -   Các tên cũ cho một số tham số ``send_file`` đã bị xóa.
+        ``download_name`` thay thế ``attachment_filename``, ``max_age``
+        thay thế ``cache_timeout``, và ``etag`` thay thế ``add_etags``.
+        Ngoài ra, ``path`` thay thế ``filename`` trong
         ``send_from_directory``.
-    -   The ``RequestContext.g`` property returning ``AppContext.g`` is
-        removed.
+    -   Thuộc tính ``RequestContext.g`` trả về ``AppContext.g`` đã bị
+        xóa.
 
--   Update Werkzeug dependency to >= 2.2.
--   The app and request contexts are managed using Python context vars
-    directly rather than Werkzeug's ``LocalStack``. This should result
-    in better performance and memory use. :pr:`4682`
+-   Cập nhật phụ thuộc Werkzeug lên >= 2.2.
+-   Các ngữ cảnh ứng dụng và yêu cầu được quản lý bằng cách sử dụng các biến ngữ cảnh Python
+    trực tiếp thay vì ``LocalStack`` của Werkzeug. Điều này sẽ dẫn đến
+    hiệu suất và sử dụng bộ nhớ tốt hơn. :pr:`4682`
 
-    -   Extension maintainers, be aware that ``_app_ctx_stack.top``
-        and ``_request_ctx_stack.top`` are deprecated. Store data on
-        ``g`` instead using a unique prefix, like
+    -   Các nhà bảo trì tiện ích mở rộng, hãy lưu ý rằng ``_app_ctx_stack.top``
+        và ``_request_ctx_stack.top`` đã bị phản đối. Lưu trữ dữ liệu trên
+        ``g`` thay vào đó bằng cách sử dụng một tiền tố duy nhất, như
         ``g._extension_name_attr``.
 
--   The ``FLASK_ENV`` environment variable and ``app.env`` attribute are
-    deprecated, removing the distinction between development and debug
-    mode. Debug mode should be controlled directly using the ``--debug``
-    option or ``app.run(debug=True)``. :issue:`4714`
--   Some attributes that proxied config keys on ``app`` are deprecated:
+-   Biến môi trường ``FLASK_ENV`` và thuộc tính ``app.env`` bị
+    phản đối, loại bỏ sự phân biệt giữa chế độ phát triển và gỡ lỗi.
+    Chế độ gỡ lỗi nên được kiểm soát trực tiếp bằng cách sử dụng tùy chọn ``--debug``
+    hoặc ``app.run(debug=True)``. :issue:`4714`
+-   Một số thuộc tính ủy quyền các khóa cấu hình trên ``app`` bị phản đối:
     ``session_cookie_name``, ``send_file_max_age_default``,
-    ``use_x_sendfile``, ``propagate_exceptions``, and
-    ``templates_auto_reload``. Use the relevant config keys instead.
+    ``use_x_sendfile``, ``propagate_exceptions``, và
+    ``templates_auto_reload``. Sử dụng các khóa cấu hình liên quan thay thế.
     :issue:`4716`
--   Add new customization points to the ``Flask`` app object for many
-    previously global behaviors.
+-   Thêm các điểm tùy chỉnh mới vào đối tượng ứng dụng ``Flask`` cho nhiều
+    hành vi toàn cục trước đây.
 
-    -   ``flask.url_for`` will call ``app.url_for``. :issue:`4568`
-    -   ``flask.abort`` will call ``app.aborter``.
-        ``Flask.aborter_class`` and ``Flask.make_aborter`` can be used
-        to customize this aborter. :issue:`4567`
-    -   ``flask.redirect`` will call ``app.redirect``. :issue:`4569`
-    -   ``flask.json`` is an instance of ``JSONProvider``. A different
-        provider can be set to use a different JSON library.
-        ``flask.jsonify`` will call ``app.json.response``, other
-        functions in ``flask.json`` will call corresponding functions in
+    -   ``flask.url_for`` sẽ gọi ``app.url_for``. :issue:`4568`
+    -   ``flask.abort`` sẽ gọi ``app.aborter``.
+        ``Flask.aborter_class`` và ``Flask.make_aborter`` có thể được sử dụng
+        để tùy chỉnh aborter này. :issue:`4567`
+    -   ``flask.redirect`` sẽ gọi ``app.redirect``. :issue:`4569`
+    -   ``flask.json`` là một thể hiện của ``JSONProvider``. Một nhà cung cấp
+        khác có thể được thiết lập để sử dụng thư viện JSON khác.
+        ``flask.jsonify`` sẽ gọi ``app.json.response``, các hàm khác
+        trong ``flask.json`` sẽ gọi các hàm tương ứng trong
         ``app.json``. :pr:`4692`
 
--   JSON configuration is moved to attributes on the default
-    ``app.json`` provider. ``JSON_AS_ASCII``, ``JSON_SORT_KEYS``,
-    ``JSONIFY_MIMETYPE``, and ``JSONIFY_PRETTYPRINT_REGULAR`` are
-    deprecated. :pr:`4692`
--   Setting custom ``json_encoder`` and ``json_decoder`` classes on the
-    app or a blueprint, and the corresponding ``json.JSONEncoder`` and
-    ``JSONDecoder`` classes, are deprecated. JSON behavior can now be
-    overridden using the ``app.json`` provider interface. :pr:`4692`
--   ``json.htmlsafe_dumps`` and ``json.htmlsafe_dump`` are deprecated,
-    the function is built-in to Jinja now. :pr:`4692`
--   Refactor ``register_error_handler`` to consolidate error checking.
-    Rewrite some error messages to be more consistent. :issue:`4559`
--   Use Blueprint decorators and functions intended for setup after
-    registering the blueprint will show a warning. In the next version,
-    this will become an error just like the application setup methods.
+-   Cấu hình JSON được chuyển sang các thuộc tính trên nhà cung cấp mặc định
+    ``app.json``. ``JSON_AS_ASCII``, ``JSON_SORT_KEYS``,
+    ``JSONIFY_MIMETYPE``, và ``JSONIFY_PRETTYPRINT_REGULAR`` bị
+    phản đối. :pr:`4692`
+-   Thiết lập các lớp ``json_encoder`` và ``json_decoder`` tùy chỉnh trên
+    ứng dụng hoặc một blueprint, và các lớp ``json.JSONEncoder`` và
+    ``JSONDecoder`` tương ứng, bị phản đối. Hành vi JSON hiện có thể được
+    ghi đè bằng cách sử dụng giao diện nhà cung cấp ``app.json``. :pr:`4692`
+-   ``json.htmlsafe_dumps`` và ``json.htmlsafe_dump`` bị phản đối,
+    hàm này hiện đã được tích hợp vào Jinja. :pr:`4692`
+-   Tái cấu trúc ``register_error_handler`` để hợp nhất việc kiểm tra lỗi.
+    Viết lại một số thông báo lỗi để nhất quán hơn. :issue:`4559`
+-   Sử dụng các decorator và hàm Blueprint dành cho việc thiết lập sau khi
+    đăng ký blueprint sẽ hiển thị cảnh báo. Trong phiên bản tiếp theo,
+    điều này sẽ trở thành lỗi giống như các phương thức thiết lập ứng dụng.
     :issue:`4571`
--   ``before_first_request`` is deprecated. Run setup code when creating
-    the application instead. :issue:`4605`
--   Added the ``View.init_every_request`` class attribute. If a view
-    subclass sets this to ``False``, the view will not create a new
-    instance on every request. :issue:`2520`.
--   A ``flask.cli.FlaskGroup`` Click group can be nested as a
-    sub-command in a custom CLI. :issue:`3263`
--   Add ``--app`` and ``--debug`` options to the ``flask`` CLI, instead
-    of requiring that they are set through environment variables.
+-   ``before_first_request`` bị phản đối. Chạy mã thiết lập khi tạo
+    ứng dụng thay thế. :issue:`4605`
+-   Đã thêm thuộc tính lớp ``View.init_every_request``. Nếu một lớp con view
+    đặt thuộc tính này thành ``False``, view sẽ không tạo một thể hiện mới
+    trên mỗi yêu cầu. :issue:`2520`.
+-   Một nhóm Click ``flask.cli.FlaskGroup`` có thể được lồng như một
+    lệnh con trong một CLI tùy chỉnh. :issue:`3263`
+-   Thêm các tùy chọn ``--app`` và ``--debug`` vào CLI ``flask``, thay vì
+    yêu cầu chúng được thiết lập thông qua các biến môi trường.
     :issue:`2836`
--   Add ``--env-file`` option to the ``flask`` CLI. This allows
-    specifying a dotenv file to load in addition to ``.env`` and
+-   Thêm tùy chọn ``--env-file`` vào CLI ``flask``. Điều này cho phép
+    chỉ định một tệp dotenv để tải thêm vào ``.env`` và
     ``.flaskenv``. :issue:`3108`
--   It is no longer required to decorate custom CLI commands on
-    ``app.cli`` or ``blueprint.cli`` with ``@with_appcontext``, an app
-    context will already be active at that point. :issue:`2410`
--   ``SessionInterface.get_expiration_time`` uses a timezone-aware
-    value. :pr:`4645`
--   View functions can return generators directly instead of wrapping
-    them in a ``Response``. :pr:`4629`
--   Add ``stream_template`` and ``stream_template_string`` functions to
-    render a template as a stream of pieces. :pr:`4629`
--   A new implementation of context preservation during debugging and
-    testing. :pr:`4666`
+-   Không còn bắt buộc phải decorate các lệnh CLI tùy chỉnh trên
+    ``app.cli`` hoặc ``blueprint.cli`` với ``@with_appcontext``, một ngữ cảnh ứng dụng
+    sẽ đã hoạt động tại thời điểm đó. :issue:`2410`
+-   ``SessionInterface.get_expiration_time`` sử dụng một giá trị
+    nhận biết múi giờ (timezone-aware). :pr:`4645`
+-   Các hàm view có thể trả về các generator trực tiếp thay vì bọc
+    chúng trong một ``Response``. :pr:`4629`
+-   Thêm các hàm ``stream_template`` và ``stream_template_string`` để
+    render một template dưới dạng một luồng các mảnh. :pr:`4629`
+-   Một triển khai mới về bảo tồn ngữ cảnh trong quá trình gỡ lỗi và
+    kiểm thử. :pr:`4666`
 
-    -   ``request``, ``g``, and other context-locals point to the
-        correct data when running code in the interactive debugger
-        console. :issue:`2836`
-    -   Teardown functions are always run at the end of the request,
-        even if the context is preserved. They are also run after the
-        preserved context is popped.
-    -   ``stream_with_context`` preserves context separately from a
-        ``with client`` block. It will be cleaned up when
-        ``response.get_data()`` or ``response.close()`` is called.
+    -   ``request``, ``g``, và các biến cục bộ ngữ cảnh khác trỏ đến
+        dữ liệu chính xác khi chạy mã trong bảng điều khiển gỡ lỗi tương tác.
+        :issue:`2836`
+    -   Các hàm teardown luôn được chạy vào cuối yêu cầu,
+        ngay cả khi ngữ cảnh được bảo tồn. Chúng cũng được chạy sau khi
+        ngữ cảnh được bảo tồn bị pop.
+    -   ``stream_with_context`` bảo tồn ngữ cảnh riêng biệt khỏi một
+        khối ``with client``. Nó sẽ được dọn dẹp khi
+        ``response.get_data()`` hoặc ``response.close()`` được gọi.
 
--   Allow returning a list from a view function, to convert it to a
-    JSON response like a dict is. :issue:`4672`
--   When type checking, allow ``TypedDict`` to be returned from view
-    functions. :pr:`4695`
--   Remove the ``--eager-loading/--lazy-loading`` options from the
-    ``flask run`` command. The app is always eager loaded the first
-    time, then lazily loaded in the reloader. The reloader always prints
-    errors immediately but continues serving. Remove the internal
-    ``DispatchingApp`` middleware used by the previous implementation.
+-   Cho phép trả về một danh sách từ một hàm view, để chuyển đổi nó thành một
+    phản hồi JSON giống như một dict. :issue:`4672`
+-   Khi kiểm tra kiểu, cho phép ``TypedDict`` được trả về từ các hàm view.
+    :pr:`4695`
+-   Xóa các tùy chọn ``--eager-loading/--lazy-loading`` khỏi
+    lệnh ``flask run``. Ứng dụng luôn được tải eager lần đầu tiên,
+    sau đó tải lazy trong trình tải lại. Trình tải lại luôn in
+    lỗi ngay lập tức nhưng vẫn tiếp tục phục vụ. Xóa middleware nội bộ
+    ``DispatchingApp`` được sử dụng bởi triển khai trước đó.
     :issue:`4715`
 
 
 Version 2.1.3
 -------------
 
-Released 2022-07-13
+Đã phát hành 2022-07-13
 
--   Inline some optional imports that are only used for certain CLI
-    commands. :pr:`4606`
--   Relax type annotation for ``after_request`` functions. :issue:`4600`
--   ``instance_path`` for namespace packages uses the path closest to
-    the imported submodule. :issue:`4610`
--   Clearer error message when ``render_template`` and
-    ``render_template_string`` are used outside an application context.
+-   Inline một số import tùy chọn chỉ được sử dụng cho một số lệnh CLI
+    nhất định. :pr:`4606`
+-   Nới lỏng chú thích kiểu cho các hàm ``after_request``. :issue:`4600`
+-   ``instance_path`` cho các gói namespace sử dụng đường dẫn gần nhất với
+    mô-đun con được import. :issue:`4610`
+-   Thông báo lỗi rõ ràng hơn khi ``render_template`` và
+    ``render_template_string`` được sử dụng bên ngoài một ngữ cảnh ứng dụng.
     :pr:`4693`
 
 
 Version 2.1.2
 -------------
 
-Released 2022-04-28
+Đã phát hành 2022-04-28
 
--   Fix type annotation for ``json.loads``, it accepts str or bytes.
+-   Sửa chú thích kiểu cho ``json.loads``, nó chấp nhận str hoặc bytes.
     :issue:`4519`
--   The ``--cert`` and ``--key`` options on ``flask run`` can be given
-    in either order. :issue:`4459`
+-   Các tùy chọn ``--cert`` và ``--key`` trên ``flask run`` có thể được đưa ra
+    theo bất kỳ thứ tự nào. :issue:`4459`
 
 
 Version 2.1.1
 -------------
 
-Released on 2022-03-30
+Đã phát hành vào 2022-03-30
 
--   Set the minimum required version of importlib_metadata to 3.6.0,
-    which is required on Python < 3.10. :issue:`4502`
+-   Đặt phiên bản yêu cầu tối thiểu của importlib_metadata thành 3.6.0,
+    điều này là bắt buộc trên Python < 3.10. :issue:`4502`
 
 
 Version 2.1.0
 -------------
 
-Released 2022-03-28
+Đã phát hành 2022-03-28
 
--   Drop support for Python 3.6. :pr:`4335`
--   Update Click dependency to >= 8.0. :pr:`4008`
--   Remove previously deprecated code. :pr:`4337`
+-   Ngừng hỗ trợ cho Python 3.6. :pr:`4335`
+-   Cập nhật phụ thuộc Click lên >= 8.0. :pr:`4008`
+-   Xóa mã đã bị phản đối trước đó. :pr:`4337`
 
-    -   The CLI does not pass ``script_info`` to app factory functions.
-    -   ``config.from_json`` is replaced by
+    -   CLI không truyền ``script_info`` đến các hàm factory ứng dụng.
+    -   ``config.from_json`` được thay thế bởi
         ``config.from_file(name, load=json.load)``.
-    -   ``json`` functions no longer take an ``encoding`` parameter.
-    -   ``safe_join`` is removed, use ``werkzeug.utils.safe_join``
-        instead.
-    -   ``total_seconds`` is removed, use ``timedelta.total_seconds``
-        instead.
-    -   The same blueprint cannot be registered with the same name. Use
-        ``name=`` when registering to specify a unique name.
-    -   The test client's ``as_tuple`` parameter is removed. Use
-        ``response.request.environ`` instead. :pr:`4417`
+    -   Các hàm ``json`` không còn nhận tham số ``encoding``.
+    -   ``safe_join`` bị xóa, sử dụng ``werkzeug.utils.safe_join``
+        thay thế.
+    -   ``total_seconds`` bị xóa, sử dụng ``timedelta.total_seconds``
+        thay thế.
+    -   Cùng một blueprint không thể được đăng ký với cùng một tên. Sử dụng
+        ``name=`` khi đăng ký để chỉ định một tên duy nhất.
+    -   Tham số ``as_tuple`` của test client bị xóa. Sử dụng
+        ``response.request.environ`` thay thế. :pr:`4417`
 
--   Some parameters in ``send_file`` and ``send_from_directory`` were
-    renamed in 2.0. The deprecation period for the old names is extended
-    to 2.2. Be sure to test with deprecation warnings visible.
+-   Một số tham số trong ``send_file`` và ``send_from_directory`` đã được
+    đổi tên trong 2.0. Thời gian phản đối cho các tên cũ được kéo dài
+    đến 2.2. Hãy chắc chắn kiểm tra với các cảnh báo phản đối hiển thị.
 
-    -   ``attachment_filename`` is renamed to ``download_name``.
-    -   ``cache_timeout`` is renamed to ``max_age``.
-    -   ``add_etags`` is renamed to ``etag``.
-    -   ``filename`` is renamed to ``path``.
+    -   ``attachment_filename`` được đổi tên thành ``download_name``.
+    -   ``cache_timeout`` được đổi tên thành ``max_age``.
+    -   ``add_etags`` được đổi tên thành ``etag``.
+    -   ``filename`` được đổi tên thành ``path``.
 
--   The ``RequestContext.g`` property is deprecated. Use ``g`` directly
-    or ``AppContext.g`` instead. :issue:`3898`
--   ``copy_current_request_context`` can decorate async functions.
+-   Thuộc tính ``RequestContext.g`` bị phản đối. Sử dụng ``g`` trực tiếp
+    hoặc ``AppContext.g`` thay thế. :issue:`3898`
+-   ``copy_current_request_context`` có thể decorate các hàm async.
     :pr:`4303`
--   The CLI uses ``importlib.metadata`` instead of ``pkg_resources`` to
-    load command entry points. :issue:`4419`
--   Overriding ``FlaskClient.open`` will not cause an error on redirect.
+-   CLI sử dụng ``importlib.metadata`` thay vì ``pkg_resources`` để
+    tải các điểm nhập lệnh. :issue:`4419`
+-   Ghi đè ``FlaskClient.open`` sẽ không gây ra lỗi khi chuyển hướng.
     :issue:`3396`
--   Add an ``--exclude-patterns`` option to the ``flask run`` CLI
-    command to specify patterns that will be ignored by the reloader.
+-   Thêm tùy chọn ``--exclude-patterns`` vào lệnh CLI ``flask run``
+    để chỉ định các mẫu sẽ bị bỏ qua bởi trình tải lại.
     :issue:`4188`
--   When using lazy loading (the default with the debugger), the Click
-    context from the ``flask run`` command remains available in the
-    loader thread. :issue:`4460`
--   Deleting the session cookie uses the ``httponly`` flag.
+-   Khi sử dụng tải lazy (mặc định với trình gỡ lỗi), ngữ cảnh Click
+    từ lệnh ``flask run`` vẫn có sẵn trong
+    luồng tải. :issue:`4460`
+-   Xóa cookie session sử dụng cờ ``httponly``.
     :issue:`4485`
--   Relax typing for ``errorhandler`` to allow the user to use more
-    precise types and decorate the same function multiple times.
+-   Nới lỏng việc gõ kiểu cho ``errorhandler`` để cho phép người dùng sử dụng các kiểu
+    chính xác hơn và decorate cùng một hàm nhiều lần.
     :issue:`4095, 4295, 4297`
--   Fix typing for ``__exit__`` methods for better compatibility with
+-   Sửa việc gõ kiểu cho các phương thức ``__exit__`` để tương thích tốt hơn với
     ``ExitStack``. :issue:`4474`
--   From Werkzeug, for redirect responses the ``Location`` header URL
-    will remain relative, and exclude the scheme and domain, by default.
+-   Từ Werkzeug, đối với các phản hồi chuyển hướng, URL header ``Location``
+    sẽ vẫn tương đối, và loại trừ scheme và domain, theo mặc định.
     :pr:`4496`
--   Add ``Config.from_prefixed_env()`` to load config values from
-    environment variables that start with ``FLASK_`` or another prefix.
-    This parses values as JSON by default, and allows setting keys in
-    nested dicts. :pr:`4479`
+-   Thêm ``Config.from_prefixed_env()`` để tải các giá trị cấu hình từ
+    các biến môi trường bắt đầu bằng ``FLASK_`` hoặc một tiền tố khác.
+    Nó phân tích các giá trị dưới dạng JSON theo mặc định, và cho phép thiết lập các khóa trong
+    các dict lồng nhau. :pr:`4479`
 
 
 Version 2.0.3
 -------------
 
-Released 2022-02-14
+Đã phát hành 2022-02-14
 
--   The test client's ``as_tuple`` parameter is deprecated and will be
-    removed in Werkzeug 2.1. It is now also deprecated in Flask, to be
-    removed in Flask 2.1, while remaining compatible with both in
-    2.0.x. Use ``response.request.environ`` instead. :pr:`4341`
--   Fix type annotation for ``errorhandler`` decorator. :issue:`4295`
--   Revert a change to the CLI that caused it to hide ``ImportError``
-    tracebacks when importing the application. :issue:`4307`
--   ``app.json_encoder`` and ``json_decoder`` are only passed to
-    ``dumps`` and ``loads`` if they have custom behavior. This improves
-    performance, mainly on PyPy. :issue:`4349`
--   Clearer error message when ``after_this_request`` is used outside a
-    request context. :issue:`4333`
+-   Tham số ``as_tuple`` của test client bị phản đối và sẽ bị
+    xóa trong Werkzeug 2.1. Nó hiện cũng bị phản đối trong Flask, để bị
+    xóa trong Flask 2.1, trong khi vẫn tương thích với cả hai trong
+    2.0.x. Sử dụng ``response.request.environ`` thay thế. :pr:`4341`
+-   Sửa chú thích kiểu cho decorator ``errorhandler``. :issue:`4295`
+-   Hoàn tác một thay đổi đối với CLI khiến nó ẩn các traceback ``ImportError``
+    khi import ứng dụng. :issue:`4307`
+-   ``app.json_encoder`` và ``json_decoder`` chỉ được truyền đến
+    ``dumps`` và ``loads`` nếu chúng có hành vi tùy chỉnh. Điều này cải thiện
+    hiệu suất, chủ yếu trên PyPy. :issue:`4349`
+-   Thông báo lỗi rõ ràng hơn khi ``after_this_request`` được sử dụng bên ngoài một
+    ngữ cảnh yêu cầu. :issue:`4333`
 
 
 Version 2.0.2
 -------------
 
-Released 2021-10-04
+Đã phát hành 2021-10-04
 
--   Fix type annotation for ``teardown_*`` methods. :issue:`4093`
--   Fix type annotation for ``before_request`` and ``before_app_request``
-    decorators. :issue:`4104`
--   Fixed the issue where typing requires template global
-    decorators to accept functions with no arguments. :issue:`4098`
--   Support View and MethodView instances with async handlers. :issue:`4112`
--   Enhance typing of ``app.errorhandler`` decorator. :issue:`4095`
--   Fix registering a blueprint twice with differing names. :issue:`4124`
--   Fix the type of ``static_folder`` to accept ``pathlib.Path``.
+-   Sửa chú thích kiểu cho các phương thức ``teardown_*``. :issue:`4093`
+-   Sửa chú thích kiểu cho các decorator ``before_request`` và ``before_app_request``.
+    :issue:`4104`
+-   Đã sửa vấn đề mà việc gõ kiểu yêu cầu các decorator template global
+    phải chấp nhận các hàm không có đối số. :issue:`4098`
+-   Hỗ trợ các thể hiện View và MethodView với các trình xử lý async. :issue:`4112`
+-   Cải thiện việc gõ kiểu của decorator ``app.errorhandler``. :issue:`4095`
+-   Sửa việc đăng ký một blueprint hai lần với các tên khác nhau. :issue:`4124`
+-   Sửa kiểu của ``static_folder`` để chấp nhận ``pathlib.Path``.
     :issue:`4150`
--   ``jsonify`` handles ``decimal.Decimal`` by encoding to ``str``.
+-   ``jsonify`` xử lý ``decimal.Decimal`` bằng cách mã hóa thành ``str``.
     :issue:`4157`
--   Correctly handle raising deferred errors in CLI lazy loading.
+-   Xử lý chính xác việc ném ra các lỗi bị hoãn trong tải lazy CLI.
     :issue:`4096`
--   The CLI loader handles ``**kwargs`` in a ``create_app`` function.
+-   Trình tải CLI xử lý ``**kwargs`` trong một hàm ``create_app``.
     :issue:`4170`
--   Fix the order of ``before_request`` and other callbacks that trigger
-    before the view returns. They are called from the app down to the
-    closest nested blueprint. :issue:`4229`
+-   Sửa thứ tự của ``before_request`` và các callback khác kích hoạt
+    trước khi view trả về. Chúng được gọi từ app xuống đến
+    blueprint lồng nhau gần nhất. :issue:`4229`
 
 
 Version 2.0.1
 -------------
 
-Released 2021-05-21
+Đã phát hành 2021-05-21
 
--   Re-add the ``filename`` parameter in ``send_from_directory``. The
-    ``filename`` parameter has been renamed to ``path``, the old name
-    is deprecated. :pr:`4019`
--   Mark top-level names as exported so type checking understands
-    imports in user projects. :issue:`4024`
--   Fix type annotation for ``g`` and inform mypy that it is a namespace
-    object that has arbitrary attributes. :issue:`4020`
--   Fix some types that weren't available in Python 3.6.0. :issue:`4040`
--   Improve typing for ``send_file``, ``send_from_directory``, and
+-   Thêm lại tham số ``filename`` trong ``send_from_directory``. Tham số
+    ``filename`` đã được đổi tên thành ``path``, tên cũ
+    bị phản đối. :pr:`4019`
+-   Đánh dấu các tên cấp cao nhất là đã xuất (exported) để kiểm tra kiểu hiểu
+    các import trong các dự án người dùng. :issue:`4024`
+-   Sửa chú thích kiểu cho ``g`` và thông báo cho mypy rằng nó là một đối tượng
+    namespace có các thuộc tính tùy ý. :issue:`4020`
+-   Sửa một số kiểu không có sẵn trong Python 3.6.0. :issue:`4040`
+-   Cải thiện việc gõ kiểu cho ``send_file``, ``send_from_directory``, và
     ``get_send_file_max_age``. :issue:`4044`, :pr:`4026`
--   Show an error when a blueprint name contains a dot. The ``.`` has
-    special meaning, it is used to separate (nested) blueprint names and
-    the endpoint name. :issue:`4041`
--   Combine URL prefixes when nesting blueprints that were created with
-    a ``url_prefix`` value. :issue:`4037`
--   Revert a change to the order that URL matching was done. The
-    URL is again matched after the session is loaded, so the session is
-    available in custom URL converters. :issue:`4053`
--   Re-add deprecated ``Config.from_json``, which was accidentally
-    removed early. :issue:`4078`
--   Improve typing for some functions using ``Callable`` in their type
-    signatures, focusing on decorator factories. :issue:`4060`
--   Nested blueprints are registered with their dotted name. This allows
-    different blueprints with the same name to be nested at different
-    locations. :issue:`4069`
--   ``register_blueprint`` takes a ``name`` option to change the
-    (pre-dotted) name the blueprint is registered with. This allows the
-    same blueprint to be registered multiple times with unique names for
-    ``url_for``. Registering the same blueprint with the same name
-    multiple times is deprecated. :issue:`1091`
--   Improve typing for ``stream_with_context``. :issue:`4052`
+-   Hiển thị lỗi khi tên blueprint chứa dấu chấm. Dấu ``.`` có
+    ý nghĩa đặc biệt, nó được sử dụng để phân tách tên blueprint (lồng nhau) và
+    tên endpoint. :issue:`4041`
+-   Kết hợp các tiền tố URL khi lồng các blueprint được tạo với
+    một giá trị ``url_prefix``. :issue:`4037`
+-   Hoàn tác một thay đổi đối với thứ tự khớp URL đã được thực hiện.
+    URL lại được khớp sau khi session được tải, vì vậy session có
+    sẵn trong các bộ chuyển đổi URL tùy chỉnh. :issue:`4053`
+-   Thêm lại ``Config.from_json`` đã bị phản đối, cái mà đã vô tình
+    bị xóa sớm. :issue:`4078`
+-   Cải thiện việc gõ kiểu cho một số hàm sử dụng ``Callable`` trong chữ ký
+    kiểu của chúng, tập trung vào các factory decorator. :issue:`4060`
+-   Các blueprint lồng nhau được đăng ký với tên có dấu chấm của chúng. Điều này cho phép
+    các blueprint khác nhau có cùng tên được lồng tại các vị trí
+    khác nhau. :issue:`4069`
+-   ``register_blueprint`` nhận một tùy chọn ``name`` để thay đổi
+    tên (trước khi có dấu chấm) mà blueprint được đăng ký. Điều này cho phép
+    cùng một blueprint được đăng ký nhiều lần với các tên duy nhất cho
+    ``url_for``. Đăng ký cùng một blueprint với cùng một tên
+    nhiều lần bị phản đối. :issue:`1091`
+-   Cải thiện việc gõ kiểu cho ``stream_with_context``. :issue:`4052`
 
 
 Version 2.0.0
 -------------
 
-Released 2021-05-11
+Đã phát hành 2021-05-11
 
--   Drop support for Python 2 and 3.5.
--   Bump minimum versions of other Pallets projects: Werkzeug >= 2,
-    Jinja2 >= 3, MarkupSafe >= 2, ItsDangerous >= 2, Click >= 8. Be sure
-    to check the change logs for each project. For better compatibility
-    with other applications (e.g. Celery) that still require Click 7,
-    there is no hard dependency on Click 8 yet, but using Click 7 will
-    trigger a DeprecationWarning and Flask 2.1 will depend on Click 8.
--   JSON support no longer uses simplejson. To use another JSON module,
-    override ``app.json_encoder`` and ``json_decoder``. :issue:`3555`
--   The ``encoding`` option to JSON functions is deprecated. :pr:`3562`
--   Passing ``script_info`` to app factory functions is deprecated. This
-    was not portable outside the ``flask`` command. Use
-    ``click.get_current_context().obj`` if it's needed. :issue:`3552`
--   The CLI shows better error messages when the app failed to load
-    when looking up commands. :issue:`2741`
--   Add ``SessionInterface.get_cookie_name`` to allow setting the
-    session cookie name dynamically. :pr:`3369`
--   Add ``Config.from_file`` to load config using arbitrary file
-    loaders, such as ``toml.load`` or ``json.load``.
-    ``Config.from_json`` is deprecated in favor of this. :pr:`3398`
--   The ``flask run`` command will only defer errors on reload. Errors
-    present during the initial call will cause the server to exit with
-    the traceback immediately. :issue:`3431`
--   ``send_file`` raises a ``ValueError`` when passed an ``io`` object
-    in text mode. Previously, it would respond with 200 OK and an empty
-    file. :issue:`3358`
--   When using ad-hoc certificates, check for the cryptography library
-    instead of PyOpenSSL. :pr:`3492`
--   When specifying a factory function with ``FLASK_APP``, keyword
-    argument can be passed. :issue:`3553`
--   When loading a ``.env`` or ``.flaskenv`` file, the current working
-    directory is no longer changed to the location of the file.
+-   Ngừng hỗ trợ cho Python 2 và 3.5.
+-   Tăng phiên bản tối thiểu của các dự án Pallets khác: Werkzeug >= 2,
+    Jinja2 >= 3, MarkupSafe >= 2, ItsDangerous >= 2, Click >= 8. Hãy chắc chắn
+    kiểm tra nhật ký thay đổi cho từng dự án. Để tương thích tốt hơn
+    với các ứng dụng khác (ví dụ: Celery) vẫn yêu cầu Click 7,
+    chưa có phụ thuộc cứng vào Click 8, nhưng sử dụng Click 7 sẽ
+    kích hoạt DeprecationWarning và Flask 2.1 sẽ phụ thuộc vào Click 8.
+-   Hỗ trợ JSON không còn sử dụng simplejson. Để sử dụng mô-đun JSON khác,
+    ghi đè ``app.json_encoder`` và ``json_decoder``. :issue:`3555`
+-   Tùy chọn ``encoding`` cho các hàm JSON bị phản đối. :pr:`3562`
+-   Truyền ``script_info`` đến các hàm factory ứng dụng bị phản đối. Điều này
+    không di động bên ngoài lệnh ``flask``. Sử dụng
+    ``click.get_current_context().obj`` nếu cần. :issue:`3552`
+-   CLI hiển thị thông báo lỗi tốt hơn khi ứng dụng không tải được
+    khi tra cứu các lệnh. :issue:`2741`
+-   Thêm ``SessionInterface.get_cookie_name`` để cho phép thiết lập
+    tên cookie session động. :pr:`3369`
+-   Thêm ``Config.from_file`` để tải cấu hình bằng cách sử dụng các trình tải tệp
+    tùy ý, chẳng hạn như ``toml.load`` hoặc ``json.load``.
+    ``Config.from_json`` bị phản đối để ủng hộ điều này. :pr:`3398`
+-   Lệnh ``flask run`` sẽ chỉ hoãn các lỗi khi tải lại. Các lỗi
+    hiện diện trong lần gọi ban đầu sẽ khiến máy chủ thoát với
+    traceback ngay lập tức. :issue:`3431`
+-   ``send_file`` ném ra ``ValueError`` khi được truyền một đối tượng ``io``
+    ở chế độ văn bản. Trước đây, nó sẽ phản hồi với 200 OK và một tệp
+    trống. :issue:`3358`
+-   Khi sử dụng các chứng chỉ ad-hoc, kiểm tra thư viện cryptography
+    thay vì PyOpenSSL. :pr:`3492`
+-   Khi chỉ định một hàm factory với ``FLASK_APP``, đối số từ khóa
+    có thể được truyền vào. :issue:`3553`
+-   Khi tải một tệp ``.env`` hoặc ``.flaskenv``, thư mục làm việc
+    hiện tại không còn bị thay đổi thành vị trí của tệp.
     :pr:`3560`
--   When returning a ``(response, headers)`` tuple from a view, the
-    headers replace rather than extend existing headers on the response.
-    For example, this allows setting the ``Content-Type`` for
-    ``jsonify()``. Use ``response.headers.extend()`` if extending is
-    desired. :issue:`3628`
--   The ``Scaffold`` class provides a common API for the ``Flask`` and
-    ``Blueprint`` classes. ``Blueprint`` information is stored in
-    attributes just like ``Flask``, rather than opaque lambda functions.
-    This is intended to improve consistency and maintainability.
+-   Khi trả về một tuple ``(response, headers)`` từ một view, các
+    header thay thế thay vì mở rộng các header hiện có trên phản hồi.
+    Ví dụ, điều này cho phép thiết lập ``Content-Type`` cho
+    ``jsonify()``. Sử dụng ``response.headers.extend()`` nếu muốn mở rộng.
+    :issue:`3628`
+-   Lớp ``Scaffold`` cung cấp một API chung cho các lớp ``Flask`` và
+    ``Blueprint``. Thông tin ``Blueprint`` được lưu trữ trong
+    các thuộc tính giống như ``Flask``, thay vì các hàm lambda mờ đục.
+    Điều này nhằm mục đích cải thiện tính nhất quán và khả năng bảo trì.
     :issue:`3215`
--   Include ``samesite`` and ``secure`` options when removing the
-    session cookie. :pr:`3726`
--   Support passing a ``pathlib.Path`` to ``static_folder``. :pr:`3579`
--   ``send_file`` and ``send_from_directory`` are wrappers around the
-    implementations in ``werkzeug.utils``. :pr:`3828`
--   Some ``send_file`` parameters have been renamed, the old names are
-    deprecated. ``attachment_filename`` is renamed to ``download_name``.
-    ``cache_timeout`` is renamed to ``max_age``. ``add_etags`` is
-    renamed to ``etag``. :pr:`3828, 3883`
--   ``send_file`` passes ``download_name`` even if
-    ``as_attachment=False`` by using ``Content-Disposition: inline``.
+-   Bao gồm các tùy chọn ``samesite`` và ``secure`` khi xóa
+    cookie session. :pr:`3726`
+-   Hỗ trợ truyền một ``pathlib.Path`` đến ``static_folder``. :pr:`3579`
+-   ``send_file`` và ``send_from_directory`` là các wrapper xung quanh
+    các triển khai trong ``werkzeug.utils``. :pr:`3828`
+-   Một số tham số ``send_file`` đã được đổi tên, các tên cũ
+    bị phản đối. ``attachment_filename`` được đổi tên thành ``download_name``.
+    ``cache_timeout`` được đổi tên thành ``max_age``. ``add_etags`` được
+    đổi tên thành ``etag``. :pr:`3828, 3883`
+-   ``send_file`` truyền ``download_name`` ngay cả khi
+    ``as_attachment=False`` bằng cách sử dụng ``Content-Disposition: inline``.
     :pr:`3828`
--   ``send_file`` sets ``conditional=True`` and ``max_age=None`` by
-    default. ``Cache-Control`` is set to ``no-cache`` if ``max_age`` is
-    not set, otherwise ``public``. This tells browsers to validate
-    conditional requests instead of using a timed cache. :pr:`3828`
--   ``helpers.safe_join`` is deprecated. Use
-    ``werkzeug.utils.safe_join`` instead. :pr:`3828`
--   The request context does route matching before opening the session.
-    This could allow a session interface to change behavior based on
+-   ``send_file`` thiết lập ``conditional=True`` và ``max_age=None`` theo
+    mặc định. ``Cache-Control`` được thiết lập thành ``no-cache`` nếu ``max_age``
+    không được thiết lập, nếu không thì là ``public``. Điều này bảo các trình duyệt xác thực
+    các yêu cầu có điều kiện thay vì sử dụng bộ nhớ cache theo thời gian. :pr:`3828`
+-   ``helpers.safe_join`` bị phản đối. Sử dụng
+    ``werkzeug.utils.safe_join`` thay thế. :pr:`3828`
+-   Ngữ cảnh yêu cầu thực hiện khớp định tuyến trước khi mở session.
+    Điều này có thể cho phép một giao diện session thay đổi hành vi dựa trên
     ``request.endpoint``. :issue:`3776`
--   Use Jinja's implementation of the ``|tojson`` filter. :issue:`3881`
--   Add route decorators for common HTTP methods. For example,
-    ``@app.post("/login")`` is a shortcut for
+-   Sử dụng triển khai của Jinja cho bộ lọc ``|tojson``. :issue:`3881`
+-   Thêm các decorator định tuyến cho các phương thức HTTP phổ biến. Ví dụ,
+    ``@app.post("/login")`` là một lối tắt cho
     ``@app.route("/login", methods=["POST"])``. :pr:`3907`
--   Support async views, error handlers, before and after request, and
-    teardown functions. :pr:`3412`
--   Support nesting blueprints. :issue:`593, 1548`, :pr:`3923`
--   Set the default encoding to "UTF-8" when loading ``.env`` and
-    ``.flaskenv`` files to allow to use non-ASCII characters. :issue:`3931`
--   ``flask shell`` sets up tab and history completion like the default
-    ``python`` shell if ``readline`` is installed. :issue:`3941`
--   ``helpers.total_seconds()`` is deprecated. Use
-    ``timedelta.total_seconds()`` instead. :pr:`3962`
--   Add type hinting. :pr:`3973`.
+-   Hỗ trợ các view async, trình xử lý lỗi, trước và sau yêu cầu, và
+    các hàm teardown. :pr:`3412`
+-   Hỗ trợ lồng các blueprint. :issue:`593, 1548`, :pr:`3923`
+-   Thiết lập mã hóa mặc định là "UTF-8" khi tải các tệp ``.env`` và
+    ``.flaskenv`` để cho phép sử dụng các ký tự không phải ASCII. :issue:`3931`
+-   ``flask shell`` thiết lập hoàn thành tab và lịch sử giống như shell
+    ``python`` mặc định nếu ``readline`` được cài đặt. :issue:`3941`
+-   ``helpers.total_seconds()`` bị phản đối. Sử dụng
+    ``timedelta.total_seconds()`` thay thế. :pr:`3962`
+-   Thêm gợi ý kiểu. :pr:`3973`.
 
 
 Version 1.1.4
 -------------
 
-Released 2021-05-13
+Đã phát hành 2021-05-13
 
--   Update ``static_folder`` to use ``_compat.fspath`` instead of
-    ``os.fspath`` to continue supporting Python < 3.6 :issue:`4050`
+-   Cập nhật ``static_folder`` để sử dụng ``_compat.fspath`` thay vì
+    ``os.fspath`` để tiếp tục hỗ trợ Python < 3.6 :issue:`4050`
 
 
 Version 1.1.3
 -------------
 
-Released 2021-05-13
+Đã phát hành 2021-05-13
 
--   Set maximum versions of Werkzeug, Jinja, Click, and ItsDangerous.
+-   Thiết lập các phiên bản tối đa của Werkzeug, Jinja, Click, và ItsDangerous.
     :issue:`4043`
--   Re-add support for passing a ``pathlib.Path`` for ``static_folder``.
+-   Thêm lại hỗ trợ cho việc truyền một ``pathlib.Path`` cho ``static_folder``.
     :pr:`3579`
 
 
 Version 1.1.2
 -------------
 
-Released 2020-04-03
+Đã phát hành 2020-04-03
 
--   Work around an issue when running the ``flask`` command with an
-    external debugger on Windows. :issue:`3297`
--   The static route will not catch all URLs if the ``Flask``
-    ``static_folder`` argument ends with a slash. :issue:`3452`
+-   Khắc phục một vấn đề khi chạy lệnh ``flask`` với một
+    trình gỡ lỗi bên ngoài trên Windows. :issue:`3297`
+-   Tuyến tĩnh sẽ không bắt tất cả các URL nếu đối số ``static_folder``
+    của ``Flask`` kết thúc bằng dấu gạch chéo. :issue:`3452`
 
 
 Version 1.1.1
 -------------
 
-Released 2019-07-08
+Đã phát hành 2019-07-08
 
--   The ``flask.json_available`` flag was added back for compatibility
-    with some extensions. It will raise a deprecation warning when used,
-    and will be removed in version 2.0.0. :issue:`3288`
+-   Cờ ``flask.json_available`` đã được thêm lại để tương thích
+    với một số tiện ích mở rộng. Nó sẽ ném ra cảnh báo phản đối khi được sử dụng,
+    và sẽ bị xóa trong phiên bản 2.0.0. :issue:`3288`
 
 
 Version 1.1.0
 -------------
 
-Released 2019-07-04
+Đã phát hành 2019-07-04
 
--   Bump minimum Werkzeug version to >= 0.15.
--   Drop support for Python 3.4.
--   Error handlers for ``InternalServerError`` or ``500`` will always be
-    passed an instance of ``InternalServerError``. If they are invoked
-    due to an unhandled exception, that original exception is now
-    available as ``e.original_exception`` rather than being passed
-    directly to the handler. The same is true if the handler is for the
-    base ``HTTPException``. This makes error handler behavior more
-    consistent. :pr:`3266`
+-   Tăng phiên bản Werkzeug tối thiểu lên >= 0.15.
+-   Ngừng hỗ trợ cho Python 3.4.
+-   Các trình xử lý lỗi cho ``InternalServerError`` hoặc ``500`` sẽ luôn được
+    truyền một thể hiện của ``InternalServerError``. Nếu chúng được gọi
+    do một ngoại lệ không được xử lý, ngoại lệ gốc đó hiện có
+    sẵn dưới dạng ``e.original_exception`` thay vì được truyền
+    trực tiếp đến trình xử lý. Điều tương tự cũng đúng nếu trình xử lý dành cho
+    cơ sở ``HTTPException``. Điều này làm cho hành vi của trình xử lý lỗi
+    nhất quán hơn. :pr:`3266`
 
-    -   ``Flask.finalize_request`` is called for all unhandled
-        exceptions even if there is no ``500`` error handler.
+    -   ``Flask.finalize_request`` được gọi cho tất cả các ngoại lệ
+        không được xử lý ngay cả khi không có trình xử lý lỗi ``500``.
 
--   ``Flask.logger`` takes the same name as ``Flask.name`` (the value
-    passed as ``Flask(import_name)``. This reverts 1.0's behavior of
-    always logging to ``"flask.app"``, in order to support multiple apps
-    in the same process. A warning will be shown if old configuration is
-    detected that needs to be moved. :issue:`2866`
--   ``RequestContext.copy`` includes the current session object in the
-    request context copy. This prevents ``session`` pointing to an
-    out-of-date object. :issue:`2935`
--   Using built-in RequestContext, unprintable Unicode characters in
-    Host header will result in a HTTP 400 response and not HTTP 500 as
-    previously. :pr:`2994`
--   ``send_file`` supports ``PathLike`` objects as described in
-    :pep:`519`, to support ``pathlib`` in Python 3. :pr:`3059`
--   ``send_file`` supports ``BytesIO`` partial content.
+-   ``Flask.logger`` lấy cùng tên với ``Flask.name`` (giá trị
+    được truyền dưới dạng ``Flask(import_name)``. Điều này hoàn tác hành vi của 1.0 là
+    luôn ghi nhật ký vào ``"flask.app"``, để hỗ trợ nhiều ứng dụng
+    trong cùng một quy trình. Một cảnh báo sẽ được hiển thị nếu cấu hình cũ được
+    phát hiện cần phải di chuyển. :issue:`2866`
+-   ``RequestContext.copy`` bao gồm đối tượng session hiện tại trong
+    bản sao ngữ cảnh yêu cầu. Điều này ngăn ``session`` trỏ đến một
+    đối tượng lỗi thời. :issue:`2935`
+-   Sử dụng RequestContext tích hợp sẵn, các ký tự Unicode không in được trong
+    Host header sẽ dẫn đến phản hồi HTTP 400 và không phải HTTP 500 như
+    trước đây. :pr:`2994`
+-   ``send_file`` hỗ trợ các đối tượng ``PathLike`` như được mô tả trong
+    :pep:`519`, để hỗ trợ ``pathlib`` trong Python 3. :pr:`3059`
+-   ``send_file`` hỗ trợ nội dung một phần ``BytesIO``.
     :issue:`2957`
--   ``open_resource`` accepts the "rt" file mode. This still does the
-    same thing as "r". :issue:`3163`
--   The ``MethodView.methods`` attribute set in a base class is used by
-    subclasses. :issue:`3138`
--   ``Flask.jinja_options`` is a ``dict`` instead of an
-    ``ImmutableDict`` to allow easier configuration. Changes must still
-    be made before creating the environment. :pr:`3190`
--   Flask's ``JSONMixin`` for the request and response wrappers was
-    moved into Werkzeug. Use Werkzeug's version with Flask-specific
-    support. This bumps the Werkzeug dependency to >= 0.15.
+-   ``open_resource`` chấp nhận chế độ tệp "rt". Điều này vẫn làm
+    điều tương tự như "r". :issue:`3163`
+-   Thuộc tính ``MethodView.methods`` được thiết lập trong một lớp cơ sở được sử dụng bởi
+    các lớp con. :issue:`3138`
+-   ``Flask.jinja_options`` là một ``dict`` thay vì một
+    ``ImmutableDict`` để cho phép cấu hình dễ dàng hơn. Các thay đổi vẫn phải
+    được thực hiện trước khi tạo môi trường. :pr:`3190`
+-   ``JSONMixin`` của Flask cho các wrapper yêu cầu và phản hồi đã được
+    chuyển vào Werkzeug. Sử dụng phiên bản của Werkzeug với hỗ trợ cụ thể cho
+    Flask. Điều này tăng phụ thuộc Werkzeug lên >= 0.15.
     :issue:`3125`
--   The ``flask`` command entry point is simplified to take advantage
-    of Werkzeug 0.15's better reloader support. This bumps the Werkzeug
-    dependency to >= 0.15. :issue:`3022`
--   Support ``static_url_path`` that ends with a forward slash.
+-   Điểm nhập lệnh ``flask`` được đơn giản hóa để tận dụng
+    hỗ trợ trình tải lại tốt hơn của Werkzeug 0.15. Điều này tăng phụ thuộc Werkzeug
+    lên >= 0.15. :issue:`3022`
+-   Hỗ trợ ``static_url_path`` kết thúc bằng dấu gạch chéo.
     :issue:`3134`
--   Support empty ``static_folder`` without requiring setting an empty
-    ``static_url_path`` as well. :pr:`3124`
--   ``jsonify`` supports ``dataclass`` objects. :pr:`3195`
--   Allow customizing the ``Flask.url_map_class`` used for routing.
+-   Hỗ trợ ``static_folder`` trống mà không yêu cầu thiết lập một
+    ``static_url_path`` trống cũng như vậy. :pr:`3124`
+-   ``jsonify`` hỗ trợ các đối tượng ``dataclass``. :pr:`3195`
+-   Cho phép tùy chỉnh ``Flask.url_map_class`` được sử dụng cho định tuyến.
     :pr:`3069`
--   The development server port can be set to 0, which tells the OS to
-    pick an available port. :issue:`2926`
--   The return value from ``cli.load_dotenv`` is more consistent with
-    the documentation. It will return ``False`` if python-dotenv is not
-    installed, or if the given path isn't a file. :issue:`2937`
--   Signaling support has a stub for the ``connect_via`` method when
-    the Blinker library is not installed. :pr:`3208`
--   Add an ``--extra-files`` option to the ``flask run`` CLI command to
-    specify extra files that will trigger the reloader on change.
+-   Cổng máy chủ phát triển có thể được đặt thành 0, điều này bảo hệ điều hành
+    chọn một cổng khả dụng. :issue:`2926`
+-   Giá trị trả về từ ``cli.load_dotenv`` nhất quán hơn với
+    tài liệu. Nó sẽ trả về ``False`` nếu python-dotenv không được
+    cài đặt, hoặc nếu đường dẫn đã cho không phải là một tệp. :issue:`2937`
+-   Hỗ trợ signaling có một stub cho phương thức ``connect_via`` khi
+    thư viện Blinker không được cài đặt. :pr:`3208`
+-   Thêm một tùy chọn ``--extra-files`` vào lệnh CLI ``flask run`` để
+    chỉ định các tệp bổ sung sẽ kích hoạt trình tải lại khi thay đổi.
     :issue:`2897`
--   Allow returning a dictionary from a view function. Similar to how
-    returning a string will produce a ``text/html`` response, returning
-    a dict will call ``jsonify`` to produce a ``application/json``
-    response. :pr:`3111`
--   Blueprints have a ``cli`` Click group like ``app.cli``. CLI commands
-    registered with a blueprint will be available as a group under the
-    ``flask`` command. :issue:`1357`.
--   When using the test client as a context manager (``with client:``),
-    all preserved request contexts are popped when the block exits,
-    ensuring nested contexts are cleaned up correctly. :pr:`3157`
--   Show a better error message when the view return type is not
-    supported. :issue:`3214`
--   ``flask.testing.make_test_environ_builder()`` has been deprecated in
-    favour of a new class ``flask.testing.EnvironBuilder``. :pr:`3232`
--   The ``flask run`` command no longer fails if Python is not built
-    with SSL support. Using the ``--cert`` option will show an
-    appropriate error message. :issue:`3211`
--   URL matching now occurs after the request context is pushed, rather
-    than when it's created. This allows custom URL converters to access
-    the app and request contexts, such as to query a database for an id.
+-   Cho phép trả về một từ điển từ một hàm view. Tương tự như cách
+    trả về một chuỗi sẽ tạo ra một phản hồi ``text/html``, trả về
+    một dict sẽ gọi ``jsonify`` để tạo ra một phản hồi ``application/json``.
+    :pr:`3111`
+-   Các blueprint có một nhóm Click ``cli`` giống như ``app.cli``. Các lệnh CLI
+    được đăng ký với một blueprint sẽ có sẵn dưới dạng một nhóm dưới
+    lệnh ``flask``. :issue:`1357`.
+-   Khi sử dụng test client như một trình quản lý ngữ cảnh (``with client:``),
+    tất cả các ngữ cảnh yêu cầu được bảo tồn sẽ bị pop khi khối thoát,
+    đảm bảo các ngữ cảnh lồng nhau được dọn dẹp chính xác. :pr:`3157`
+-   Hiển thị thông báo lỗi tốt hơn khi kiểu trả về của view không được
+    hỗ trợ. :issue:`3214`
+-   ``flask.testing.make_test_environ_builder()`` đã bị phản đối để
+    ủng hộ một lớp mới ``flask.testing.EnvironBuilder``. :pr:`3232`
+-   Lệnh ``flask run`` không còn thất bại nếu Python không được xây dựng
+    với hỗ trợ SSL. Sử dụng tùy chọn ``--cert`` sẽ hiển thị một
+    thông báo lỗi thích hợp. :issue:`3211`
+-   Khớp URL hiện xảy ra sau khi ngữ cảnh yêu cầu được đẩy, thay vì
+    khi nó được tạo. Điều này cho phép các bộ chuyển đổi URL tùy chỉnh truy cập
+    các ngữ cảnh ứng dụng và yêu cầu, chẳng hạn như để truy vấn cơ sở dữ liệu cho một id.
     :issue:`3088`
 
 
 Version 1.0.4
 -------------
 
-Released 2019-07-04
+Đã phát hành 2019-07-04
 
--   The key information for ``BadRequestKeyError`` is no longer cleared
-    outside debug mode, so error handlers can still access it. This
-    requires upgrading to Werkzeug 0.15.5. :issue:`3249`
--   ``send_file`` url quotes the ":" and "/" characters for more
-    compatible UTF-8 filename support in some browsers. :issue:`3074`
--   Fixes for :pep:`451` import loaders and pytest 5.x. :issue:`3275`
--   Show message about dotenv on stderr instead of stdout. :issue:`3285`
+-   Thông tin khóa cho ``BadRequestKeyError`` không còn bị xóa
+    bên ngoài chế độ gỡ lỗi, vì vậy các trình xử lý lỗi vẫn có thể truy cập nó. Điều này
+    yêu cầu nâng cấp lên Werkzeug 0.15.5. :issue:`3249`
+-   ``send_file`` trích dẫn url các ký tự ":" và "/" để hỗ trợ tên tệp UTF-8
+    tương thích hơn trong một số trình duyệt. :issue:`3074`
+-   Các bản sửa lỗi cho các trình tải import :pep:`451` và pytest 5.x. :issue:`3275`
+-   Hiển thị thông báo về dotenv trên stderr thay vì stdout. :issue:`3285`
 
 
 Version 1.0.3
 -------------
 
-Released 2019-05-17
+Đã phát hành 2019-05-17
 
--   ``send_file`` encodes filenames as ASCII instead of Latin-1
-    (ISO-8859-1). This fixes compatibility with Gunicorn, which is
-    stricter about header encodings than :pep:`3333`. :issue:`2766`
--   Allow custom CLIs using ``FlaskGroup`` to set the debug flag without
-    it always being overwritten based on environment variables.
+-   ``send_file`` mã hóa tên tệp dưới dạng ASCII thay vì Latin-1
+    (ISO-8859-1). Điều này sửa lỗi tương thích với Gunicorn, cái mà
+    nghiêm ngặt hơn về mã hóa header so với :pep:`3333`. :issue:`2766`
+-   Cho phép các CLI tùy chỉnh sử dụng ``FlaskGroup`` để thiết lập cờ gỡ lỗi mà không
+    luôn bị ghi đè dựa trên các biến môi trường.
     :pr:`2765`
--   ``flask --version`` outputs Werkzeug's version and simplifies the
-    Python version. :pr:`2825`
--   ``send_file`` handles an ``attachment_filename`` that is a native
-    Python 2 string (bytes) with UTF-8 coded bytes. :issue:`2933`
--   A catch-all error handler registered for ``HTTPException`` will not
-    handle ``RoutingException``, which is used internally during
-    routing. This fixes the unexpected behavior that had been introduced
-    in 1.0. :pr:`2986`
--   Passing the ``json`` argument to ``app.test_client`` does not
-    push/pop an extra app context. :issue:`2900`
+-   ``flask --version`` xuất ra phiên bản của Werkzeug và đơn giản hóa
+    phiên bản Python. :pr:`2825`
+-   ``send_file`` xử lý một ``attachment_filename`` là một chuỗi Python 2
+    gốc (bytes) với các byte được mã hóa UTF-8. :issue:`2933`
+-   Một trình xử lý lỗi catch-all được đăng ký cho ``HTTPException`` sẽ không
+    xử lý ``RoutingException``, cái được sử dụng nội bộ trong quá trình
+    định tuyến. Điều này sửa lỗi hành vi không mong muốn đã được giới thiệu
+    trong 1.0. :pr:`2986`
+-   Truyền đối số ``json`` cho ``app.test_client`` không
+    đẩy/pop thêm một ngữ cảnh ứng dụng. :issue:`2900`
 
 
 Version 1.0.2
 -------------
 
-Released 2018-05-02
+Đã phát hành 2018-05-02
 
--   Fix more backwards compatibility issues with merging slashes between
-    a blueprint prefix and route. :pr:`2748`
--   Fix error with ``flask routes`` command when there are no routes.
+-   Sửa nhiều vấn đề tương thích ngược hơn với việc hợp nhất các dấu gạch chéo giữa
+    một tiền tố blueprint và route. :pr:`2748`
+-   Sửa lỗi với lệnh ``flask routes`` khi không có route nào.
     :issue:`2751`
 
 
 Version 1.0.1
 -------------
 
-Released 2018-04-29
+Đã phát hành 2018-04-29
 
--   Fix registering partials (with no ``__name__``) as view functions.
+-   Sửa việc đăng ký các partial (không có ``__name__``) dưới dạng các hàm view.
     :pr:`2730`
--   Don't treat lists returned from view functions the same as tuples.
-    Only tuples are interpreted as response data. :issue:`2736`
--   Extra slashes between a blueprint's ``url_prefix`` and a route URL
-    are merged. This fixes some backwards compatibility issues with the
-    change in 1.0. :issue:`2731`, :issue:`2742`
--   Only trap ``BadRequestKeyError`` errors in debug mode, not all
-    ``BadRequest`` errors. This allows ``abort(400)`` to continue
-    working as expected. :issue:`2735`
--   The ``FLASK_SKIP_DOTENV`` environment variable can be set to ``1``
-    to skip automatically loading dotenv files. :issue:`2722`
+-   Không xử lý các danh sách được trả về từ các hàm view giống như các tuple.
+    Chỉ các tuple được hiểu là dữ liệu phản hồi. :issue:`2736`
+-   Các dấu gạch chéo thừa giữa ``url_prefix`` của một blueprint và một URL route
+    được hợp nhất. Điều này sửa một số vấn đề tương thích ngược với
+    thay đổi trong 1.0. :issue:`2731`, :issue:`2742`
+-   Chỉ bẫy các lỗi ``BadRequestKeyError`` trong chế độ gỡ lỗi, không phải tất cả
+    các lỗi ``BadRequest``. Điều này cho phép ``abort(400)`` tiếp tục
+    hoạt động như mong đợi. :issue:`2735`
+-   Biến môi trường ``FLASK_SKIP_DOTENV`` có thể được đặt thành ``1``
+    để bỏ qua việc tự động tải các tệp dotenv. :issue:`2722`
 
 
 Version 1.0
 -----------
 
-Released 2018-04-26
+Đã phát hành 2018-04-26
 
--   Python 2.6 and 3.3 are no longer supported.
--   Bump minimum dependency versions to the latest stable versions:
+-   Python 2.6 và 3.3 không còn được hỗ trợ.
+-   Tăng phiên bản phụ thuộc tối thiểu lên các phiên bản ổn định mới nhất:
     Werkzeug >= 0.14, Jinja >= 2.10, itsdangerous >= 0.24, Click >= 5.1.
     :issue:`2586`
--   Skip ``app.run`` when a Flask application is run from the command
-    line. This avoids some behavior that was confusing to debug.
--   Change the default for ``JSONIFY_PRETTYPRINT_REGULAR`` to
-    ``False``. ``~json.jsonify`` returns a compact format by default,
-    and an indented format in debug mode. :pr:`2193`
--   ``Flask.__init__`` accepts the ``host_matching`` argument and sets
-    it on ``Flask.url_map``. :issue:`1559`
--   ``Flask.__init__`` accepts the ``static_host`` argument and passes
-    it as the ``host`` argument when defining the static route.
+-   Bỏ qua ``app.run`` khi một ứng dụng Flask được chạy từ dòng lệnh.
+    Điều này tránh một số hành vi gây nhầm lẫn khi gỡ lỗi.
+-   Thay đổi mặc định cho ``JSONIFY_PRETTYPRINT_REGULAR`` thành
+    ``False``. ``~json.jsonify`` trả về một định dạng nhỏ gọn theo mặc định,
+    và một định dạng thụt lề trong chế độ gỡ lỗi. :pr:`2193`
+-   ``Flask.__init__`` chấp nhận đối số ``host_matching`` và thiết lập
+    nó trên ``Flask.url_map``. :issue:`1559`
+-   ``Flask.__init__`` chấp nhận đối số ``static_host`` và truyền
+    nó dưới dạng đối số ``host`` khi định nghĩa tuyến tĩnh.
     :issue:`1559`
--   ``send_file`` supports Unicode in ``attachment_filename``.
+-   ``send_file`` hỗ trợ Unicode trong ``attachment_filename``.
     :pr:`2223`
--   Pass ``_scheme`` argument from ``url_for`` to
+-   Truyền đối số ``_scheme`` từ ``url_for`` đến
     ``Flask.handle_url_build_error``. :pr:`2017`
--   ``Flask.add_url_rule`` accepts the ``provide_automatic_options``
-    argument to disable adding the ``OPTIONS`` method. :pr:`1489`
--   ``MethodView`` subclasses inherit method handlers from base classes.
+-   ``Flask.add_url_rule`` chấp nhận đối số ``provide_automatic_options``
+    để vô hiệu hóa việc thêm phương thức ``OPTIONS``. :pr:`1489`
+-   Các lớp con ``MethodView`` kế thừa các trình xử lý phương thức từ các lớp cơ sở.
     :pr:`1936`
--   Errors caused while opening the session at the beginning of the
-    request are handled by the app's error handlers. :pr:`2254`
--   Blueprints gained ``Blueprint.json_encoder`` and
-    ``Blueprint.json_decoder`` attributes to override the app's
-    encoder and decoder. :pr:`1898`
--   ``Flask.make_response`` raises ``TypeError`` instead of
-    ``ValueError`` for bad response types. The error messages have been
-    improved to describe why the type is invalid. :pr:`2256`
--   Add ``routes`` CLI command to output routes registered on the
-    application. :pr:`2259`
--   Show warning when session cookie domain is a bare hostname or an IP
-    address, as these may not behave properly in some browsers, such as
+-   Các lỗi gây ra trong khi mở session ở đầu
+    yêu cầu được xử lý bởi các trình xử lý lỗi của ứng dụng. :pr:`2254`
+-   Các blueprint đã có thêm các thuộc tính ``Blueprint.json_encoder`` và
+    ``Blueprint.json_decoder`` để ghi đè encoder và decoder của ứng dụng.
+    :pr:`1898`
+-   ``Flask.make_response`` ném ra ``TypeError`` thay vì
+    ``ValueError`` cho các kiểu phản hồi xấu. Các thông báo lỗi đã được
+    cải thiện để mô tả lý do tại sao kiểu không hợp lệ. :pr:`2256`
+-   Thêm lệnh CLI ``routes`` để xuất các route đã đăng ký trên
+    ứng dụng. :pr:`2259`
+-   Hiển thị cảnh báo khi miền cookie session là một tên máy chủ trần (bare hostname) hoặc một địa chỉ IP,
+    vì những điều này có thể không hoạt động bình thường trong một số trình duyệt, chẳng hạn như
     Chrome. :pr:`2282`
--   Allow IP address as exact session cookie domain. :pr:`2282`
--   ``SESSION_COOKIE_DOMAIN`` is set if it is detected through
+-   Cho phép địa chỉ IP làm miền cookie session chính xác. :pr:`2282`
+-   ``SESSION_COOKIE_DOMAIN`` được thiết lập nếu nó được phát hiện thông qua
     ``SERVER_NAME``. :pr:`2282`
--   Auto-detect zero-argument app factory called ``create_app`` or
-    ``make_app`` from ``FLASK_APP``. :pr:`2297`
--   Factory functions are not required to take a ``script_info``
-    parameter to work with the ``flask`` command. If they take a single
-    parameter or a parameter named ``script_info``, the ``ScriptInfo``
-    object will be passed. :pr:`2319`
--   ``FLASK_APP`` can be set to an app factory, with arguments if
-    needed, for example ``FLASK_APP=myproject.app:create_app('dev')``.
+-   Tự động phát hiện factory ứng dụng không đối số được gọi là ``create_app`` hoặc
+    ``make_app`` từ ``FLASK_APP``. :pr:`2297`
+-   Các hàm factory không bắt buộc phải nhận tham số ``script_info``
+    để làm việc với lệnh ``flask``. Nếu chúng nhận một tham số duy nhất
+    hoặc một tham số có tên ``script_info``, đối tượng ``ScriptInfo``
+    sẽ được truyền vào. :pr:`2319`
+-   ``FLASK_APP`` có thể được đặt thành một factory ứng dụng, với các đối số nếu
+    cần, ví dụ ``FLASK_APP=myproject.app:create_app('dev')``.
     :pr:`2326`
--   ``FLASK_APP`` can point to local packages that are not installed in
-    editable mode, although ``pip install -e`` is still preferred.
+-   ``FLASK_APP`` có thể trỏ đến các gói cục bộ không được cài đặt trong
+    chế độ có thể chỉnh sửa, mặc dù ``pip install -e`` vẫn được ưu tiên.
     :pr:`2414`
--   The ``View`` class attribute
-    ``View.provide_automatic_options`` is set in ``View.as_view``, to be
-    detected by ``Flask.add_url_rule``. :pr:`2316`
--   Error handling will try handlers registered for ``blueprint, code``,
+-   Thuộc tính lớp ``View``
+    ``View.provide_automatic_options`` được thiết lập trong ``View.as_view``, để được
+    phát hiện bởi ``Flask.add_url_rule``. :pr:`2316`
+-   Xử lý lỗi sẽ thử các trình xử lý được đăng ký cho ``blueprint, code``,
     ``app, code``, ``blueprint, exception``, ``app, exception``.
     :pr:`2314`
--   ``Cookie`` is added to the response's ``Vary`` header if the session
-    is accessed at all during the request (and not deleted). :pr:`2288`
--   ``Flask.test_request_context`` accepts ``subdomain`` and
-    ``url_scheme`` arguments for use when building the base URL.
+-   ``Cookie`` được thêm vào header ``Vary`` của phản hồi nếu session
+    được truy cập trong suốt yêu cầu (và không bị xóa). :pr:`2288`
+-   ``Flask.test_request_context`` chấp nhận các đối số ``subdomain`` và
+    ``url_scheme`` để sử dụng khi xây dựng URL cơ sở.
     :pr:`1621`
--   Set ``APPLICATION_ROOT`` to ``'/'`` by default. This was already the
-    implicit default when it was set to ``None``.
--   ``TRAP_BAD_REQUEST_ERRORS`` is enabled by default in debug mode.
-    ``BadRequestKeyError`` has a message with the bad key in debug mode
-    instead of the generic bad request message. :pr:`2348`
--   Allow registering new tags with ``TaggedJSONSerializer`` to support
-    storing other types in the session cookie. :pr:`2352`
--   Only open the session if the request has not been pushed onto the
-    context stack yet. This allows ``stream_with_context`` generators to
-    access the same session that the containing view uses. :pr:`2354`
--   Add ``json`` keyword argument for the test client request methods.
-    This will dump the given object as JSON and set the appropriate
-    content type. :pr:`2358`
--   Extract JSON handling to a mixin applied to both the ``Request`` and
-    ``Response`` classes. This adds the ``Response.is_json`` and
-    ``Response.get_json`` methods to the response to make testing JSON
-    response much easier. :pr:`2358`
--   Removed error handler caching because it caused unexpected results
-    for some exception inheritance hierarchies. Register handlers
-    explicitly for each exception if you want to avoid traversing the
+-   Thiết lập ``APPLICATION_ROOT`` thành ``'/'`` theo mặc định. Đây đã là
+    mặc định ngầm định khi nó được thiết lập thành ``None``.
+-   ``TRAP_BAD_REQUEST_ERRORS`` được bật theo mặc định trong chế độ gỡ lỗi.
+    ``BadRequestKeyError`` có một thông báo với khóa xấu trong chế độ gỡ lỗi
+    thay vì thông báo yêu cầu xấu chung chung. :pr:`2348`
+-   Cho phép đăng ký các thẻ mới với ``TaggedJSONSerializer`` để hỗ trợ
+    lưu trữ các kiểu khác trong cookie session. :pr:`2352`
+-   Chỉ mở session nếu yêu cầu chưa được đẩy lên
+    ngăn xếp ngữ cảnh. Điều này cho phép các generator ``stream_with_context``
+    truy cập cùng một session mà view chứa nó sử dụng. :pr:`2354`
+-   Thêm đối số từ khóa ``json`` cho các phương thức yêu cầu của test client.
+    Điều này sẽ dump đối tượng đã cho dưới dạng JSON và thiết lập
+    loại nội dung thích hợp. :pr:`2358`
+-   Trích xuất xử lý JSON sang một mixin được áp dụng cho cả các lớp ``Request`` và
+    ``Response``. Điều này thêm các phương thức ``Response.is_json`` và
+    ``Response.get_json`` vào phản hồi để làm cho việc kiểm tra phản hồi JSON
+    dễ dàng hơn nhiều. :pr:`2358`
+-   Đã xóa bộ nhớ đệm trình xử lý lỗi vì nó gây ra kết quả không mong muốn
+    cho một số phân cấp kế thừa ngoại lệ. Đăng ký các trình xử lý
+    một cách rõ ràng cho từng ngoại lệ nếu bạn muốn tránh duyệt qua
     MRO. :pr:`2362`
--   Fix incorrect JSON encoding of aware, non-UTC datetimes. :pr:`2374`
--   Template auto reloading will honor debug mode even if
-    ``Flask.jinja_env`` was already accessed. :pr:`2373`
--   The following old deprecated code was removed. :issue:`2385`
+-   Sửa mã hóa JSON không chính xác của các datetime nhận biết (aware), không phải UTC. :pr:`2374`
+-   Tự động tải lại template sẽ tôn trọng chế độ gỡ lỗi ngay cả khi
+    ``Flask.jinja_env`` đã được truy cập. :pr:`2373`
+-   Mã cũ bị phản đối sau đây đã bị xóa. :issue:`2385`
 
-    -   ``flask.ext`` - import extensions directly by their name instead
-        of through the ``flask.ext`` namespace. For example,
-        ``import flask.ext.sqlalchemy`` becomes
+    -   ``flask.ext`` - import các tiện ích mở rộng trực tiếp bằng tên của chúng thay vì
+        thông qua namespace ``flask.ext``. Ví dụ,
+        ``import flask.ext.sqlalchemy`` trở thành
         ``import flask_sqlalchemy``.
-    -   ``Flask.init_jinja_globals`` - extend
-        ``Flask.create_jinja_environment`` instead.
-    -   ``Flask.error_handlers`` - tracked by
-        ``Flask.error_handler_spec``, use ``Flask.errorhandler``
-        to register handlers.
-    -   ``Flask.request_globals_class`` - use
-        ``Flask.app_ctx_globals_class`` instead.
-    -   ``Flask.static_path`` - use ``Flask.static_url_path`` instead.
-    -   ``Request.module`` - use ``Request.blueprint`` instead.
+    -   ``Flask.init_jinja_globals`` - mở rộng
+        ``Flask.create_jinja_environment`` thay thế.
+    -   ``Flask.error_handlers`` - được theo dõi bởi
+        ``Flask.error_handler_spec``, sử dụng ``Flask.errorhandler``
+        để đăng ký các trình xử lý.
+    -   ``Flask.request_globals_class`` - sử dụng
+        ``Flask.app_ctx_globals_class`` thay thế.
+    -   ``Flask.static_path`` - sử dụng ``Flask.static_url_path`` thay thế.
+    -   ``Request.module`` - sử dụng ``Request.blueprint`` thay thế.
 
--   The ``Request.json`` property is no longer deprecated. :issue:`1421`
--   Support passing a ``EnvironBuilder`` or ``dict`` to
+-   Thuộc tính ``Request.json`` không còn bị phản đối. :issue:`1421`
+-   Hỗ trợ truyền một ``EnvironBuilder`` hoặc ``dict`` đến
     ``test_client.open``. :pr:`2412`
--   The ``flask`` command and ``Flask.run`` will load environment
-    variables from ``.env`` and ``.flaskenv`` files if python-dotenv is
-    installed. :pr:`2416`
--   When passing a full URL to the test client, the scheme in the URL is
-    used instead of ``PREFERRED_URL_SCHEME``. :pr:`2430`
--   ``Flask.logger`` has been simplified. ``LOGGER_NAME`` and
-    ``LOGGER_HANDLER_POLICY`` config was removed. The logger is always
-    named ``flask.app``. The level is only set on first access, it
-    doesn't check ``Flask.debug`` each time. Only one format is used,
-    not different ones depending on ``Flask.debug``. No handlers are
-    removed, and a handler is only added if no handlers are already
-    configured. :pr:`2436`
--   Blueprint view function names may not contain dots. :pr:`2450`
--   Fix a ``ValueError`` caused by invalid ``Range`` requests in some
-    cases. :issue:`2526`
--   The development server uses threads by default. :pr:`2529`
--   Loading config files with ``silent=True`` will ignore ``ENOTDIR``
-    errors. :pr:`2581`
--   Pass ``--cert`` and ``--key`` options to ``flask run`` to run the
-    development server over HTTPS. :pr:`2606`
--   Added ``SESSION_COOKIE_SAMESITE`` to control the ``SameSite``
-    attribute on the session cookie. :pr:`2607`
--   Added ``Flask.test_cli_runner`` to create a Click runner that can
-    invoke Flask CLI commands for testing. :pr:`2636`
--   Subdomain matching is disabled by default and setting
-    ``SERVER_NAME`` does not implicitly enable it. It can be enabled by
-    passing ``subdomain_matching=True`` to the ``Flask`` constructor.
+-   Lệnh ``flask`` và ``Flask.run`` sẽ tải các biến môi trường
+    từ các tệp ``.env`` và ``.flaskenv`` nếu python-dotenv được
+    cài đặt. :pr:`2416`
+-   Khi truyền một URL đầy đủ đến test client, scheme trong URL được
+    sử dụng thay vì ``PREFERRED_URL_SCHEME``. :pr:`2430`
+-   ``Flask.logger`` đã được đơn giản hóa. Cấu hình ``LOGGER_NAME`` và
+    ``LOGGER_HANDLER_POLICY`` đã bị xóa. Logger luôn được
+    đặt tên là ``flask.app``. Mức độ chỉ được thiết lập trong lần truy cập đầu tiên, nó
+    không kiểm tra ``Flask.debug`` mỗi lần. Chỉ một định dạng được sử dụng,
+    không phải các định dạng khác nhau tùy thuộc vào ``Flask.debug``. Không có trình xử lý nào bị
+    xóa, và một trình xử lý chỉ được thêm vào nếu chưa có trình xử lý nào được
+    cấu hình. :pr:`2436`
+-   Tên hàm view blueprint không được chứa dấu chấm. :pr:`2450`
+-   Sửa một ``ValueError`` gây ra bởi các yêu cầu ``Range`` không hợp lệ trong một số
+    trường hợp. :issue:`2526`
+-   Máy chủ phát triển sử dụng các luồng theo mặc định. :pr:`2529`
+-   Tải các tệp cấu hình với ``silent=True`` sẽ bỏ qua các lỗi ``ENOTDIR``.
+    :pr:`2581`
+-   Truyền các tùy chọn ``--cert`` và ``--key`` đến ``flask run`` để chạy
+    máy chủ phát triển qua HTTPS. :pr:`2606`
+-   Đã thêm ``SESSION_COOKIE_SAMESITE`` để kiểm soát thuộc tính ``SameSite``
+    trên cookie session. :pr:`2607`
+-   Đã thêm ``Flask.test_cli_runner`` để tạo một Click runner có thể
+    gọi các lệnh CLI Flask để kiểm thử. :pr:`2636`
+-   Khớp tên miền phụ bị vô hiệu hóa theo mặc định và thiết lập
+    ``SERVER_NAME`` không ngầm kích hoạt nó. Nó có thể được kích hoạt bằng cách
+    truyền ``subdomain_matching=True`` đến hàm tạo ``Flask``.
     :pr:`2635`
--   A single trailing slash is stripped from the blueprint
-    ``url_prefix`` when it is registered with the app. :pr:`2629`
--   ``Request.get_json`` doesn't cache the result if parsing fails when
-    ``silent`` is true. :issue:`2651`
--   ``Request.get_json`` no longer accepts arbitrary encodings. Incoming
-    JSON should be encoded using UTF-8 per :rfc:`8259`, but Flask will
-    autodetect UTF-8, -16, or -32. :pr:`2691`
--   Added ``MAX_COOKIE_SIZE`` and ``Response.max_cookie_size`` to
-    control when Werkzeug warns about large cookies that browsers may
-    ignore. :pr:`2693`
--   Updated documentation theme to make docs look better in small
-    windows. :pr:`2709`
--   Rewrote the tutorial docs and example project to take a more
-    structured approach to help new users avoid common pitfalls.
+-   Một dấu gạch chéo cuối cùng duy nhất bị loại bỏ khỏi ``url_prefix``
+    của blueprint khi nó được đăng ký với ứng dụng. :pr:`2629`
+-   ``Request.get_json`` không cache kết quả nếu phân tích cú pháp thất bại khi
+    ``silent`` là true. :issue:`2651`
+-   ``Request.get_json`` không còn chấp nhận các mã hóa tùy ý. JSON đến
+    nên được mã hóa bằng UTF-8 theo :rfc:`8259`, nhưng Flask sẽ
+    tự động phát hiện UTF-8, -16, hoặc -32. :pr:`2691`
+-   Đã thêm ``MAX_COOKIE_SIZE`` và ``Response.max_cookie_size`` để
+    kiểm soát khi Werkzeug cảnh báo về các cookie lớn mà các trình duyệt có thể
+    bỏ qua. :pr:`2693`
+-   Đã cập nhật chủ đề tài liệu để làm cho tài liệu trông đẹp hơn trong các cửa sổ
+    nhỏ. :pr:`2709`
+-   Viết lại tài liệu hướng dẫn và dự án ví dụ để thực hiện một cách tiếp cận
+    có cấu trúc hơn để giúp người dùng mới tránh các cạm bẫy phổ biến.
     :pr:`2676`
 
 
 Version 0.12.5
 --------------
 
-Released 2020-02-10
+Đã phát hành 2020-02-10
 
--   Pin Werkzeug to < 1.0.0. :issue:`3497`
+-   Ghim Werkzeug ở mức < 1.0.0. :issue:`3497`
 
 
 Version 0.12.4
 --------------
 
-Released 2018-04-29
+Đã phát hành 2018-04-29
 
--   Repackage 0.12.3 to fix package layout issue. :issue:`2728`
+-   Đóng gói lại 0.12.3 để sửa lỗi bố cục gói. :issue:`2728`
 
 
 Version 0.12.3
 --------------
 
-Released 2018-04-26
+Đã phát hành 2018-04-26
 
--   ``Request.get_json`` no longer accepts arbitrary encodings.
-    Incoming JSON should be encoded using UTF-8 per :rfc:`8259`, but
-    Flask will autodetect UTF-8, -16, or -32. :issue:`2692`
--   Fix a Python warning about imports when using ``python -m flask``.
+-   ``Request.get_json`` không còn chấp nhận các mã hóa tùy ý.
+    JSON đến nên được mã hóa bằng UTF-8 theo :rfc:`8259`, nhưng
+    Flask sẽ tự động phát hiện UTF-8, -16, hoặc -32. :issue:`2692`
+-   Sửa một cảnh báo Python về import khi sử dụng ``python -m flask``.
     :issue:`2666`
--   Fix a ``ValueError`` caused by invalid ``Range`` requests in some
-    cases.
+-   Sửa một ``ValueError`` gây ra bởi các yêu cầu ``Range`` không hợp lệ trong một số
+    trường hợp.
 
 
 Version 0.12.2
 --------------
 
-Released 2017-05-16
+Đã phát hành 2017-05-16
 
--   Fix a bug in ``safe_join`` on Windows.
+-   Sửa một lỗi trong ``safe_join`` trên Windows.
 
 
 Version 0.12.1
 --------------
 
-Released 2017-03-31
+Đã phát hành 2017-03-31
 
--   Prevent ``flask run`` from showing a ``NoAppException`` when an
-    ``ImportError`` occurs within the imported application module.
--   Fix encoding behavior of ``app.config.from_pyfile`` for Python 3.
+-   Ngăn ``flask run`` hiển thị ``NoAppException`` khi một
+    ``ImportError`` xảy ra bên trong mô-đun ứng dụng được import.
+-   Sửa hành vi mã hóa của ``app.config.from_pyfile`` cho Python 3.
     :issue:`2118`
--   Use the ``SERVER_NAME`` config if it is present as default values
-    for ``app.run``. :issue:`2109`, :pr:`2152`
--   Call ``ctx.auto_pop`` with the exception object instead of ``None``,
-    in the event that a ``BaseException`` such as ``KeyboardInterrupt``
-    is raised in a request handler.
+-   Sử dụng cấu hình ``SERVER_NAME`` nếu nó hiện diện làm giá trị mặc định
+    cho ``app.run``. :issue:`2109`, :pr:`2152`
+-   Gọi ``ctx.auto_pop`` với đối tượng ngoại lệ thay vì ``None``,
+    trong trường hợp một ``BaseException`` như ``KeyboardInterrupt``
+    được ném ra trong một trình xử lý yêu cầu.
 
 
 Version 0.12
 ------------
 
-Released 2016-12-21, codename Punsch
+Đã phát hành 2016-12-21, tên mã Punsch
 
--   The cli command now responds to ``--version``.
--   Mimetype guessing and ETag generation for file-like objects in
-    ``send_file`` has been removed. :issue:`104`, :pr`1849`
--   Mimetype guessing in ``send_file`` now fails loudly and doesn't fall
-    back to ``application/octet-stream``. :pr:`1988`
--   Make ``flask.safe_join`` able to join multiple paths like
+-   Lệnh cli hiện phản hồi với ``--version``.
+-   Đoán Mimetype và tạo ETag cho các đối tượng giống tệp trong
+    ``send_file`` đã bị xóa. :issue:`104`, :pr`1849`
+-   Đoán Mimetype trong ``send_file`` hiện thất bại ồn ào và không quay lại
+    ``application/octet-stream``. :pr:`1988`
+-   Làm cho ``flask.safe_join`` có thể nối nhiều đường dẫn giống như
     ``os.path.join`` :pr:`1730`
--   Revert a behavior change that made the dev server crash instead of
-    returning an Internal Server Error. :pr:`2006`
--   Correctly invoke response handlers for both regular request
-    dispatching as well as error handlers.
--   Disable logger propagation by default for the app logger.
--   Add support for range requests in ``send_file``.
--   ``app.test_client`` includes preset default environment, which can
-    now be directly set, instead of per ``client.get``.
--   Fix crash when running under PyPy3. :pr:`1814`
+-   Hoàn tác một thay đổi hành vi làm cho máy chủ phát triển bị sập thay vì
+    trả về Lỗi Máy chủ Nội bộ. :pr:`2006`
+-   Gọi chính xác các trình xử lý phản hồi cho cả việc gửi yêu cầu
+    thông thường cũng như các trình xử lý lỗi.
+-   Vô hiệu hóa lan truyền logger theo mặc định cho logger ứng dụng.
+-   Thêm hỗ trợ cho các yêu cầu phạm vi trong ``send_file``.
+-   ``app.test_client`` bao gồm môi trường mặc định đặt trước, hiện có thể
+    được thiết lập trực tiếp, thay vì mỗi ``client.get``.
+-   Sửa lỗi sập khi chạy dưới PyPy3. :pr:`1814`
 
 
 Version 0.11.1
 --------------
 
-Released 2016-06-07
+Đã phát hành 2016-06-07
 
--   Fixed a bug that prevented ``FLASK_APP=foobar/__init__.py`` from
-    working. :pr:`1872`
+-   Đã sửa một lỗi ngăn ``FLASK_APP=foobar/__init__.py`` hoạt động. :pr:`1872`
 
 
 Version 0.11
 ------------
 
-Released 2016-05-29, codename Absinthe
+Đã phát hành 2016-05-29, tên mã Absinthe
 
--   Added support to serializing top-level arrays to ``jsonify``. This
-    introduces a security risk in ancient browsers.
--   Added before_render_template signal.
--   Added ``**kwargs`` to ``Flask.test_client`` to support passing
-    additional keyword arguments to the constructor of
+-   Đã thêm hỗ trợ tuần tự hóa các mảng cấp cao nhất vào ``jsonify``. Điều này
+    gây ra rủi ro bảo mật trong các trình duyệt cổ đại.
+-   Đã thêm tín hiệu before_render_template.
+-   Đã thêm ``**kwargs`` vào ``Flask.test_client`` để hỗ trợ truyền
+    các đối số từ khóa bổ sung cho hàm tạo của
     ``Flask.test_client_class``.
--   Added ``SESSION_REFRESH_EACH_REQUEST`` config key that controls the
-    set-cookie behavior. If set to ``True`` a permanent session will be
-    refreshed each request and get their lifetime extended, if set to
-    ``False`` it will only be modified if the session actually modifies.
-    Non permanent sessions are not affected by this and will always
-    expire if the browser window closes.
--   Made Flask support custom JSON mimetypes for incoming data.
--   Added support for returning tuples in the form ``(response,
-    headers)`` from a view function.
--   Added ``Config.from_json``.
--   Added ``Flask.config_class``.
--   Added ``Config.get_namespace``.
--   Templates are no longer automatically reloaded outside of debug
-    mode. This can be configured with the new ``TEMPLATES_AUTO_RELOAD``
-    config key.
--   Added a workaround for a limitation in Python 3.3's namespace
-    loader.
--   Added support for explicit root paths when using Python 3.3's
-    namespace packages.
--   Added ``flask`` and the ``flask.cli`` module to start the
-    local debug server through the click CLI system. This is recommended
-    over the old ``flask.run()`` method as it works faster and more
-    reliable due to a different design and also replaces
+-   Đã thêm khóa cấu hình ``SESSION_REFRESH_EACH_REQUEST`` kiểm soát
+    hành vi set-cookie. Nếu được đặt thành ``True`` một session vĩnh viễn sẽ được
+    làm mới mỗi yêu cầu và được gia hạn thời gian tồn tại, nếu được đặt thành
+    ``False`` nó sẽ chỉ được sửa đổi nếu session thực sự thay đổi.
+    Các session không vĩnh viễn không bị ảnh hưởng bởi điều này và sẽ luôn
+    hết hạn nếu cửa sổ trình duyệt đóng.
+-   Đã làm cho Flask hỗ trợ các mimetype JSON tùy chỉnh cho dữ liệu đến.
+-   Đã thêm hỗ trợ trả về các tuple ở dạng ``(response,
+    headers)`` từ một hàm view.
+-   Đã thêm ``Config.from_json``.
+-   Đã thêm ``Flask.config_class``.
+-   Đã thêm ``Config.get_namespace``.
+-   Các template không còn được tự động tải lại bên ngoài chế độ gỡ lỗi.
+    Điều này có thể được cấu hình với khóa cấu hình mới ``TEMPLATES_AUTO_RELOAD``.
+-   Đã thêm một giải pháp thay thế cho một hạn chế trong trình tải namespace
+    của Python 3.3.
+-   Đã thêm hỗ trợ cho các đường dẫn gốc rõ ràng khi sử dụng các gói namespace
+    của Python 3.3.
+-   Đã thêm ``flask`` và mô-đun ``flask.cli`` để khởi động
+    máy chủ gỡ lỗi cục bộ thông qua hệ thống click CLI. Điều này được khuyến nghị
+    hơn phương thức cũ ``flask.run()`` vì nó hoạt động nhanh hơn và đáng tin cậy
+    hơn do thiết kế khác và cũng thay thế
     ``Flask-Script``.
--   Error handlers that match specific classes are now checked first,
-    thereby allowing catching exceptions that are subclasses of HTTP
-    exceptions (in ``werkzeug.exceptions``). This makes it possible for
-    an extension author to create exceptions that will by default result
-    in the HTTP error of their choosing, but may be caught with a custom
-    error handler if desired.
--   Added ``Config.from_mapping``.
--   Flask will now log by default even if debug is disabled. The log
-    format is now hardcoded but the default log handling can be disabled
-    through the ``LOGGER_HANDLER_POLICY`` configuration key.
--   Removed deprecated module functionality.
--   Added the ``EXPLAIN_TEMPLATE_LOADING`` config flag which when
-    enabled will instruct Flask to explain how it locates templates.
-    This should help users debug when the wrong templates are loaded.
--   Enforce blueprint handling in the order they were registered for
-    template loading.
--   Ported test suite to py.test.
--   Deprecated ``request.json`` in favour of ``request.get_json()``.
--   Add "pretty" and "compressed" separators definitions in jsonify()
-    method. Reduces JSON response size when
-    ``JSONIFY_PRETTYPRINT_REGULAR=False`` by removing unnecessary white
-    space included by default after separators.
--   JSON responses are now terminated with a newline character, because
-    it is a convention that UNIX text files end with a newline and some
-    clients don't deal well when this newline is missing. :pr:`1262`
--   The automatically provided ``OPTIONS`` method is now correctly
-    disabled if the user registered an overriding rule with the
-    lowercase-version ``options``. :issue:`1288`
--   ``flask.json.jsonify`` now supports the ``datetime.date`` type.
+-   Các trình xử lý lỗi khớp với các lớp cụ thể hiện được kiểm tra trước,
+    do đó cho phép bắt các ngoại lệ là lớp con của các ngoại lệ HTTP
+    (trong ``werkzeug.exceptions``). Điều này làm cho tác giả tiện ích mở rộng có thể
+    tạo ra các ngoại lệ mà theo mặc định sẽ dẫn đến lỗi HTTP mà họ chọn, nhưng có thể
+    bị bắt bằng một trình xử lý lỗi tùy chỉnh nếu muốn.
+-   Đã thêm ``Config.from_mapping``.
+-   Flask hiện sẽ ghi nhật ký theo mặc định ngay cả khi gỡ lỗi bị tắt. Định dạng nhật ký
+    hiện được mã hóa cứng nhưng việc xử lý nhật ký mặc định có thể bị tắt
+    thông qua khóa cấu hình ``LOGGER_HANDLER_POLICY``.
+-   Đã xóa chức năng mô-đun bị phản đối.
+-   Đã thêm cờ cấu hình ``EXPLAIN_TEMPLATE_LOADING`` khi được
+    bật sẽ hướng dẫn Flask giải thích cách nó định vị các template.
+    Điều này sẽ giúp người dùng gỡ lỗi khi các template sai được tải.
+-   Thực thi xử lý blueprint theo thứ tự chúng được đăng ký để
+    tải template.
+-   Đã chuyển bộ test suite sang py.test.
+-   Phản đối ``request.json`` để ủng hộ ``request.get_json()``.
+-   Thêm các định nghĩa dấu phân cách "pretty" và "compressed" trong phương thức jsonify().
+    Giảm kích thước phản hồi JSON khi
+    ``JSONIFY_PRETTYPRINT_REGULAR=False`` bằng cách xóa khoảng trắng không cần thiết
+    được bao gồm theo mặc định sau các dấu phân cách.
+-   Các phản hồi JSON hiện được kết thúc bằng ký tự dòng mới, vì
+    quy ước là các tệp văn bản UNIX kết thúc bằng dòng mới và một số
+    máy khách không xử lý tốt khi thiếu dòng mới này. :pr:`1262`
+-   Phương thức ``OPTIONS`` được cung cấp tự động hiện đã bị vô hiệu hóa chính xác
+    nếu người dùng đã đăng ký quy tắc ghi đè với
+    phiên bản chữ thường ``options``. :issue:`1288`
+-   ``flask.json.jsonify`` hiện hỗ trợ kiểu ``datetime.date``.
     :pr:`1326`
--   Don't leak exception info of already caught exceptions to context
-    teardown handlers. :pr:`1393`
--   Allow custom Jinja environment subclasses. :pr:`1422`
--   Updated extension dev guidelines.
--   ``flask.g`` now has ``pop()`` and ``setdefault`` methods.
--   Turn on autoescape for ``flask.templating.render_template_string``
-    by default. :pr:`1515`
--   ``flask.ext`` is now deprecated. :pr:`1484`
--   ``send_from_directory`` now raises BadRequest if the filename is
-    invalid on the server OS. :pr:`1763`
--   Added the ``JSONIFY_MIMETYPE`` configuration variable. :pr:`1728`
--   Exceptions during teardown handling will no longer leave bad
-    application contexts lingering around.
--   Fixed broken ``test_appcontext_signals()`` test case.
--   Raise an ``AttributeError`` in ``helpers.find_package`` with a
-    useful message explaining why it is raised when a :pep:`302` import
-    hook is used without an ``is_package()`` method.
--   Fixed an issue causing exceptions raised before entering a request
-    or app context to be passed to teardown handlers.
--   Fixed an issue with query parameters getting removed from requests
-    in the test client when absolute URLs were requested.
--   Made ``@before_first_request`` into a decorator as intended.
--   Fixed an etags bug when sending a file streams with a name.
--   Fixed ``send_from_directory`` not expanding to the application root
-    path correctly.
--   Changed logic of before first request handlers to flip the flag
-    after invoking. This will allow some uses that are potentially
-    dangerous but should probably be permitted.
--   Fixed Python 3 bug when a handler from
-    ``app.url_build_error_handlers`` reraises the ``BuildError``.
+-   Không rò rỉ thông tin ngoại lệ của các ngoại lệ đã bắt cho các trình xử lý
+    teardown ngữ cảnh. :pr:`1393`
+-   Cho phép các lớp con môi trường Jinja tùy chỉnh. :pr:`1422`
+-   Đã cập nhật hướng dẫn phát triển tiện ích mở rộng.
+-   ``flask.g`` hiện có các phương thức ``pop()`` và ``setdefault``.
+-   Bật autoescape cho ``flask.templating.render_template_string``
+    theo mặc định. :pr:`1515`
+-   ``flask.ext`` hiện đã bị phản đối. :pr:`1484`
+-   ``send_from_directory`` hiện ném ra BadRequest nếu tên tệp không hợp lệ
+    trên hệ điều hành máy chủ. :pr:`1763`
+-   Đã thêm biến cấu hình ``JSONIFY_MIMETYPE``. :pr:`1728`
+-   Các ngoại lệ trong quá trình xử lý teardown sẽ không còn để lại các ngữ cảnh
+    ứng dụng xấu lảng vảng xung quanh.
+-   Đã sửa trường hợp kiểm thử ``test_appcontext_signals()`` bị hỏng.
+-   Ném ra một ``AttributeError`` trong ``helpers.find_package`` với một
+    thông báo hữu ích giải thích lý do tại sao nó được ném ra khi một hook import :pep:`302`
+    được sử dụng mà không có phương thức ``is_package()``.
+-   Đã sửa một vấn đề khiến các ngoại lệ được ném ra trước khi vào một ngữ cảnh yêu cầu
+    hoặc ứng dụng được chuyển đến các trình xử lý teardown.
+-   Đã sửa một vấn đề với các tham số truy vấn bị xóa khỏi các yêu cầu
+    trong test client khi các URL tuyệt đối được yêu cầu.
+-   Đã biến ``@before_first_request`` thành một decorator như dự định.
+-   Đã sửa một lỗi etags khi gửi một luồng tệp với một tên.
+-   Đã sửa ``send_from_directory`` không mở rộng đến đường dẫn gốc ứng dụng
+    một cách chính xác.
+-   Đã thay đổi logic của các trình xử lý trước yêu cầu đầu tiên để lật cờ
+    sau khi gọi. Điều này sẽ cho phép một số cách sử dụng có khả năng
+    nguy hiểm nhưng có lẽ nên được cho phép.
+-   Đã sửa lỗi Python 3 khi một trình xử lý từ
+    ``app.url_build_error_handlers`` ném lại ``BuildError``.
 
 
 Version 0.10.1
 --------------
 
-Released 2013-06-14
+Đã phát hành 2013-06-14
 
--   Fixed an issue where ``|tojson`` was not quoting single quotes which
-    made the filter not work properly in HTML attributes. Now it's
-    possible to use that filter in single quoted attributes. This should
-    make using that filter with angular.js easier.
--   Added support for byte strings back to the session system. This
-    broke compatibility with the common case of people putting binary
-    data for token verification into the session.
--   Fixed an issue where registering the same method twice for the same
-    endpoint would trigger an exception incorrectly.
+-   Đã sửa một vấn đề trong đó ``|tojson`` không trích dẫn các dấu nháy đơn khiến
+    bộ lọc không hoạt động bình thường trong các thuộc tính HTML. Bây giờ có thể
+    sử dụng bộ lọc đó trong các thuộc tính được trích dẫn đơn. Điều này sẽ
+    làm cho việc sử dụng bộ lọc đó với angular.js dễ dàng hơn.
+-   Đã thêm hỗ trợ cho chuỗi byte trở lại hệ thống session. Điều này
+    đã phá vỡ khả năng tương thích với trường hợp phổ biến của những người đặt dữ liệu
+    nhị phân để xác minh mã thông báo vào session.
+-   Đã sửa một vấn đề trong đó việc đăng ký cùng một phương thức hai lần cho cùng một
+    endpoint sẽ kích hoạt một ngoại lệ không chính xác.
 
 
 Version 0.10
 ------------
 
-Released 2013-06-13, codename Limoncello
+Đã phát hành 2013-06-13, tên mã Limoncello
 
--   Changed default cookie serialization format from pickle to JSON to
-    limit the impact an attacker can do if the secret key leaks.
--   Added ``template_test`` methods in addition to the already existing
-    ``template_filter`` method family.
--   Added ``template_global`` methods in addition to the already
-    existing ``template_filter`` method family.
--   Set the content-length header for x-sendfile.
--   ``tojson`` filter now does not escape script blocks in HTML5
-    parsers.
--   ``tojson`` used in templates is now safe by default. This was
-    allowed due to the different escaping behavior.
--   Flask will now raise an error if you attempt to register a new
-    function on an already used endpoint.
--   Added wrapper module around simplejson and added default
-    serialization of datetime objects. This allows much easier
-    customization of how JSON is handled by Flask or any Flask
-    extension.
--   Removed deprecated internal ``flask.session`` module alias. Use
-    ``flask.sessions`` instead to get the session module. This is not to
-    be confused with ``flask.session`` the session proxy.
--   Templates can now be rendered without request context. The behavior
-    is slightly different as the ``request``, ``session`` and ``g``
-    objects will not be available and blueprint's context processors are
-    not called.
--   The config object is now available to the template as a real global
-    and not through a context processor which makes it available even in
-    imported templates by default.
--   Added an option to generate non-ascii encoded JSON which should
-    result in less bytes being transmitted over the network. It's
-    disabled by default to not cause confusion with existing libraries
-    that might expect ``flask.json.dumps`` to return bytes by default.
--   ``flask.g`` is now stored on the app context instead of the request
-    context.
--   ``flask.g`` now gained a ``get()`` method for not erroring out on
-    non existing items.
--   ``flask.g`` now can be used with the ``in`` operator to see what's
-    defined and it now is iterable and will yield all attributes stored.
--   ``flask.Flask.request_globals_class`` got renamed to
-    ``flask.Flask.app_ctx_globals_class`` which is a better name to what
-    it does since 0.10.
--   ``request``, ``session`` and ``g`` are now also added as proxies to
-    the template context which makes them available in imported
-    templates. One has to be very careful with those though because
-    usage outside of macros might cause caching.
--   Flask will no longer invoke the wrong error handlers if a proxy
-    exception is passed through.
--   Added a workaround for chrome's cookies in localhost not working as
-    intended with domain names.
--   Changed logic for picking defaults for cookie values from sessions
-    to work better with Google Chrome.
--   Added ``message_flashed`` signal that simplifies flashing testing.
--   Added support for copying of request contexts for better working
-    with greenlets.
--   Removed custom JSON HTTP exception subclasses. If you were relying
-    on them you can reintroduce them again yourself trivially. Using
-    them however is strongly discouraged as the interface was flawed.
--   Python requirements changed: requiring Python 2.6 or 2.7 now to
-    prepare for Python 3.3 port.
--   Changed how the teardown system is informed about exceptions. This
-    is now more reliable in case something handles an exception halfway
-    through the error handling process.
--   Request context preservation in debug mode now keeps the exception
-    information around which means that teardown handlers are able to
-    distinguish error from success cases.
--   Added the ``JSONIFY_PRETTYPRINT_REGULAR`` configuration variable.
--   Flask now orders JSON keys by default to not trash HTTP caches due
-    to different hash seeds between different workers.
--   Added ``appcontext_pushed`` and ``appcontext_popped`` signals.
--   The builtin run method now takes the ``SERVER_NAME`` into account
-    when picking the default port to run on.
--   Added ``flask.request.get_json()`` as a replacement for the old
-    ``flask.request.json`` property.
+-   Đã thay đổi định dạng tuần tự hóa cookie mặc định từ pickle sang JSON để
+    hạn chế tác động mà kẻ tấn công có thể thực hiện nếu khóa bí mật bị rò rỉ.
+-   Đã thêm các phương thức ``template_test`` ngoài họ phương thức
+    ``template_filter`` đã tồn tại.
+-   Đã thêm các phương thức ``template_global`` ngoài họ phương thức
+    ``template_filter`` đã tồn tại.
+-   Thiết lập header content-length cho x-sendfile.
+-   Bộ lọc ``tojson`` hiện không thoát các khối script trong trình phân tích cú pháp HTML5.
+-   ``tojson`` được sử dụng trong các template hiện an toàn theo mặc định. Điều này được
+    cho phép do hành vi thoát khác nhau.
+-   Flask hiện sẽ ném ra lỗi nếu bạn cố gắng đăng ký một hàm mới
+    trên một endpoint đã được sử dụng.
+-   Đã thêm mô-đun wrapper xung quanh simplejson và thêm tuần tự hóa mặc định
+    của các đối tượng datetime. Điều này cho phép tùy chỉnh dễ dàng hơn nhiều
+    về cách JSON được xử lý bởi Flask hoặc bất kỳ tiện ích mở rộng Flask nào.
+-   Đã xóa bí danh mô-đun nội bộ bị phản đối ``flask.session``. Sử dụng
+    ``flask.sessions`` thay thế để lấy mô-đun session. Điều này không được
+    nhầm lẫn với ``flask.session`` là proxy session.
+-   Các template hiện có thể được render mà không cần ngữ cảnh yêu cầu. Hành vi
+    hơi khác một chút vì các đối tượng ``request``, ``session`` và ``g``
+    sẽ không có sẵn và các bộ xử lý ngữ cảnh của blueprint không được gọi.
+-   Đối tượng config hiện có sẵn cho template như một biến toàn cục thực sự
+    và không thông qua một bộ xử lý ngữ cảnh, điều này làm cho nó có sẵn ngay cả trong
+    các template được import theo mặc định.
+-   Đã thêm một tùy chọn để tạo JSON được mã hóa không phải ascii, điều này sẽ
+    dẫn đến ít byte được truyền qua mạng hơn. Nó bị tắt theo mặc định để không gây
+    nhầm lẫn với các thư viện hiện có có thể mong đợi ``flask.json.dumps`` trả về byte theo mặc định.
+-   ``flask.g`` hiện được lưu trữ trên ngữ cảnh ứng dụng thay vì ngữ cảnh yêu cầu.
+-   ``flask.g`` hiện đã có thêm một phương thức ``get()`` để không bị lỗi trên
+    các mục không tồn tại.
+-   ``flask.g`` hiện có thể được sử dụng với toán tử ``in`` để xem những gì
+    được định nghĩa và nó hiện có thể lặp lại và sẽ yield tất cả các thuộc tính được lưu trữ.
+-   ``flask.Flask.request_globals_class`` đã được đổi tên thành
+    ``flask.Flask.app_ctx_globals_class``, đây là một cái tên tốt hơn cho những gì
+    nó làm kể từ 0.10.
+-   ``request``, ``session`` và ``g`` hiện cũng được thêm vào như các proxy cho
+    ngữ cảnh template, điều này làm cho chúng có sẵn trong các template được import.
+    Tuy nhiên, người ta phải rất cẩn thận với những thứ đó vì
+    việc sử dụng bên ngoài macro có thể gây ra bộ nhớ đệm.
+-   Flask sẽ không còn gọi sai các trình xử lý lỗi nếu một ngoại lệ proxy
+    được truyền qua.
+-   Đã thêm một giải pháp thay thế cho cookie của chrome trong localhost không hoạt động như
+    dự định với tên miền.
+-   Đã thay đổi logic để chọn mặc định cho các giá trị cookie từ session
+    để hoạt động tốt hơn với Google Chrome.
+-   Đã thêm tín hiệu ``message_flashed`` giúp đơn giản hóa việc kiểm thử flashing.
+-   Đã thêm hỗ trợ sao chép các ngữ cảnh yêu cầu để làm việc tốt hơn
+    với greenlets.
+-   Đã xóa các lớp con ngoại lệ HTTP JSON tùy chỉnh. Nếu bạn đang dựa vào
+    chúng, bạn có thể giới thiệu lại chúng một cách dễ dàng. Tuy nhiên, việc sử dụng
+    chúng không được khuyến khích vì giao diện bị lỗi.
+-   Yêu cầu Python đã thay đổi: yêu cầu Python 2.6 hoặc 2.7 ngay bây giờ để
+    chuẩn bị cho cổng Python 3.3.
+-   Đã thay đổi cách hệ thống teardown được thông báo về các ngoại lệ. Điều này
+    hiện đáng tin cậy hơn trong trường hợp một cái gì đó xử lý một ngoại lệ giữa chừng
+    trong quá trình xử lý lỗi.
+-   Bảo tồn ngữ cảnh yêu cầu trong chế độ gỡ lỗi hiện giữ thông tin ngoại lệ
+    xung quanh, điều đó có nghĩa là các trình xử lý teardown có thể
+    phân biệt lỗi với các trường hợp thành công.
+-   Đã thêm biến cấu hình ``JSONIFY_PRETTYPRINT_REGULAR``.
+-   Flask hiện sắp xếp các khóa JSON theo mặc định để không làm hỏng bộ nhớ đệm HTTP do
+    các hạt giống băm khác nhau giữa các worker khác nhau.
+-   Đã thêm các tín hiệu ``appcontext_pushed`` và ``appcontext_popped``.
+-   Phương thức run tích hợp hiện tính đến ``SERVER_NAME``
+    khi chọn cổng mặc định để chạy.
+-   Đã thêm ``flask.request.get_json()`` thay thế cho thuộc tính cũ
+    ``flask.request.json``.
 
 
 Version 0.9
 -----------
 
-Released 2012-07-01, codename Campari
+Đã phát hành 2012-07-01, tên mã Campari
 
--   The ``Request.on_json_loading_failed`` now returns a JSON formatted
-    response by default.
--   The ``url_for`` function now can generate anchors to the generated
-    links.
--   The ``url_for`` function now can also explicitly generate URL rules
-    specific to a given HTTP method.
--   Logger now only returns the debug log setting if it was not set
-    explicitly.
--   Unregister a circular dependency between the WSGI environment and
-    the request object when shutting down the request. This means that
-    environ ``werkzeug.request`` will be ``None`` after the response was
-    returned to the WSGI server but has the advantage that the garbage
-    collector is not needed on CPython to tear down the request unless
-    the user created circular dependencies themselves.
--   Session is now stored after callbacks so that if the session payload
-    is stored in the session you can still modify it in an after request
-    callback.
--   The ``Flask`` class will avoid importing the provided import name if
-    it can (the required first parameter), to benefit tools which build
-    Flask instances programmatically. The Flask class will fall back to
-    using import on systems with custom module hooks, e.g. Google App
-    Engine, or when the import name is inside a zip archive (usually an
-    egg) prior to Python 2.7.
--   Blueprints now have a decorator to add custom template filters
-    application wide, ``Blueprint.app_template_filter``.
--   The Flask and Blueprint classes now have a non-decorator method for
-    adding custom template filters application wide,
-    ``Flask.add_template_filter`` and
+-   ``Request.on_json_loading_failed`` hiện trả về phản hồi định dạng JSON
+    theo mặc định.
+-   Hàm ``url_for`` hiện có thể tạo các neo đến các liên kết được tạo.
+-   Hàm ``url_for`` hiện cũng có thể tạo rõ ràng các quy tắc URL
+    cụ thể cho một phương thức HTTP nhất định.
+-   Logger hiện chỉ trả về cài đặt nhật ký gỡ lỗi nếu nó không được thiết lập
+    rõ ràng.
+-   Hủy đăng ký phụ thuộc vòng tròn giữa môi trường WSGI và
+    đối tượng yêu cầu khi tắt yêu cầu. Điều này có nghĩa là
+    environ ``werkzeug.request`` sẽ là ``None`` sau khi phản hồi được
+    trả về máy chủ WSGI nhưng có lợi thế là bộ thu gom rác
+    không cần thiết trên CPython để xé bỏ yêu cầu trừ khi
+    người dùng tự tạo ra các phụ thuộc vòng tròn.
+-   Session hiện được lưu trữ sau các callback để nếu payload session
+    được lưu trữ trong session, bạn vẫn có thể sửa đổi nó trong một callback sau yêu cầu.
+-   Lớp ``Flask`` sẽ tránh import tên import được cung cấp nếu
+    có thể (tham số đầu tiên bắt buộc), để mang lại lợi ích cho các công cụ xây dựng
+    các thể hiện Flask theo chương trình. Lớp Flask sẽ quay lại
+    sử dụng import trên các hệ thống có hook mô-đun tùy chỉnh, ví dụ: Google App
+    Engine, hoặc khi tên import nằm trong kho lưu trữ zip (thường là
+    egg) trước Python 2.7.
+-   Các blueprint hiện có một decorator để thêm các bộ lọc template tùy chỉnh
+    trên toàn ứng dụng, ``Blueprint.app_template_filter``.
+-   Các lớp Flask và Blueprint hiện có một phương thức không phải decorator để
+    thêm các bộ lọc template tùy chỉnh trên toàn ứng dụng,
+    ``Flask.add_template_filter`` và
     ``Blueprint.add_app_template_filter``.
--   The ``get_flashed_messages`` function now allows rendering flashed
-    message categories in separate blocks, through a ``category_filter``
-    argument.
--   The ``Flask.run`` method now accepts ``None`` for ``host`` and
-    ``port`` arguments, using default values when ``None``. This allows
-    for calling run using configuration values, e.g.
+-   Hàm ``get_flashed_messages`` hiện cho phép render các danh mục tin nhắn
+    đã flash trong các khối riêng biệt, thông qua đối số ``category_filter``.
+-   Phương thức ``Flask.run`` hiện chấp nhận ``None`` cho các đối số ``host`` và
+    ``port``, sử dụng các giá trị mặc định khi ``None``. Điều này cho phép
+    gọi run bằng cách sử dụng các giá trị cấu hình, ví dụ:
     ``app.run(app.config.get('MYHOST'), app.config.get('MYPORT'))``,
-    with proper behavior whether or not a config file is provided.
--   The ``render_template`` method now accepts a either an iterable of
-    template names or a single template name. Previously, it only
-    accepted a single template name. On an iterable, the first template
-    found is rendered.
--   Added ``Flask.app_context`` which works very similar to the request
-    context but only provides access to the current application. This
-    also adds support for URL generation without an active request
-    context.
--   View functions can now return a tuple with the first instance being
-    an instance of ``Response``. This allows for returning
-    ``jsonify(error="error msg"), 400`` from a view function.
--   ``Flask`` and ``Blueprint`` now provide a ``get_send_file_max_age``
-    hook for subclasses to override behavior of serving static files
-    from Flask when using ``Flask.send_static_file`` (used for the
-    default static file handler) and ``helpers.send_file``. This hook is
-    provided a filename, which for example allows changing cache
-    controls by file extension. The default max-age for ``send_file``
-    and static files can be configured through a new
-    ``SEND_FILE_MAX_AGE_DEFAULT`` configuration variable, which is used
-    in the default ``get_send_file_max_age`` implementation.
--   Fixed an assumption in sessions implementation which could break
-    message flashing on sessions implementations which use external
-    storage.
--   Changed the behavior of tuple return values from functions. They are
-    no longer arguments to the response object, they now have a defined
-    meaning.
--   Added ``Flask.request_globals_class`` to allow a specific class to
-    be used on creation of the ``g`` instance of each request.
--   Added ``required_methods`` attribute to view functions to force-add
-    methods on registration.
--   Added ``flask.after_this_request``.
--   Added ``flask.stream_with_context`` and the ability to push contexts
-    multiple times without producing unexpected behavior.
+    với hành vi thích hợp cho dù tệp cấu hình có được cung cấp hay không.
+-   Phương thức ``render_template`` hiện chấp nhận một iterable của
+    tên template hoặc một tên template duy nhất. Trước đây, nó chỉ
+    chấp nhận một tên template duy nhất. Trên một iterable, template đầu tiên
+    được tìm thấy sẽ được render.
+-   Đã thêm ``Flask.app_context`` hoạt động rất giống với ngữ cảnh yêu cầu
+    nhưng chỉ cung cấp quyền truy cập vào ứng dụng hiện tại. Điều này
+    cũng thêm hỗ trợ cho việc tạo URL mà không cần ngữ cảnh yêu cầu
+    hoạt động.
+-   Các hàm view hiện có thể trả về một tuple với thể hiện đầu tiên là
+    một thể hiện của ``Response``. Điều này cho phép trả về
+    ``jsonify(error="error msg"), 400`` từ một hàm view.
+-   ``Flask`` và ``Blueprint`` hiện cung cấp một hook ``get_send_file_max_age``
+    cho các lớp con để ghi đè hành vi phục vụ các tệp tĩnh
+    từ Flask khi sử dụng ``Flask.send_static_file`` (được sử dụng cho
+    trình xử lý tệp tĩnh mặc định) và ``helpers.send_file``. Hook này được
+    cung cấp một tên tệp, ví dụ cho phép thay đổi kiểm soát bộ nhớ đệm
+    theo phần mở rộng tệp. Max-age mặc định cho ``send_file``
+    và các tệp tĩnh có thể được cấu hình thông qua biến cấu hình mới
+    ``SEND_FILE_MAX_AGE_DEFAULT``, được sử dụng
+    trong triển khai ``get_send_file_max_age`` mặc định.
+-   Đã sửa một giả định trong triển khai session có thể phá vỡ
+    message flashing trên các triển khai session sử dụng bộ nhớ ngoài.
+-   Đã thay đổi hành vi của các giá trị trả về tuple từ các hàm. Chúng
+    không còn là đối số cho đối tượng phản hồi, chúng hiện có một ý nghĩa
+    xác định.
+-   Đã thêm ``Flask.request_globals_class`` để cho phép một lớp cụ thể
+    được sử dụng khi tạo thể hiện ``g`` của mỗi yêu cầu.
+-   Đã thêm thuộc tính ``required_methods`` vào các hàm view để buộc thêm
+    các phương thức khi đăng ký.
+-   Đã thêm ``flask.after_this_request``.
+-   Đã thêm ``flask.stream_with_context`` và khả năng đẩy ngữ cảnh
+    nhiều lần mà không tạo ra hành vi không mong muốn.
 
 
 Version 0.8.1
 -------------
 
-Released 2012-07-01
+Đã phát hành 2012-07-01
 
--   Fixed an issue with the undocumented ``flask.session`` module to not
-    work properly on Python 2.5. It should not be used but did cause
-    some problems for package managers.
+-   Đã sửa một vấn đề với mô-đun ``flask.session`` không có tài liệu để không
+    hoạt động bình thường trên Python 2.5. Nó không nên được sử dụng nhưng đã gây ra
+    một số vấn đề cho các trình quản lý gói.
 
 
 Version 0.8
 -----------
 
-Released 2011-09-29, codename Rakija
+Đã phát hành 2011-09-29, tên mã Rakija
 
--   Refactored session support into a session interface so that the
-    implementation of the sessions can be changed without having to
-    override the Flask class.
--   Empty session cookies are now deleted properly automatically.
--   View functions can now opt out of getting the automatic OPTIONS
-    implementation.
--   HTTP exceptions and Bad Request errors can now be trapped so that
-    they show up normally in the traceback.
--   Flask in debug mode is now detecting some common problems and tries
-    to warn you about them.
--   Flask in debug mode will now complain with an assertion error if a
-    view was attached after the first request was handled. This gives
-    earlier feedback when users forget to import view code ahead of
-    time.
--   Added the ability to register callbacks that are only triggered once
-    at the beginning of the first request with
+-   Đã cấu trúc lại hỗ trợ session thành một giao diện session để việc
+    triển khai các session có thể thay đổi mà không cần phải
+    ghi đè lớp Flask.
+-   Các cookie session trống hiện được xóa đúng cách tự động.
+-   Các hàm view hiện có thể chọn không nhận triển khai OPTIONS
+    tự động.
+-   Các ngoại lệ HTTP và lỗi Bad Request hiện có thể bị bẫy để chúng
+    hiển thị bình thường trong traceback.
+-   Flask trong chế độ gỡ lỗi hiện đang phát hiện một số vấn đề phổ biến và cố gắng
+    cảnh báo bạn về chúng.
+-   Flask trong chế độ gỡ lỗi hiện sẽ phàn nàn với một lỗi assertion nếu một
+    view được đính kèm sau khi yêu cầu đầu tiên được xử lý. Điều này cung cấp
+    phản hồi sớm hơn khi người dùng quên import mã view trước.
+-   Đã thêm khả năng đăng ký các callback chỉ được kích hoạt một lần
+    khi bắt đầu yêu cầu đầu tiên với
     ``Flask.before_first_request``.
--   Malformed JSON data will now trigger a bad request HTTP exception
-    instead of a value error which usually would result in a 500
-    internal server error if not handled. This is a backwards
-    incompatible change.
--   Applications now not only have a root path where the resources and
-    modules are located but also an instance path which is the
-    designated place to drop files that are modified at runtime (uploads
-    etc.). Also this is conceptually only instance depending and outside
-    version control so it's the perfect place to put configuration files
-    etc.
--   Added the ``APPLICATION_ROOT`` configuration variable.
--   Implemented ``TestClient.session_transaction`` to easily modify
-    sessions from the test environment.
--   Refactored test client internally. The ``APPLICATION_ROOT``
-    configuration variable as well as ``SERVER_NAME`` are now properly
-    used by the test client as defaults.
--   Added ``View.decorators`` to support simpler decorating of pluggable
-    (class-based) views.
--   Fixed an issue where the test client if used with the "with"
-    statement did not trigger the execution of the teardown handlers.
--   Added finer control over the session cookie parameters.
--   HEAD requests to a method view now automatically dispatch to the
-    ``get`` method if no handler was implemented.
--   Implemented the virtual ``flask.ext`` package to import extensions
-    from.
--   The context preservation on exceptions is now an integral component
-    of Flask itself and no longer of the test client. This cleaned up
-    some internal logic and lowers the odds of runaway request contexts
-    in unittests.
--   Fixed the Jinja environment's ``list_templates`` method not
-    returning the correct names when blueprints or modules were
-    involved.
+-   Dữ liệu JSON không đúng định dạng hiện sẽ kích hoạt một ngoại lệ HTTP bad request
+    thay vì lỗi giá trị thường dẫn đến lỗi máy chủ nội bộ 500
+    nếu không được xử lý. Đây là một thay đổi không tương thích
+    ngược.
+-   Các ứng dụng hiện không chỉ có đường dẫn gốc nơi chứa tài nguyên và
+    mô-đun mà còn có đường dẫn instance là nơi được
+    chỉ định để thả các tệp được sửa đổi khi chạy (tải lên
+    v.v.). Ngoài ra, về mặt khái niệm, điều này chỉ phụ thuộc vào instance và nằm ngoài
+    kiểm soát phiên bản nên đây là nơi hoàn hảo để đặt các tệp cấu hình
+    v.v.
+-   Đã thêm biến cấu hình ``APPLICATION_ROOT``.
+-   Đã triển khai ``TestClient.session_transaction`` để dễ dàng sửa đổi
+    các session từ môi trường kiểm thử.
+-   Đã cấu trúc lại test client nội bộ. Biến cấu hình ``APPLICATION_ROOT``
+    cũng như ``SERVER_NAME`` hiện được sử dụng đúng cách
+    bởi test client làm mặc định.
+-   Đã thêm ``View.decorators`` để hỗ trợ việc trang trí đơn giản hơn cho các view
+    có thể cắm (dựa trên lớp).
+-   Đã sửa một vấn đề trong đó test client nếu được sử dụng với câu lệnh "with"
+    đã không kích hoạt việc thực thi các trình xử lý teardown.
+-   Đã thêm kiểm soát tốt hơn đối với các tham số cookie session.
+-   Các yêu cầu HEAD đến một method view hiện tự động gửi đến
+    phương thức ``get`` nếu không có trình xử lý nào được triển khai.
+-   Đã triển khai gói ảo ``flask.ext`` để import các tiện ích mở rộng
+    từ đó.
+-   Việc bảo tồn ngữ cảnh trên các ngoại lệ hiện là một thành phần không thể thiếu
+    của chính Flask và không còn là của test client nữa. Điều này đã làm sạch
+    một số logic nội bộ và giảm tỷ lệ các ngữ cảnh yêu cầu chạy trốn
+    trong unittests.
+-   Đã sửa phương thức ``list_templates`` của môi trường Jinja không
+    trả về tên chính xác khi các blueprint hoặc mô-đun có
+    liên quan.
 
 
 Version 0.7.2
 -------------
 
-Released 2011-07-06
+Đã phát hành 2011-07-06
 
--   Fixed an issue with URL processors not properly working on
-    blueprints.
+-   Đã sửa một vấn đề với các bộ xử lý URL không hoạt động bình thường trên
+    các blueprint.
 
 
 Version 0.7.1
 -------------
 
-Released 2011-06-29
+Đã phát hành 2011-06-29
 
--   Added missing future import that broke 2.5 compatibility.
--   Fixed an infinite redirect issue with blueprints.
+-   Đã thêm import future bị thiếu làm hỏng khả năng tương thích 2.5.
+-   Đã sửa một vấn đề chuyển hướng vô hạn với các blueprint.
 
 
 Version 0.7
 -----------
 
-Released 2011-06-28, codename Grappa
+Đã phát hành 2011-06-28, tên mã Grappa
 
--   Added ``Flask.make_default_options_response`` which can be used by
-    subclasses to alter the default behavior for ``OPTIONS`` responses.
--   Unbound locals now raise a proper ``RuntimeError`` instead of an
+-   Đã thêm ``Flask.make_default_options_response`` có thể được sử dụng bởi
+    các lớp con để thay đổi hành vi mặc định cho các phản hồi ``OPTIONS``.
+-   Các biến cục bộ không bị ràng buộc hiện ném ra một ``RuntimeError`` thích hợp thay vì một
     ``AttributeError``.
--   Mimetype guessing and etag support based on file objects is now
-    deprecated for ``send_file`` because it was unreliable. Pass
-    filenames instead or attach your own etags and provide a proper
-    mimetype by hand.
--   Static file handling for modules now requires the name of the static
-    folder to be supplied explicitly. The previous autodetection was not
-    reliable and caused issues on Google's App Engine. Until 1.0 the old
-    behavior will continue to work but issue dependency warnings.
--   Fixed a problem for Flask to run on jython.
--   Added a ``PROPAGATE_EXCEPTIONS`` configuration variable that can be
-    used to flip the setting of exception propagation which previously
-    was linked to ``DEBUG`` alone and is now linked to either ``DEBUG``
-    or ``TESTING``.
--   Flask no longer internally depends on rules being added through the
-    ``add_url_rule`` function and can now also accept regular werkzeug
-    rules added to the url map.
--   Added an ``endpoint`` method to the flask application object which
-    allows one to register a callback to an arbitrary endpoint with a
+-   Đoán Mimetype và hỗ trợ etag dựa trên các đối tượng tệp hiện
+    đã bị phản đối cho ``send_file`` vì nó không đáng tin cậy. Truyền
+    tên tệp thay thế hoặc đính kèm etag của riêng bạn và cung cấp một
+    mimetype thích hợp bằng tay.
+-   Xử lý tệp tĩnh cho các mô-đun hiện yêu cầu tên của thư mục tĩnh
+    phải được cung cấp rõ ràng. Việc tự động phát hiện trước đó không
+    đáng tin cậy và gây ra sự cố trên Google's App Engine. Cho đến 1.0
+    hành vi cũ sẽ tiếp tục hoạt động nhưng đưa ra cảnh báo phụ thuộc.
+-   Đã sửa một vấn đề để Flask chạy trên jython.
+-   Đã thêm một biến cấu hình ``PROPAGATE_EXCEPTIONS`` có thể được
+    sử dụng để lật cài đặt lan truyền ngoại lệ mà trước đây
+    chỉ được liên kết với ``DEBUG`` và hiện được liên kết với ``DEBUG``
+    hoặc ``TESTING``.
+-   Flask không còn phụ thuộc nội bộ vào các quy tắc được thêm thông qua
+    hàm ``add_url_rule`` và hiện cũng có thể chấp nhận các quy tắc werkzeug
+    thông thường được thêm vào bản đồ url.
+-   Đã thêm một phương thức ``endpoint`` vào đối tượng ứng dụng flask cho phép
+    đăng ký một callback đến một endpoint tùy ý với một
     decorator.
--   Use Last-Modified for static file sending instead of Date which was
-    incorrectly introduced in 0.6.
--   Added ``create_jinja_loader`` to override the loader creation
-    process.
--   Implemented a silent flag for ``config.from_pyfile``.
--   Added ``teardown_request`` decorator, for functions that should run
-    at the end of a request regardless of whether an exception occurred.
-    Also the behavior for ``after_request`` was changed. It's now no
-    longer executed when an exception is raised.
--   Implemented ``has_request_context``.
--   Deprecated ``init_jinja_globals``. Override the
-    ``Flask.create_jinja_environment`` method instead to achieve the
-    same functionality.
--   Added ``safe_join``.
--   The automatic JSON request data unpacking now looks at the charset
-    mimetype parameter.
--   Don't modify the session on ``get_flashed_messages`` if there are no
-    messages in the session.
--   ``before_request`` handlers are now able to abort requests with
-    errors.
--   It is not possible to define user exception handlers. That way you
-    can provide custom error messages from a central hub for certain
-    errors that might occur during request processing (for instance
-    database connection errors, timeouts from remote resources etc.).
--   Blueprints can provide blueprint specific error handlers.
--   Implemented generic class-based views.
+-   Sử dụng Last-Modified để gửi tệp tĩnh thay vì Date được
+    giới thiệu không chính xác trong 0.6.
+-   Đã thêm ``create_jinja_loader`` để ghi đè quy trình tạo loader.
+-   Đã triển khai một cờ im lặng cho ``config.from_pyfile``.
+-   Đã thêm decorator ``teardown_request``, cho các hàm nên chạy
+    ở cuối yêu cầu bất kể ngoại lệ có xảy ra hay không.
+    Ngoài ra, hành vi cho ``after_request`` đã được thay đổi. Nó hiện không
+    còn được thực thi khi một ngoại lệ được ném ra.
+-   Đã triển khai ``has_request_context``.
+-   Phản đối ``init_jinja_globals``. Ghi đè phương thức
+    ``Flask.create_jinja_environment`` thay thế để đạt được
+    chức năng tương tự.
+-   Đã thêm ``safe_join``.
+-   Việc giải nén dữ liệu yêu cầu JSON tự động hiện xem xét tham số
+    mimetype charset.
+-   Không sửa đổi session trên ``get_flashed_messages`` nếu không có
+    tin nhắn nào trong session.
+-   Các trình xử lý ``before_request`` hiện có thể hủy bỏ các yêu cầu với
+    các lỗi.
+-   Không thể định nghĩa các trình xử lý ngoại lệ người dùng. Bằng cách đó bạn
+    có thể cung cấp các thông báo lỗi tùy chỉnh từ một trung tâm trung tâm cho các
+    lỗi nhất định có thể xảy ra trong quá trình xử lý yêu cầu (ví dụ
+    lỗi kết nối cơ sở dữ liệu, thời gian chờ từ các tài nguyên từ xa v.v.).
+-   Các blueprint có thể cung cấp các trình xử lý lỗi cụ thể cho blueprint.
+-   Đã triển khai các view dựa trên lớp chung.
 
 
 Version 0.6.1
 -------------
 
-Released 2010-12-31
+Đã phát hành 2010-12-31
 
--   Fixed an issue where the default ``OPTIONS`` response was not
-    exposing all valid methods in the ``Allow`` header.
--   Jinja template loading syntax now allows "./" in front of a
-    template load path. Previously this caused issues with module
-    setups.
--   Fixed an issue where the subdomain setting for modules was ignored
-    for the static folder.
--   Fixed a security problem that allowed clients to download arbitrary
-    files if the host server was a windows based operating system and
-    the client uses backslashes to escape the directory the files where
-    exposed from.
+-   Đã sửa một vấn đề trong đó phản hồi ``OPTIONS`` mặc định không
+    hiển thị tất cả các phương thức hợp lệ trong header ``Allow``.
+-   Cú pháp tải template Jinja hiện cho phép "./" trước một
+    đường dẫn tải template. Trước đây điều này gây ra sự cố với các
+    thiết lập mô-đun.
+-   Đã sửa một vấn đề trong đó cài đặt tên miền phụ cho các mô-đun bị bỏ qua
+    đối với thư mục tĩnh.
+-   Đã sửa một vấn đề bảo mật cho phép máy khách tải xuống các tệp tùy ý
+    nếu máy chủ lưu trữ là hệ điều hành dựa trên windows và
+    máy khách sử dụng dấu gạch chéo ngược để thoát khỏi thư mục mà các tệp được
+    hiển thị.
 
 
 Version 0.6
 -----------
 
-Released 2010-07-27, codename Whisky
+Đã phát hành 2010-07-27, tên mã Whisky
 
--   After request functions are now called in reverse order of
-    registration.
--   OPTIONS is now automatically implemented by Flask unless the
-    application explicitly adds 'OPTIONS' as method to the URL rule. In
-    this case no automatic OPTIONS handling kicks in.
--   Static rules are now even in place if there is no static folder for
-    the module. This was implemented to aid GAE which will remove the
-    static folder if it's part of a mapping in the .yml file.
--   ``Flask.config`` is now available in the templates as ``config``.
--   Context processors will no longer override values passed directly to
-    the render function.
--   Added the ability to limit the incoming request data with the new
-    ``MAX_CONTENT_LENGTH`` configuration value.
--   The endpoint for the ``Module.add_url_rule`` method is now optional
-    to be consistent with the function of the same name on the
-    application object.
--   Added a ``make_response`` function that simplifies creating response
-    object instances in views.
--   Added signalling support based on blinker. This feature is currently
-    optional and supposed to be used by extensions and applications. If
-    you want to use it, make sure to have ``blinker`` installed.
--   Refactored the way URL adapters are created. This process is now
-    fully customizable with the ``Flask.create_url_adapter`` method.
--   Modules can now register for a subdomain instead of just an URL
-    prefix. This makes it possible to bind a whole module to a
-    configurable subdomain.
+-   Các hàm sau yêu cầu hiện được gọi theo thứ tự ngược lại của
+    đăng ký.
+-   OPTIONS hiện được Flask tự động triển khai trừ khi
+    ứng dụng thêm rõ ràng 'OPTIONS' làm phương thức vào quy tắc URL. Trong
+    trường hợp này, không có xử lý OPTIONS tự động nào khởi động.
+-   Các quy tắc tĩnh hiện thậm chí còn được áp dụng nếu không có thư mục tĩnh cho
+    mô-đun. Điều này được triển khai để hỗ trợ GAE sẽ xóa
+    thư mục tĩnh nếu nó là một phần của ánh xạ trong tệp .yml.
+-   ``Flask.config`` hiện có sẵn trong các template dưới dạng ``config``.
+-   Các bộ xử lý ngữ cảnh sẽ không còn ghi đè các giá trị được truyền trực tiếp đến
+    hàm render.
+-   Đã thêm khả năng giới hạn dữ liệu yêu cầu đến với giá trị cấu hình mới
+    ``MAX_CONTENT_LENGTH``.
+-   Endpoint cho phương thức ``Module.add_url_rule`` hiện là tùy chọn
+    để nhất quán với hàm cùng tên trên
+    đối tượng ứng dụng.
+-   Đã thêm một hàm ``make_response`` giúp đơn giản hóa việc tạo các thể hiện
+    đối tượng phản hồi trong các view.
+-   Đã thêm hỗ trợ tín hiệu dựa trên blinker. Tính năng này hiện là
+    tùy chọn và được cho là sẽ được sử dụng bởi các tiện ích mở rộng và ứng dụng. Nếu
+    bạn muốn sử dụng nó, hãy đảm bảo đã cài đặt ``blinker``.
+-   Đã cấu trúc lại cách tạo bộ điều hợp URL. Quá trình này hiện
+    hoàn toàn có thể tùy chỉnh với phương thức ``Flask.create_url_adapter``.
+-   Các mô-đun hiện có thể đăng ký cho một tên miền phụ thay vì chỉ một tiền tố
+    URL. Điều này làm cho nó có thể liên kết toàn bộ mô-đun với một
+    tên miền phụ có thể cấu hình.
 
 
 Version 0.5.2
 -------------
 
-Released 2010-07-15
+Đã phát hành 2010-07-15
 
--   Fixed another issue with loading templates from directories when
-    modules were used.
+-   Đã sửa một vấn đề khác với việc tải template từ các thư mục khi
+    các mô-đun được sử dụng.
 
 
 Version 0.5.1
 -------------
 
-Released 2010-07-06
+Đã phát hành 2010-07-06
 
--   Fixes an issue with template loading from directories when modules
-    where used.
+-   Sửa một vấn đề với việc tải template từ các thư mục khi các mô-đun
+    được sử dụng.
 
 
 Version 0.5
 -----------
 
-Released 2010-07-06, codename Calvados
+Đã phát hành 2010-07-06, tên mã Calvados
 
--   Fixed a bug with subdomains that was caused by the inability to
-    specify the server name. The server name can now be set with the
-    ``SERVER_NAME`` config key. This key is now also used to set the
-    session cookie cross-subdomain wide.
--   Autoescaping is no longer active for all templates. Instead it is
-    only active for ``.html``, ``.htm``, ``.xml`` and ``.xhtml``. Inside
-    templates this behavior can be changed with the ``autoescape`` tag.
--   Refactored Flask internally. It now consists of more than a single
-    file.
--   ``send_file`` now emits etags and has the ability to do conditional
-    responses builtin.
--   (temporarily) dropped support for zipped applications. This was a
-    rarely used feature and led to some confusing behavior.
--   Added support for per-package template and static-file directories.
--   Removed support for ``create_jinja_loader`` which is no longer used
-    in 0.5 due to the improved module support.
--   Added a helper function to expose files from any directory.
+-   Đã sửa một lỗi với các tên miền phụ gây ra bởi việc không thể
+    chỉ định tên máy chủ. Tên máy chủ hiện có thể được thiết lập với
+    khóa cấu hình ``SERVER_NAME``. Khóa này hiện cũng được sử dụng để thiết lập
+    cookie session trên toàn tên miền phụ.
+-   Autoescaping không còn hoạt động cho tất cả các template. Thay vào đó nó
+    chỉ hoạt động cho ``.html``, ``.htm``, ``.xml`` và ``.xhtml``. Bên trong
+    các template, hành vi này có thể được thay đổi với thẻ ``autoescape``.
+-   Đã cấu trúc lại Flask nội bộ. Nó hiện bao gồm nhiều hơn một tệp
+    duy nhất.
+-   ``send_file`` hiện phát ra etags và có khả năng thực hiện các phản hồi
+    có điều kiện tích hợp sẵn.
+-   (tạm thời) bỏ hỗ trợ cho các ứng dụng nén. Đây là một
+    tính năng hiếm khi được sử dụng và dẫn đến một số hành vi khó hiểu.
+-   Đã thêm hỗ trợ cho các thư mục template và tệp tĩnh theo gói.
+-   Đã xóa hỗ trợ cho ``create_jinja_loader`` không còn được sử dụng
+    trong 0.5 do hỗ trợ mô-đun được cải thiện.
+-   Đã thêm một hàm trợ giúp để hiển thị các tệp từ bất kỳ thư mục nào.
 
 
 Version 0.4
 -----------
 
-Released 2010-06-18, codename Rakia
+Đã phát hành 2010-06-18, tên mã Rakia
 
--   Added the ability to register application wide error handlers from
-    modules.
--   ``Flask.after_request`` handlers are now also invoked if the request
-    dies with an exception and an error handling page kicks in.
--   Test client has not the ability to preserve the request context for
-    a little longer. This can also be used to trigger custom requests
-    that do not pop the request stack for testing.
--   Because the Python standard library caches loggers, the name of the
-    logger is configurable now to better support unittests.
--   Added ``TESTING`` switch that can activate unittesting helpers.
--   The logger switches to ``DEBUG`` mode now if debug is enabled.
+-   Đã thêm khả năng đăng ký các trình xử lý lỗi toàn ứng dụng từ
+    các mô-đun.
+-   Các trình xử lý ``Flask.after_request`` hiện cũng được gọi nếu yêu cầu
+    chết với một ngoại lệ và một trang xử lý lỗi khởi động.
+-   Test client không có khả năng bảo tồn ngữ cảnh yêu cầu cho
+    lâu hơn một chút. Điều này cũng có thể được sử dụng để kích hoạt các yêu cầu tùy chỉnh
+    không pop ngăn xếp yêu cầu để kiểm thử.
+-   Vì thư viện chuẩn Python lưu trữ các logger, tên của
+    logger hiện có thể định cấu hình để hỗ trợ tốt hơn cho unittests.
+-   Đã thêm công tắc ``TESTING`` có thể kích hoạt các trình trợ giúp unittesting.
+-   Logger chuyển sang chế độ ``DEBUG`` ngay bây giờ nếu gỡ lỗi được bật.
 
 
 Version 0.3.1
 -------------
 
-Released 2010-05-28
+Đã phát hành 2010-05-28
 
--   Fixed a error reporting bug with ``Config.from_envvar``.
--   Removed some unused code.
--   Release does no longer include development leftover files (.git
-    folder for themes, built documentation in zip and pdf file and some
-    .pyc files)
+-   Đã sửa một lỗi báo cáo lỗi với ``Config.from_envvar``.
+-   Đã xóa một số mã không sử dụng.
+-   Bản phát hành không còn bao gồm các tệp còn sót lại của quá trình phát triển (thư mục .git
+    cho các chủ đề, tài liệu đã xây dựng trong tệp zip và pdf và một số
+    tệp .pyc)
 
 
 Version 0.3
 -----------
 
-Released 2010-05-28, codename Schnaps
+Đã phát hành 2010-05-28, tên mã Schnaps
 
--   Added support for categories for flashed messages.
--   The application now configures a ``logging.Handler`` and will log
-    request handling exceptions to that logger when not in debug mode.
-    This makes it possible to receive mails on server errors for
-    example.
--   Added support for context binding that does not require the use of
-    the with statement for playing in the console.
--   The request context is now available within the with statement
-    making it possible to further push the request context or pop it.
--   Added support for configurations.
+-   Đã thêm hỗ trợ cho các danh mục cho các tin nhắn đã flash.
+-   Ứng dụng hiện cấu hình một ``logging.Handler`` và sẽ ghi nhật ký
+    các ngoại lệ xử lý yêu cầu vào logger đó khi không ở chế độ gỡ lỗi.
+    Điều này làm cho nó có thể nhận thư về lỗi máy chủ chẳng hạn
+    ví dụ.
+-   Đã thêm hỗ trợ cho ràng buộc ngữ cảnh không yêu cầu sử dụng
+    câu lệnh with để chơi trong bảng điều khiển.
+-   Ngữ cảnh yêu cầu hiện có sẵn trong câu lệnh with
+    làm cho nó có thể đẩy thêm ngữ cảnh yêu cầu hoặc pop nó.
+-   Đã thêm hỗ trợ cho các cấu hình.
 
 
 Version 0.2
 -----------
 
-Released 2010-05-12, codename J?germeister
+Đã phát hành 2010-05-12, tên mã Jägermeister
 
--   Various bugfixes
--   Integrated JSON support
--   Added ``get_template_attribute`` helper function.
--   ``Flask.add_url_rule`` can now also register a view function.
--   Refactored internal request dispatching.
--   Server listens on 127.0.0.1 by default now to fix issues with
+-   Các bản sửa lỗi khác nhau
+-   Tích hợp hỗ trợ JSON
+-   Đã thêm hàm trợ giúp ``get_template_attribute``.
+-   ``Flask.add_url_rule`` hiện cũng có thể đăng ký một hàm view.
+-   Đã cấu trúc lại việc gửi yêu cầu nội bộ.
+-   Máy chủ lắng nghe trên 127.0.0.1 theo mặc định ngay bây giờ để sửa các vấn đề với
     chrome.
--   Added external URL support.
--   Added support for ``send_file``.
--   Module support and internal request handling refactoring to better
-    support pluggable applications.
--   Sessions can be set to be permanent now on a per-session basis.
--   Better error reporting on missing secret keys.
--   Added support for Google Appengine.
+-   Đã thêm hỗ trợ URL bên ngoài.
+-   Đã thêm hỗ trợ cho ``send_file``.
+-   Hỗ trợ mô-đun và cấu trúc lại xử lý yêu cầu nội bộ để hỗ trợ tốt hơn
+    các ứng dụng có thể cắm.
+-   Các session có thể được thiết lập là vĩnh viễn ngay bây giờ trên cơ sở từng session.
+-   Báo cáo lỗi tốt hơn về các khóa bí mật bị thiếu.
+-   Đã thêm hỗ trợ cho Google Appengine.
 
 
 Version 0.1
 -----------
 
-Released 2010-04-16
+Đã phát hành 2010-04-16
 
--   First public preview release.
+-   Bản phát hành xem trước công khai đầu tiên.

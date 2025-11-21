@@ -4,23 +4,23 @@ from flask import Flask
 
 
 def create_app(test_config=None):
-    """Create and configure an instance of the Flask application."""
+    """Tạo và cấu hình một thể hiện của ứng dụng Flask."""
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        # a default secret that should be overridden by instance config
+        # một bí mật mặc định nên được ghi đè bởi cấu hình thể hiện
         SECRET_KEY="dev",
-        # store the database in the instance folder
+        # lưu trữ cơ sở dữ liệu trong thư mục thể hiện
         DATABASE=os.path.join(app.instance_path, "flaskr.sqlite"),
     )
 
     if test_config is None:
-        # load the instance config, if it exists, when not testing
+        # tải cấu hình thể hiện, nếu nó tồn tại, khi không kiểm thử
         app.config.from_pyfile("config.py", silent=True)
     else:
-        # load the test config if passed in
+        # tải cấu hình kiểm thử nếu được truyền vào
         app.config.update(test_config)
 
-    # ensure the instance folder exists
+    # đảm bảo thư mục thể hiện tồn tại
     try:
         os.makedirs(app.instance_path)
     except OSError:
@@ -28,7 +28,7 @@ def create_app(test_config=None):
 
     @app.route("/hello")
     def hello():
-        return "Hello, World!"
+        return "Xin chào, Thế giới!"
 
     # register the database commands
     from . import db

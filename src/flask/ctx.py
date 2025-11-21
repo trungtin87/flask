@@ -22,32 +22,32 @@ if t.TYPE_CHECKING:
     from .wrappers import Request
 
 
-# a singleton sentinel value for parameter defaults
+# một giá trị sentinel singleton cho các giá trị mặc định của tham số
 _sentinel = object()
 
 
 class _AppCtxGlobals:
-    """A plain object. Used as a namespace for storing data during an
-    application context.
+    """Một đối tượng đơn giản. Được sử dụng như một namespace để lưu trữ dữ liệu trong
+    ngữ cảnh ứng dụng.
 
-    Creating an app context automatically creates this object, which is
-    made available as the :data:`.g` proxy.
+    Việc tạo một ngữ cảnh ứng dụng sẽ tự động tạo đối tượng này, đối tượng này
+    được cung cấp dưới dạng proxy :data:`.g`.
 
     .. describe:: 'key' in g
 
-        Check whether an attribute is present.
+        Kiểm tra xem một thuộc tính có tồn tại hay không.
 
         .. versionadded:: 0.10
 
     .. describe:: iter(g)
 
-        Return an iterator over the attribute names.
+        Trả về một iterator qua các tên thuộc tính.
 
         .. versionadded:: 0.10
     """
 
-    # Define attr methods to let mypy know this is a namespace object
-    # that has arbitrary attributes.
+    # Định nghĩa các phương thức attr để cho mypy biết đây là một đối tượng namespace
+    # có các thuộc tính tùy ý.
 
     def __getattr__(self, name: str) -> t.Any:
         try:
@@ -65,22 +65,22 @@ class _AppCtxGlobals:
             raise AttributeError(name) from None
 
     def get(self, name: str, default: t.Any | None = None) -> t.Any:
-        """Get an attribute by name, or a default value. Like
+        """Lấy một thuộc tính theo tên, hoặc một giá trị mặc định. Giống như
         :meth:`dict.get`.
 
-        :param name: Name of attribute to get.
-        :param default: Value to return if the attribute is not present.
+        :param name: Tên của thuộc tính cần lấy.
+        :param default: Giá trị trả về nếu thuộc tính không tồn tại.
 
         .. versionadded:: 0.10
         """
         return self.__dict__.get(name, default)
 
     def pop(self, name: str, default: t.Any = _sentinel) -> t.Any:
-        """Get and remove an attribute by name. Like :meth:`dict.pop`.
+        """Lấy và xóa một thuộc tính theo tên. Giống như :meth:`dict.pop`.
 
-        :param name: Name of attribute to pop.
-        :param default: Value to return if the attribute is not present,
-            instead of raising a ``KeyError``.
+        :param name: Tên của thuộc tính cần pop.
+        :param default: Giá trị trả về nếu thuộc tính không tồn tại,
+            thay vì ném ra ``KeyError``.
 
         .. versionadded:: 0.11
         """
@@ -90,12 +90,12 @@ class _AppCtxGlobals:
             return self.__dict__.pop(name, default)
 
     def setdefault(self, name: str, default: t.Any = None) -> t.Any:
-        """Get the value of an attribute if it is present, otherwise
-        set and return a default value. Like :meth:`dict.setdefault`.
+        """Lấy giá trị của một thuộc tính nếu nó tồn tại, nếu không
+        thiết lập và trả về một giá trị mặc định. Giống như :meth:`dict.setdefault`.
 
-        :param name: Name of attribute to get.
-        :param default: Value to set and return if the attribute is not
-            present.
+        :param name: Tên của thuộc tính cần lấy.
+        :param default: Giá trị để thiết lập và trả về nếu thuộc tính không
+            tồn tại.
 
         .. versionadded:: 0.11
         """
@@ -117,10 +117,10 @@ class _AppCtxGlobals:
 def after_this_request(
     f: ft.AfterRequestCallable[t.Any],
 ) -> ft.AfterRequestCallable[t.Any]:
-    """Decorate a function to run after the current request. The behavior is the
-    same as :meth:`.Flask.after_request`, except it only applies to the current
-    request, rather than every request. Therefore, it must be used within a
-    request context, rather than during setup.
+    """Trang trí một hàm để chạy sau request hiện tại. Hành vi là
+    giống như :meth:`.Flask.after_request`, ngoại trừ việc nó chỉ áp dụng cho request
+    hiện tại, thay vì mọi request. Do đó, nó phải được sử dụng trong một
+    ngữ cảnh request, thay vì trong quá trình thiết lập.
 
     .. code-block:: python
 
@@ -151,25 +151,25 @@ F = t.TypeVar("F", bound=t.Callable[..., t.Any])
 
 
 def copy_current_request_context(f: F) -> F:
-    """Decorate a function to run inside the current request context. This can
-    be used when starting a background task, otherwise it will not see the app
-    and request objects that were active in the parent.
+    """Trang trí một hàm để chạy bên trong ngữ cảnh request hiện tại. Điều này có thể
+    được sử dụng khi bắt đầu một tác vụ nền, nếu không nó sẽ không thấy ứng dụng
+    và các đối tượng request đã hoạt động trong cha.
 
     .. warning::
 
-        Due to the following caveats, it is often safer (and simpler) to pass
-        the data you need when starting the task, rather than using this and
-        relying on the context objects.
+        Do những cảnh báo sau đây, thường an toàn hơn (và đơn giản hơn) để truyền
+        dữ liệu bạn cần khi bắt đầu tác vụ, thay vì sử dụng cái này và
+        dựa vào các đối tượng ngữ cảnh.
 
-    In order to avoid execution switching partially though reading data, either
-    read the request body (access ``form``, ``json``, ``data``, etc) before
-    starting the task, or use a lock. This can be an issue when using threading,
-    but shouldn't be an issue when using greenlet/gevent or asyncio.
+    Để tránh chuyển đổi thực thi một phần thông qua việc đọc dữ liệu, hoặc
+    đọc body request (truy cập ``form``, ``json``, ``data``, v.v.) trước khi
+    bắt đầu tác vụ, hoặc sử dụng một khóa. Điều này có thể là một vấn đề khi sử dụng threading,
+    nhưng không nên là một vấn đề khi sử dụng greenlet/gevent hoặc asyncio.
 
-    If the task will access ``session``, be sure to do so in the parent as well
-    so that the ``Vary: cookie`` header will be set. Modifying ``session`` in
-    the task should be avoided, as it may execute after the response cookie has
-    already been written.
+    Nếu tác vụ sẽ truy cập ``session``, hãy chắc chắn làm như vậy trong cha cũng như
+    để header ``Vary: cookie`` sẽ được thiết lập. Việc sửa đổi ``session`` trong
+    tác vụ nên tránh, vì nó có thể thực thi sau khi cookie phản hồi đã
+    được ghi.
 
     .. code-block:: python
 
@@ -206,7 +206,7 @@ def copy_current_request_context(f: F) -> F:
 
 
 def has_request_context() -> bool:
-    """Test if an app context is active and if it has request information.
+    """Kiểm tra xem một ngữ cảnh ứng dụng có đang hoạt động và nếu nó có thông tin request.
 
     .. code-block:: python
 
@@ -215,9 +215,9 @@ def has_request_context() -> bool:
         if has_request_context():
             remote_addr = request.remote_addr
 
-    If a request context is active, the :data:`.request` and :data:`.session`
-    context proxies will available and ``True``, otherwise ``False``. You can
-    use that to test the data you use, rather than using this function.
+    Nếu một ngữ cảnh request đang hoạt động, các proxy ngữ cảnh :data:`.request` và :data:`.session`
+    sẽ có sẵn và ``True``, nếu không thì ``False``. Bạn có thể
+    sử dụng điều đó để kiểm tra dữ liệu bạn sử dụng, thay vì sử dụng hàm này.
 
     .. code-block:: python
 
@@ -232,8 +232,8 @@ def has_request_context() -> bool:
 
 
 def has_app_context() -> bool:
-    """Test if an app context is active. Unlike :func:`has_request_context`
-    this can be true outside a request, such as in a CLI command.
+    """Kiểm tra xem một ngữ cảnh ứng dụng có đang hoạt động hay không. Không giống như :func:`has_request_context`
+    điều này có thể đúng bên ngoài một request, chẳng hạn như trong một lệnh CLI.
 
     .. code-block:: python
 
@@ -242,9 +242,9 @@ def has_app_context() -> bool:
         if has_app_context():
             g.cached_data = ...
 
-    If an app context is active, the :data:`.g` and :data:`.current_app` context
-    proxies will available and ``True``, otherwise ``False``. You can use that
-    to test the data you use, rather than using this function.
+    Nếu một ngữ cảnh ứng dụng đang hoạt động, các proxy ngữ cảnh :data:`.g` và :data:`.current_app`
+    sẽ có sẵn và ``True``, nếu không thì ``False``. Bạn có thể sử dụng điều đó
+    để kiểm tra dữ liệu bạn sử dụng, thay vì sử dụng hàm này.
 
         from flask import g
 
@@ -257,43 +257,43 @@ def has_app_context() -> bool:
 
 
 class AppContext:
-    """An app context contains information about an app, and about the request
-    when handling a request. A context is pushed at the beginning of each
-    request and CLI command, and popped at the end. The context is referred to
-    as a "request context" if it has request information, and an "app context"
-    if not.
+    """Một ngữ cảnh ứng dụng chứa thông tin về một ứng dụng, và về request
+    khi xử lý một request. Một ngữ cảnh được push ở đầu mỗi
+    request và lệnh CLI, và pop ở cuối. Ngữ cảnh được gọi là
+    "ngữ cảnh request" nếu nó có thông tin request, và "ngữ cảnh ứng dụng"
+    nếu không.
 
-    Do not use this class directly. Use :meth:`.Flask.app_context` to create an
-    app context if needed during setup, and :meth:`.Flask.test_request_context`
-    to create a request context if needed during tests.
+    Không sử dụng lớp này trực tiếp. Sử dụng :meth:`.Flask.app_context` để tạo một
+    ngữ cảnh ứng dụng nếu cần trong quá trình thiết lập, và :meth:`.Flask.test_request_context`
+    để tạo một ngữ cảnh request nếu cần trong quá trình kiểm thử.
 
-    When the context is popped, it will evaluate all the teardown functions
-    registered with :meth:`~flask.Flask.teardown_request` (if handling a
-    request) then :meth:`.Flask.teardown_appcontext`.
+    Khi ngữ cảnh được pop, nó sẽ đánh giá tất cả các hàm teardown
+    được đăng ký với :meth:`~flask.Flask.teardown_request` (nếu xử lý một
+    request) sau đó :meth:`.Flask.teardown_appcontext`.
 
-    When using the interactive debugger, the context will be restored so
-    ``request`` is still accessible. Similarly, the test client can preserve the
-    context after the request ends. However, teardown functions may already have
-    closed some resources such as database connections, and will run again when
-    the restored context is popped.
+    Khi sử dụng trình gỡ lỗi tương tác, ngữ cảnh sẽ được khôi phục để
+    ``request`` vẫn có thể truy cập được. Tương tự, test client có thể bảo tồn
+    ngữ cảnh sau khi request kết thúc. Tuy nhiên, các hàm teardown có thể đã
+    đóng một số tài nguyên như kết nối cơ sở dữ liệu, và sẽ chạy lại khi
+    ngữ cảnh đã khôi phục được pop.
 
-    :param app: The application this context represents.
-    :param request: The request data this context represents.
-    :param session: The session data this context represents. If not given,
-        loaded from the request on first access.
-
-    .. versionchanged:: 3.2
-        Merged with ``RequestContext``. The ``RequestContext`` alias will be
-        removed in Flask 4.0.
+    :param app: Ứng dụng mà ngữ cảnh này đại diện.
+    :param request: Dữ liệu request mà ngữ cảnh này đại diện.
+    :param session: Dữ liệu session mà ngữ cảnh này đại diện. Nếu không được đưa ra,
+        được tải từ request khi truy cập lần đầu.
 
     .. versionchanged:: 3.2
-        A combined app and request context is pushed for every request and CLI
-        command, rather than trying to detect if an app context is already
-        pushed.
+        Đã hợp nhất với ``RequestContext``. Alias ``RequestContext`` sẽ bị
+        xóa trong Flask 4.0.
 
     .. versionchanged:: 3.2
-        The session is loaded the first time it is accessed, rather than when
-        the context is pushed.
+        Một ngữ cảnh ứng dụng và request kết hợp được push cho mỗi request và lệnh CLI,
+        thay vì cố gắng phát hiện xem một ngữ cảnh ứng dụng đã được
+        push hay chưa.
+
+    .. versionchanged:: 3.2
+        Session được tải lần đầu tiên nó được truy cập, thay vì khi
+        ngữ cảnh được push.
     """
 
     def __init__(
@@ -304,16 +304,16 @@ class AppContext:
         session: SessionMixin | None = None,
     ) -> None:
         self.app = app
-        """The application represented by this context. Accessed through
+        """Ứng dụng được đại diện bởi ngữ cảnh này. Được truy cập thông qua
         :data:`.current_app`.
         """
 
         self.g: _AppCtxGlobals = app.app_ctx_globals_class()
-        """The global data for this context. Accessed through :data:`.g`."""
+        """Dữ liệu toàn cục cho ngữ cảnh này. Được truy cập thông qua :data:`.g`."""
 
         self.url_adapter: MapAdapter | None = None
-        """The URL adapter bound to the request, or the app if not in a request.
-        May be ``None`` if binding failed.
+        """Bộ chuyển đổi URL bị ràng buộc với request, hoặc ứng dụng nếu không trong một request.
+        Có thể là ``None`` nếu ràng buộc thất bại.
         """
 
         self._request: Request | None = request
@@ -328,19 +328,19 @@ class AppContext:
                 self._request.routing_exception = e
 
         self._cv_token: contextvars.Token[AppContext] | None = None
-        """The previous state to restore when popping."""
+        """Trạng thái trước đó để khôi phục khi pop."""
 
         self._push_count: int = 0
-        """Track nested pushes of this context. Cleanup will only run once the
-        original push has been popped.
+        """Theo dõi các lần push lồng nhau của ngữ cảnh này. Dọn dẹp sẽ chỉ chạy một lần khi
+        lần push ban đầu đã được pop.
         """
 
     @classmethod
     def from_environ(cls, app: Flask, environ: WSGIEnvironment, /) -> te.Self:
-        """Create an app context with request data from the given WSGI environ.
+        """Tạo một ngữ cảnh ứng dụng với dữ liệu request từ WSGI environ đã cho.
 
-        :param app: The application this context represents.
-        :param environ: The request data this context represents.
+        :param app: Ứng dụng mà ngữ cảnh này đại diện.
+        :param environ: Dữ liệu request mà ngữ cảnh này đại diện.
         """
         request = app.request_class(environ)
         request.json_module = app.json
@@ -348,15 +348,15 @@ class AppContext:
 
     @property
     def has_request(self) -> bool:
-        """True if this context was created with request data."""
+        """True nếu ngữ cảnh này được tạo với dữ liệu request."""
         return self._request is not None
 
     def copy(self) -> te.Self:
-        """Create a new context with the same data objects as this context. See
+        """Tạo một ngữ cảnh mới với cùng các đối tượng dữ liệu như ngữ cảnh này. Xem
         :func:`.copy_current_request_context`.
 
         .. versionchanged:: 1.1
-            The current session data is used instead of reloading the original data.
+            Dữ liệu session hiện tại được sử dụng thay vì tải lại dữ liệu gốc.
 
         .. versionadded:: 0.10
         """
@@ -368,8 +368,8 @@ class AppContext:
 
     @property
     def request(self) -> Request:
-        """The request object associated with this context. Accessed through
-        :data:`.request`. Only available in request contexts, otherwise raises
+        """Đối tượng request được liên kết với ngữ cảnh này. Được truy cập thông qua
+        :data:`.request`. Chỉ có sẵn trong các ngữ cảnh request, nếu không sẽ ném ra
         :exc:`RuntimeError`.
         """
         if self._request is None:
@@ -379,8 +379,8 @@ class AppContext:
 
     @property
     def session(self) -> SessionMixin:
-        """The session object associated with this context. Accessed through
-        :data:`.session`. Only available in request contexts, otherwise raises
+        """Đối tượng session được liên kết với ngữ cảnh này. Được truy cập thông qua
+        :data:`.session`. Chỉ có sẵn trong các ngữ cảnh request, nếu không sẽ ném ra
         :exc:`RuntimeError`.
         """
         if self._request is None:
@@ -396,8 +396,8 @@ class AppContext:
         return self._session
 
     def match_request(self) -> None:
-        """Apply routing to the current request, storing either the matched
-        endpoint and args, or a routing exception.
+        """Áp dụng routing cho request hiện tại, lưu trữ hoặc endpoint và args đã khớp,
+        hoặc một ngoại lệ routing.
         """
         try:
             result = self.url_adapter.match(return_rule=True)  # type: ignore[union-attr]
@@ -407,16 +407,16 @@ class AppContext:
             self._request.url_rule, self._request.view_args = result  # type: ignore[union-attr]
 
     def push(self) -> None:
-        """Push this context so that it is the active context. If this is a
-        request context, calls :meth:`match_request` to perform routing with
-        the context active.
+        """Push ngữ cảnh này để nó trở thành ngữ cảnh hoạt động. Nếu đây là một
+        ngữ cảnh request, gọi :meth:`match_request` để thực hiện routing với
+        ngữ cảnh đang hoạt động.
 
-        Typically, this is not used directly. Instead, use a ``with`` block
-        to manage the context.
+        Thông thường, điều này không được sử dụng trực tiếp. Thay vào đó, sử dụng một khối ``with``
+        để quản lý ngữ cảnh.
 
-        In some situations, such as streaming or testing, the context may be
-        pushed multiple times. It will only trigger matching and signals if it
-        is not currently pushed.
+        Trong một số tình huống, chẳng hạn như streaming hoặc testing, ngữ cảnh có thể được
+        push nhiều lần. Nó sẽ chỉ kích hoạt matching và signals nếu nó
+        hiện không được push.
         """
         self._push_count += 1
 
@@ -430,23 +430,23 @@ class AppContext:
             self.match_request()
 
     def pop(self, exc: BaseException | None = None) -> None:
-        """Pop this context so that it is no longer the active context. Then
-        call teardown functions and signals.
+        """Pop ngữ cảnh này để nó không còn là ngữ cảnh hoạt động nữa. Sau đó
+        gọi các hàm teardown và signals.
 
-        Typically, this is not used directly. Instead, use a ``with`` block
-        to manage the context.
+        Thông thường, điều này không được sử dụng trực tiếp. Thay vào đó, sử dụng một khối ``with``
+        để quản lý ngữ cảnh.
 
-        This context must currently be the active context, otherwise a
-        :exc:`RuntimeError` is raised. In some situations, such as streaming or
-        testing, the context may have been pushed multiple times. It will only
-        trigger cleanup once it has been popped as many times as it was pushed.
-        Until then, it will remain the active context.
+        Ngữ cảnh này hiện phải là ngữ cảnh hoạt động, nếu không một
+        :exc:`RuntimeError` sẽ được ném ra. Trong một số tình huống, chẳng hạn như streaming hoặc
+        testing, ngữ cảnh có thể đã được push nhiều lần. Nó sẽ chỉ
+        kích hoạt dọn dẹp một lần khi nó đã được pop nhiều lần như nó đã được push.
+        Cho đến lúc đó, nó sẽ vẫn là ngữ cảnh hoạt động.
 
-        :param exc: An unhandled exception that was raised while the context was
-            active. Passed to teardown functions.
+        :param exc: Một ngoại lệ không được xử lý đã được ném ra trong khi ngữ cảnh đang
+            hoạt động. Được truyền cho các hàm teardown.
 
         .. versionchanged:: 0.9
-            Added the ``exc`` argument.
+            Đã thêm đối số ``exc``.
         """
         if self._cv_token is None:
             raise RuntimeError(f"Cannot pop this context ({self!r}), it is not pushed.")

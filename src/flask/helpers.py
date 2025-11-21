@@ -25,19 +25,19 @@ if t.TYPE_CHECKING:  # pragma: no cover
 
 
 def get_debug_flag() -> bool:
-    """Get whether debug mode should be enabled for the app, indicated by the
-    :envvar:`FLASK_DEBUG` environment variable. The default is ``False``.
+    """Lấy xem chế độ debug có nên được bật cho ứng dụng hay không, được chỉ định bởi
+    biến môi trường :envvar:`FLASK_DEBUG`. Mặc định là ``False``.
     """
     val = os.environ.get("FLASK_DEBUG")
     return bool(val and val.lower() not in {"0", "false", "no"})
 
 
 def get_load_dotenv(default: bool = True) -> bool:
-    """Get whether the user has disabled loading default dotenv files by
-    setting :envvar:`FLASK_SKIP_DOTENV`. The default is ``True``, load
-    the files.
+    """Lấy xem người dùng có tắt việc tải các tệp dotenv mặc định hay không bằng cách
+    thiết lập :envvar:`FLASK_SKIP_DOTENV`. Mặc định là ``True``, tải
+    các tệp.
 
-    :param default: What to return if the env var isn't set.
+    :param default: Cái gì để trả về nếu biến môi trường không được thiết lập.
     """
     val = os.environ.get("FLASK_SKIP_DOTENV")
 
@@ -62,12 +62,12 @@ def stream_with_context(
 def stream_with_context(
     generator_or_function: t.Iterator[t.AnyStr] | t.Callable[..., t.Iterator[t.AnyStr]],
 ) -> t.Iterator[t.AnyStr] | t.Callable[[t.Iterator[t.AnyStr]], t.Iterator[t.AnyStr]]:
-    """Wrap a response generator function so that it runs inside the current
-    request context. This keeps :data:`.request`, :data:`.session`, and :data:`.g`
-    available, even though at the point the generator runs the request context
-    will typically have ended.
+    """Bọc một hàm generator phản hồi để nó chạy bên trong ngữ cảnh request
+    hiện tại. Điều này giữ cho :data:`.request`, :data:`.session`, và :data:`.g`
+    có sẵn, mặc dù tại thời điểm generator chạy ngữ cảnh request
+    thường sẽ đã kết thúc.
 
-    Use it as a decorator on a generator function:
+    Sử dụng nó như một decorator trên một hàm generator:
 
     .. code-block:: python
 
@@ -83,7 +83,7 @@ def stream_with_context(
 
             return Response(generate())
 
-    Or use it as a wrapper around a created generator:
+    Hoặc sử dụng nó như một wrapper xung quanh một generator đã tạo:
 
     .. code-block:: python
 
@@ -113,8 +113,8 @@ def stream_with_context(
     def generator() -> t.Iterator[t.AnyStr]:
         if (ctx := _cv_app.get(None)) is None:
             raise RuntimeError(
-                "'stream_with_context' can only be used when a request"
-                " context is active, such as in a view function."
+                "'stream_with_context' chỉ có thể được sử dụng khi một ngữ cảnh"
+                " request đang hoạt động, chẳng hạn như trong một hàm view."
             )
 
         with ctx:
@@ -123,57 +123,56 @@ def stream_with_context(
             try:
                 yield from gen
             finally:
-                # Clean up in case the user wrapped a WSGI iterator.
+                # Dọn dẹp trong trường hợp người dùng đã bọc một WSGI iterator.
                 if hasattr(gen, "close"):
                     gen.close()
 
-    # Execute the generator to the sentinel value. This captures the current
-    # context and pushes it to preserve it. Further iteration will yield from
-    # the original iterator.
+    # Thực thi generator đến giá trị sentinel. Điều này bắt giữ ngữ cảnh
+    # hiện tại và push nó để bảo tồn nó. Việc lặp lại thêm sẽ yield từ
+    # iterator ban đầu.
     wrapped_g = generator()
     next(wrapped_g)
     return wrapped_g
 
 
 def make_response(*args: t.Any) -> Response:
-    """Sometimes it is necessary to set additional headers in a view.  Because
-    views do not have to return response objects but can return a value that
-    is converted into a response object by Flask itself, it becomes tricky to
-    add headers to it.  This function can be called instead of using a return
-    and you will get a response object which you can use to attach headers.
+    """Đôi khi cần thiết để thiết lập các header bổ sung trong một view. Vì
+    các view không cần phải trả về các đối tượng response mà có thể trả về một giá trị
+    được chuyển đổi thành một đối tượng response bởi chính Flask, nên việc thêm
+    các header vào nó trở nên khó khăn. Hàm này có thể được gọi thay vì sử dụng return
+    và bạn sẽ nhận được một đối tượng response mà bạn có thể sử dụng để đính kèm các header.
 
-    If view looked like this and you want to add a new header::
+    Nếu view trông giống như thế này và bạn muốn thêm một header mới::
 
         def index():
             return render_template('index.html', foo=42)
 
-    You can now do something like this::
+    Bây giờ bạn có thể làm một cái gì đó như thế này::
 
         def index():
             response = make_response(render_template('index.html', foo=42))
             response.headers['X-Parachutes'] = 'parachutes are cool'
             return response
 
-    This function accepts the very same arguments you can return from a
-    view function.  This for example creates a response with a 404 error
-    code::
+    Hàm này chấp nhận các đối số giống hệt như bạn có thể trả về từ một
+    hàm view. Ví dụ này tạo một response với mã lỗi 404::
 
         response = make_response(render_template('not_found.html'), 404)
 
-    The other use case of this function is to force the return value of a
-    view function into a response which is helpful with view
-    decorators::
+    Trường hợp sử dụng khác của hàm này là ép buộc giá trị trả về của một
+    hàm view thành một response, điều này hữu ích với các decorator
+    view::
 
         response = make_response(view_function())
         response.headers['X-Parachutes'] = 'parachutes are cool'
 
-    Internally this function does the following things:
+    Bên trong hàm này thực hiện những việc sau:
 
-    -   if no arguments are passed, it creates a new response argument
-    -   if one argument is passed, :meth:`flask.Flask.make_response`
-        is invoked with it.
-    -   if more than one argument is passed, the arguments are passed
-        to the :meth:`flask.Flask.make_response` function as tuple.
+    -   nếu không có đối số nào được truyền, nó tạo một đối số response mới
+    -   nếu một đối số được truyền, :meth:`flask.Flask.make_response`
+        được gọi với nó.
+    -   nếu nhiều hơn một đối số được truyền, các đối số được truyền
+        cho hàm :meth:`flask.Flask.make_response` dưới dạng tuple.
 
     .. versionadded:: 0.6
     """
@@ -193,40 +192,40 @@ def url_for(
     _external: bool | None = None,
     **values: t.Any,
 ) -> str:
-    """Generate a URL to the given endpoint with the given values.
+    """Tạo một URL đến endpoint đã cho với các giá trị đã cho.
 
-    This requires an active request or application context, and calls
-    :meth:`current_app.url_for() <flask.Flask.url_for>`. See that method
-    for full documentation.
+    Điều này yêu cầu một ngữ cảnh request hoặc ứng dụng đang hoạt động, và gọi
+    :meth:`current_app.url_for() <flask.Flask.url_for>`. Xem phương thức đó
+    để biết tài liệu đầy đủ.
 
-    :param endpoint: The endpoint name associated with the URL to
-        generate. If this starts with a ``.``, the current blueprint
-        name (if any) will be used.
-    :param _anchor: If given, append this as ``#anchor`` to the URL.
-    :param _method: If given, generate the URL associated with this
-        method for the endpoint.
-    :param _scheme: If given, the URL will have this scheme if it is
+    :param endpoint: Tên endpoint được liên kết với URL để
+        tạo. Nếu cái này bắt đầu bằng một ``.``, tên blueprint hiện tại
+        (nếu có) sẽ được sử dụng.
+    :param _anchor: Nếu được đưa ra, thêm cái này dưới dạng ``#anchor`` vào URL.
+    :param _method: Nếu được đưa ra, tạo URL được liên kết với phương thức này
+        cho endpoint.
+    :param _scheme: Nếu được đưa ra, URL sẽ có scheme này nếu nó là
         external.
-    :param _external: If given, prefer the URL to be internal (False) or
-        require it to be external (True). External URLs include the
-        scheme and domain. When not in an active request, URLs are
-        external by default.
-    :param values: Values to use for the variable parts of the URL rule.
-        Unknown keys are appended as query string arguments, like
+    :param _external: Nếu được đưa ra, ưu tiên URL là nội bộ (False) hoặc
+        yêu cầu nó là bên ngoài (True). Các URL bên ngoài bao gồm
+        scheme và domain. Khi không ở trong một request đang hoạt động, các URL là
+        bên ngoài theo mặc định.
+    :param values: Các giá trị để sử dụng cho các phần biến của quy tắc URL.
+        Các khóa không xác định được thêm vào dưới dạng đối số query string, giống như
         ``?a=b&c=d``.
 
     .. versionchanged:: 2.2
-        Calls ``current_app.url_for``, allowing an app to override the
-        behavior.
+        Gọi ``current_app.url_for``, cho phép một ứng dụng ghi đè
+        hành vi.
 
     .. versionchanged:: 0.10
-       The ``_scheme`` parameter was added.
+       Tham số ``_scheme`` đã được thêm vào.
 
     .. versionchanged:: 0.9
-       The ``_anchor`` and ``_method`` parameters were added.
+       Các tham số ``_anchor`` và ``_method`` đã được thêm vào.
 
     .. versionchanged:: 0.9
-       Calls ``app.handle_url_build_error`` on build errors.
+       Gọi ``app.handle_url_build_error`` khi có lỗi build.
     """
     return current_app.url_for(
         endpoint,
@@ -241,20 +240,20 @@ def url_for(
 def redirect(
     location: str, code: int = 302, Response: type[BaseResponse] | None = None
 ) -> BaseResponse:
-    """Create a redirect response object.
+    """Tạo một đối tượng response chuyển hướng.
 
-    If :data:`~flask.current_app` is available, it will use its
-    :meth:`~flask.Flask.redirect` method, otherwise it will use
+    Nếu :data:`~flask.current_app` có sẵn, nó sẽ sử dụng phương thức
+    :meth:`~flask.Flask.redirect` của nó, nếu không nó sẽ sử dụng
     :func:`werkzeug.utils.redirect`.
 
-    :param location: The URL to redirect to.
-    :param code: The status code for the redirect.
-    :param Response: The response class to use. Not used when
-        ``current_app`` is active, which uses ``app.response_class``.
+    :param location: URL để chuyển hướng đến.
+    :param code: Mã trạng thái cho chuyển hướng.
+    :param Response: Lớp response để sử dụng. Không được sử dụng khi
+        ``current_app`` đang hoạt động, cái mà sử dụng ``app.response_class``.
 
     .. versionadded:: 2.2
-        Calls ``current_app.redirect`` if available instead of always
-        using Werkzeug's default ``redirect``.
+        Gọi ``current_app.redirect`` nếu có sẵn thay vì luôn luôn
+        sử dụng ``redirect`` mặc định của Werkzeug.
     """
     if (ctx := _cv_app.get(None)) is not None:
         return ctx.app.redirect(location, code=code)
@@ -263,21 +262,21 @@ def redirect(
 
 
 def abort(code: int | BaseResponse, *args: t.Any, **kwargs: t.Any) -> t.NoReturn:
-    """Raise an :exc:`~werkzeug.exceptions.HTTPException` for the given
-    status code.
+    """Ném ra một :exc:`~werkzeug.exceptions.HTTPException` cho mã trạng thái
+    đã cho.
 
-    If :data:`~flask.current_app` is available, it will call its
-    :attr:`~flask.Flask.aborter` object, otherwise it will use
+    Nếu :data:`~flask.current_app` có sẵn, nó sẽ gọi đối tượng
+    :attr:`~flask.Flask.aborter` của nó, nếu không nó sẽ sử dụng
     :func:`werkzeug.exceptions.abort`.
 
-    :param code: The status code for the exception, which must be
-        registered in ``app.aborter``.
-    :param args: Passed to the exception.
-    :param kwargs: Passed to the exception.
+    :param code: Mã trạng thái cho ngoại lệ, cái mà phải được
+        đăng ký trong ``app.aborter``.
+    :param args: Được truyền cho ngoại lệ.
+    :param kwargs: Được truyền cho ngoại lệ.
 
     .. versionadded:: 2.2
-        Calls ``current_app.aborter`` if available instead of always
-        using Werkzeug's default ``abort``.
+        Gọi ``current_app.aborter`` nếu có sẵn thay vì luôn luôn
+        sử dụng ``abort`` mặc định của Werkzeug.
     """
     if (ctx := _cv_app.get(None)) is not None:
         ctx.app.aborter(code, *args, **kwargs)
@@ -286,49 +285,49 @@ def abort(code: int | BaseResponse, *args: t.Any, **kwargs: t.Any) -> t.NoReturn
 
 
 def get_template_attribute(template_name: str, attribute: str) -> t.Any:
-    """Loads a macro (or variable) a template exports.  This can be used to
-    invoke a macro from within Python code.  If you for example have a
-    template named :file:`_cider.html` with the following contents:
+    """Tải một macro (hoặc biến) mà một template xuất ra. Điều này có thể được sử dụng để
+    gọi một macro từ bên trong mã Python. Nếu bạn ví dụ có một
+    template tên là :file:`_cider.html` với nội dung sau:
 
     .. sourcecode:: html+jinja
 
        {% macro hello(name) %}Hello {{ name }}!{% endmacro %}
 
-    You can access this from Python code like this::
+    Bạn có thể truy cập cái này từ mã Python như thế này::
 
         hello = get_template_attribute('_cider.html', 'hello')
         return hello('World')
 
     .. versionadded:: 0.2
 
-    :param template_name: the name of the template
-    :param attribute: the name of the variable of macro to access
+    :param template_name: tên của template
+    :param attribute: tên của biến hoặc macro để truy cập
     """
     return getattr(current_app.jinja_env.get_template(template_name).module, attribute)
 
 
 def flash(message: str, category: str = "message") -> None:
-    """Flashes a message to the next request.  In order to remove the
-    flashed message from the session and to display it to the user,
-    the template has to call :func:`get_flashed_messages`.
+    """Flash một thông báo đến request tiếp theo. Để xóa thông báo
+    đã flash khỏi session và hiển thị nó cho người dùng,
+    template phải gọi :func:`get_flashed_messages`.
 
     .. versionchanged:: 0.3
-       `category` parameter added.
+       Tham số `category` đã được thêm vào.
 
-    :param message: the message to be flashed.
-    :param category: the category for the message.  The following values
-                     are recommended: ``'message'`` for any kind of message,
-                     ``'error'`` for errors, ``'info'`` for information
-                     messages and ``'warning'`` for warnings.  However any
-                     kind of string can be used as category.
+    :param message: thông báo để flash.
+    :param category: danh mục cho thông báo. Các giá trị sau đây
+                     được khuyến nghị: ``'message'`` cho bất kỳ loại thông báo nào,
+                     ``'error'`` cho lỗi, ``'info'`` cho thông báo thông tin
+                     và ``'warning'`` cho cảnh báo. Tuy nhiên bất kỳ
+                     loại chuỗi nào cũng có thể được sử dụng làm danh mục.
     """
-    # Original implementation:
+    # Triển khai ban đầu:
     #
     #     session.setdefault('_flashes', []).append((category, message))
     #
-    # This assumed that changes made to mutable structures in the session are
-    # always in sync with the session object, which is not true for session
-    # implementations that use external storage for keeping their keys/values.
+    # Điều này giả định rằng các thay đổi được thực hiện đối với các cấu trúc có thể thay đổi trong session luôn
+    # đồng bộ với đối tượng session, điều này không đúng đối với các triển khai
+    # session sử dụng lưu trữ bên ngoài để giữ các khóa/giá trị của chúng.
     flashes = session.get("_flashes", [])
     flashes.append((category, message))
     session["_flashes"] = flashes
@@ -344,33 +343,33 @@ def flash(message: str, category: str = "message") -> None:
 def get_flashed_messages(
     with_categories: bool = False, category_filter: t.Iterable[str] = ()
 ) -> list[str] | list[tuple[str, str]]:
-    """Pulls all flashed messages from the session and returns them.
-    Further calls in the same request to the function will return
-    the same messages.  By default just the messages are returned,
-    but when `with_categories` is set to ``True``, the return value will
-    be a list of tuples in the form ``(category, message)`` instead.
+    """Lấy tất cả các thông báo đã flash từ session và trả về chúng.
+    Các cuộc gọi tiếp theo trong cùng một request đến hàm sẽ trả về
+    cùng các thông báo. Theo mặc định chỉ các thông báo được trả về,
+    nhưng khi `with_categories` được đặt thành ``True``, giá trị trả về sẽ
+    là một danh sách các tuple ở dạng ``(category, message)`` thay thế.
 
-    Filter the flashed messages to one or more categories by providing those
-    categories in `category_filter`.  This allows rendering categories in
-    separate html blocks.  The `with_categories` and `category_filter`
-    arguments are distinct:
+    Lọc các thông báo đã flash theo một hoặc nhiều danh mục bằng cách cung cấp các
+    danh mục đó trong `category_filter`. Điều này cho phép render các danh mục trong
+    các khối html riêng biệt. Các đối số `with_categories` và `category_filter`
+    là riêng biệt:
 
-    * `with_categories` controls whether categories are returned with message
-      text (``True`` gives a tuple, where ``False`` gives just the message text).
-    * `category_filter` filters the messages down to only those matching the
-      provided categories.
+    * `with_categories` kiểm soát xem các danh mục có được trả về cùng với văn bản
+      thông báo hay không (``True`` đưa ra một tuple, trong khi ``False`` chỉ đưa ra văn bản thông báo).
+    * `category_filter` lọc các thông báo xuống chỉ những thông báo khớp với các
+      danh mục đã cung cấp.
 
-    See :doc:`/patterns/flashing` for examples.
+    Xem :doc:`/patterns/flashing` để biết các ví dụ.
 
     .. versionchanged:: 0.3
-       `with_categories` parameter added.
+       Tham số `with_categories` đã được thêm vào.
 
     .. versionchanged:: 0.9
-        `category_filter` parameter added.
+        Tham số `category_filter` đã được thêm vào.
 
-    :param with_categories: set to ``True`` to also receive categories.
-    :param category_filter: filter of categories to limit return values.  Only
-                            categories in the list will be returned.
+    :param with_categories: đặt thành ``True`` để cũng nhận các danh mục.
+    :param category_filter: bộ lọc các danh mục để giới hạn các giá trị trả về. Chỉ
+                            các danh mục trong danh sách sẽ được trả về.
     """
     flashes = app_ctx._flashes
     if flashes is None:
@@ -408,104 +407,104 @@ def send_file(
     last_modified: datetime | int | float | None = None,
     max_age: None | (int | t.Callable[[str | None], int | None]) = None,
 ) -> Response:
-    """Send the contents of a file to the client.
+    """Gửi nội dung của một tệp đến client.
 
-    The first argument can be a file path or a file-like object. Paths
-    are preferred in most cases because Werkzeug can manage the file and
-    get extra information from the path. Passing a file-like object
-    requires that the file is opened in binary mode, and is mostly
-    useful when building a file in memory with :class:`io.BytesIO`.
+    Đối số đầu tiên có thể là một đường dẫn tệp hoặc một đối tượng giống tệp. Các đường dẫn
+    được ưu tiên trong hầu hết các trường hợp vì Werkzeug có thể quản lý tệp và
+    lấy thêm thông tin từ đường dẫn. Truyền một đối tượng giống tệp
+    yêu cầu tệp phải được mở ở chế độ nhị phân, và chủ yếu
+    hữu ích khi xây dựng một tệp trong bộ nhớ với :class:`io.BytesIO`.
 
-    Never pass file paths provided by a user. The path is assumed to be
-    trusted, so a user could craft a path to access a file you didn't
-    intend. Use :func:`send_from_directory` to safely serve
-    user-requested paths from within a directory.
+    Không bao giờ truyền các đường dẫn tệp được cung cấp bởi người dùng. Đường dẫn được giả định là
+    đáng tin cậy, vì vậy người dùng có thể tạo ra một đường dẫn để truy cập một tệp bạn không
+    có ý định. Sử dụng :func:`send_from_directory` để phục vụ an toàn
+    các đường dẫn được yêu cầu bởi người dùng từ bên trong một thư mục.
 
-    If the WSGI server sets a ``file_wrapper`` in ``environ``, it is
-    used, otherwise Werkzeug's built-in wrapper is used. Alternatively,
-    if the HTTP server supports ``X-Sendfile``, configuring Flask with
-    ``USE_X_SENDFILE = True`` will tell the server to send the given
-    path, which is much more efficient than reading it in Python.
+    Nếu server WSGI thiết lập một ``file_wrapper`` trong ``environ``, nó được
+    sử dụng, nếu không wrapper tích hợp của Werkzeug được sử dụng. Thay vào đó,
+    nếu server HTTP hỗ trợ ``X-Sendfile``, cấu hình Flask với
+    ``USE_X_SENDFILE = True`` sẽ bảo server gửi đường dẫn đã cho,
+    điều này hiệu quả hơn nhiều so với việc đọc nó trong Python.
 
-    :param path_or_file: The path to the file to send, relative to the
-        current working directory if a relative path is given.
-        Alternatively, a file-like object opened in binary mode. Make
-        sure the file pointer is seeked to the start of the data.
-    :param mimetype: The MIME type to send for the file. If not
-        provided, it will try to detect it from the file name.
-    :param as_attachment: Indicate to a browser that it should offer to
-        save the file instead of displaying it.
-    :param download_name: The default name browsers will use when saving
-        the file. Defaults to the passed file name.
-    :param conditional: Enable conditional and range responses based on
-        request headers. Requires passing a file path and ``environ``.
-    :param etag: Calculate an ETag for the file, which requires passing
-        a file path. Can also be a string to use instead.
-    :param last_modified: The last modified time to send for the file,
-        in seconds. If not provided, it will try to detect it from the
-        file path.
-    :param max_age: How long the client should cache the file, in
-        seconds. If set, ``Cache-Control`` will be ``public``, otherwise
-        it will be ``no-cache`` to prefer conditional caching.
-
-    .. versionchanged:: 2.0
-        ``download_name`` replaces the ``attachment_filename``
-        parameter. If ``as_attachment=False``, it is passed with
-        ``Content-Disposition: inline`` instead.
+    :param path_or_file: Đường dẫn đến tệp để gửi, tương đối với
+        thư mục làm việc hiện tại nếu một đường dẫn tương đối được đưa ra.
+        Thay vào đó, một đối tượng giống tệp được mở ở chế độ nhị phân. Hãy chắc chắn
+        rằng con trỏ tệp được seek đến đầu dữ liệu.
+    :param mimetype: Loại MIME để gửi cho tệp. Nếu không được
+        cung cấp, nó sẽ cố gắng phát hiện nó từ tên tệp.
+    :param as_attachment: Chỉ ra cho trình duyệt rằng nó nên đề nghị
+        lưu tệp thay vì hiển thị nó.
+    :param download_name: Tên mặc định mà các trình duyệt sẽ sử dụng khi lưu
+        tệp. Mặc định là tên tệp đã truyền.
+    :param conditional: Bật các phản hồi có điều kiện và phạm vi dựa trên
+        các header request. Yêu cầu truyền một đường dẫn tệp và ``environ``.
+    :param etag: Tính toán một ETag cho tệp, điều này yêu cầu truyền
+        một đường dẫn tệp. Cũng có thể là một chuỗi để sử dụng thay thế.
+    :param last_modified: Thời gian sửa đổi cuối cùng để gửi cho tệp,
+        tính bằng giây. Nếu không được cung cấp, nó sẽ cố gắng phát hiện nó từ
+        đường dẫn tệp.
+    :param max_age: Thời gian client nên cache tệp, tính bằng
+        giây. Nếu được thiết lập, ``Cache-Control`` sẽ là ``public``, nếu không
+        nó sẽ là ``no-cache`` để ưu tiên caching có điều kiện.
 
     .. versionchanged:: 2.0
-        ``max_age`` replaces the ``cache_timeout`` parameter.
-        ``conditional`` is enabled and ``max_age`` is not set by
-        default.
+        ``download_name`` thay thế tham số ``attachment_filename``.
+        Nếu ``as_attachment=False``, nó được truyền với
+        ``Content-Disposition: inline`` thay thế.
 
     .. versionchanged:: 2.0
-        ``etag`` replaces the ``add_etags`` parameter. It can be a
-        string to use instead of generating one.
+        ``max_age`` thay thế tham số ``cache_timeout``.
+        ``conditional`` được bật và ``max_age`` không được thiết lập theo
+        mặc định.
 
     .. versionchanged:: 2.0
-        Passing a file-like object that inherits from
-        :class:`~io.TextIOBase` will raise a :exc:`ValueError` rather
-        than sending an empty file.
+        ``etag`` thay thế tham số ``add_etags``. Nó có thể là một
+        chuỗi để sử dụng thay vì tạo ra một cái.
+
+    .. versionchanged:: 2.0
+        Truyền một đối tượng giống tệp kế thừa từ
+        :class:`~io.TextIOBase` sẽ ném ra một :exc:`ValueError` thay vì
+        gửi một tệp trống.
 
     .. versionadded:: 2.0
-        Moved the implementation to Werkzeug. This is now a wrapper to
-        pass some Flask-specific arguments.
+        Đã di chuyển triển khai sang Werkzeug. Đây hiện là một wrapper để
+        truyền một số đối số cụ thể của Flask.
 
     .. versionchanged:: 1.1
-        ``filename`` may be a :class:`~os.PathLike` object.
+        ``filename`` có thể là một đối tượng :class:`~os.PathLike`.
 
     .. versionchanged:: 1.1
-        Passing a :class:`~io.BytesIO` object supports range requests.
+        Truyền một đối tượng :class:`~io.BytesIO` hỗ trợ các request phạm vi.
 
     .. versionchanged:: 1.0.3
-        Filenames are encoded with ASCII instead of Latin-1 for broader
-        compatibility with WSGI servers.
+        Tên tệp được mã hóa bằng ASCII thay vì Latin-1 để tương thích
+        rộng hơn với các server WSGI.
 
     .. versionchanged:: 1.0
-        UTF-8 filenames as specified in :rfc:`2231` are supported.
+        Tên tệp UTF-8 như được chỉ định trong :rfc:`2231` được hỗ trợ.
 
     .. versionchanged:: 0.12
-        The filename is no longer automatically inferred from file
-        objects. If you want to use automatic MIME and etag support,
-        pass a filename via ``filename_or_fp`` or
+        Tên tệp không còn được tự động suy ra từ các đối tượng
+        tệp. Nếu bạn muốn sử dụng hỗ trợ MIME và etag tự động,
+        hãy truyền một tên tệp qua ``filename_or_fp`` hoặc
         ``attachment_filename``.
 
     .. versionchanged:: 0.12
-        ``attachment_filename`` is preferred over ``filename`` for MIME
-        detection.
+        ``attachment_filename`` được ưu tiên hơn ``filename`` cho phát hiện
+        MIME.
 
     .. versionchanged:: 0.9
-        ``cache_timeout`` defaults to
+        ``cache_timeout`` mặc định là
         :meth:`Flask.get_send_file_max_age`.
 
     .. versionchanged:: 0.7
-        MIME guessing and etag support for file-like objects was
-        removed because it was unreliable. Pass a filename if you are
-        able to, otherwise attach an etag yourself.
+        Đoán MIME và hỗ trợ etag cho các đối tượng giống tệp đã bị
+        xóa vì nó không đáng tin cậy. Truyền một tên tệp nếu bạn có thể,
+        nếu không hãy tự đính kèm một etag.
 
     .. versionchanged:: 0.5
-        The ``add_etags``, ``cache_timeout`` and ``conditional``
-        parameters were added. The default behavior is to add etags.
+        Các tham số ``add_etags``, ``cache_timeout`` và ``conditional``
+        đã được thêm vào. Hành vi mặc định là thêm etags.
 
     .. versionadded:: 0.2
     """
@@ -529,7 +528,7 @@ def send_from_directory(
     path: os.PathLike[str] | str,
     **kwargs: t.Any,
 ) -> Response:
-    """Send a file from within a directory using :func:`send_file`.
+    """Gửi một tệp từ bên trong một thư mục sử dụng :func:`send_file`.
 
     .. code-block:: python
 
@@ -539,27 +538,27 @@ def send_from_directory(
                 app.config['UPLOAD_FOLDER'], name, as_attachment=True
             )
 
-    This is a secure way to serve files from a folder, such as static
-    files or uploads. Uses :func:`~werkzeug.security.safe_join` to
-    ensure the path coming from the client is not maliciously crafted to
-    point outside the specified directory.
+    Đây là một cách an toàn để phục vụ các tệp từ một thư mục, chẳng hạn như các tệp
+    tĩnh hoặc các tệp tải lên. Sử dụng :func:`~werkzeug.security.safe_join` để
+    đảm bảo đường dẫn đến từ client không được tạo ra một cách độc hại để
+    trỏ ra bên ngoài thư mục đã chỉ định.
 
-    If the final path does not point to an existing regular file,
-    raises a 404 :exc:`~werkzeug.exceptions.NotFound` error.
+    Nếu đường dẫn cuối cùng không trỏ đến một tệp thông thường hiện có,
+    ném ra một lỗi 404 :exc:`~werkzeug.exceptions.NotFound`.
 
-    :param directory: The directory that ``path`` must be located under,
-        relative to the current application's root path. This *must not*
-        be a value provided by the client, otherwise it becomes insecure.
-    :param path: The path to the file to send, relative to
+    :param directory: Thư mục mà ``path`` phải nằm dưới đó,
+        tương đối với đường dẫn gốc của ứng dụng hiện tại. Giá trị này *không được*
+        là một giá trị được cung cấp bởi client, nếu không nó trở nên không an toàn.
+    :param path: Đường dẫn đến tệp để gửi, tương đối với
         ``directory``.
-    :param kwargs: Arguments to pass to :func:`send_file`.
+    :param kwargs: Các đối số để truyền cho :func:`send_file`.
 
     .. versionchanged:: 2.0
-        ``path`` replaces the ``filename`` parameter.
+        ``path`` thay thế tham số ``filename``.
 
     .. versionadded:: 2.0
-        Moved the implementation to Werkzeug. This is now a wrapper to
-        pass some Flask-specific arguments.
+        Đã di chuyển triển khai sang Werkzeug. Đây hiện là một wrapper để
+        truyền một số đối số cụ thể của Flask.
 
     .. versionadded:: 0.5
     """
@@ -569,21 +568,21 @@ def send_from_directory(
 
 
 def get_root_path(import_name: str) -> str:
-    """Find the root path of a package, or the path that contains a
-    module. If it cannot be found, returns the current working
-    directory.
+    """Tìm đường dẫn gốc của một gói, hoặc đường dẫn chứa một
+    module. Nếu nó không thể được tìm thấy, trả về thư mục làm việc
+    hiện tại.
 
-    Not to be confused with the value returned by :func:`find_package`.
+    Không nhầm lẫn với giá trị được trả về bởi :func:`find_package`.
 
     :meta private:
     """
-    # Module already imported and has a file attribute. Use that first.
+    # Module đã được import và có thuộc tính file. Sử dụng cái đó trước.
     mod = sys.modules.get(import_name)
 
     if mod is not None and hasattr(mod, "__file__") and mod.__file__ is not None:
         return os.path.dirname(os.path.abspath(mod.__file__))
 
-    # Next attempt: check the loader.
+    # Nỗ lực tiếp theo: kiểm tra loader.
     try:
         spec = importlib.util.find_spec(import_name)
 
@@ -594,34 +593,34 @@ def get_root_path(import_name: str) -> str:
     else:
         loader = spec.loader
 
-    # Loader does not exist or we're referring to an unloaded main
-    # module or a main module without path (interactive sessions), go
-    # with the current working directory.
+    # Loader không tồn tại hoặc chúng ta đang tham chiếu đến một module chính chưa tải
+    # hoặc một module chính không có đường dẫn (các phiên tương tác), đi
+    # với thư mục làm việc hiện tại.
     if loader is None:
         return os.getcwd()
 
     if hasattr(loader, "get_filename"):
         filepath = loader.get_filename(import_name)  # pyright: ignore
     else:
-        # Fall back to imports.
+        # Quay lại imports.
         __import__(import_name)
         mod = sys.modules[import_name]
         filepath = getattr(mod, "__file__", None)
 
-        # If we don't have a file path it might be because it is a
-        # namespace package. In this case pick the root path from the
-        # first module that is contained in the package.
+        # Nếu chúng ta không có đường dẫn tệp, có thể là do nó là một
+        # namespace package. Trong trường hợp này chọn đường dẫn gốc từ
+        # module đầu tiên được chứa trong gói.
         if filepath is None:
             raise RuntimeError(
-                "No root path can be found for the provided module"
-                f" {import_name!r}. This can happen because the module"
-                " came from an import hook that does not provide file"
-                " name information or because it's a namespace package."
-                " In this case the root path needs to be explicitly"
-                " provided."
+                "Không thể tìm thấy đường dẫn gốc cho module đã cung cấp"
+                f" {import_name!r}. Điều này có thể xảy ra vì module"
+                " đến từ một import hook không cung cấp thông tin tên"
+                " tệp hoặc vì nó là một namespace package."
+                " Trong trường hợp này đường dẫn gốc cần được cung cấp"
+                " một cách rõ ràng."
             )
 
-    # filepath is import_name.py for a module, or __init__.py for a package.
+    # filepath là import_name.py cho một module, hoặc __init__.py cho một gói.
     return os.path.dirname(os.path.abspath(filepath))  # type: ignore[no-any-return]
 
 

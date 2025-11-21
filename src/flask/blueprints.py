@@ -42,30 +42,30 @@ class Blueprint(SansioBlueprint):
             cli_group,
         )
 
-        #: The Click command group for registering CLI commands for this
-        #: object. The commands are available from the ``flask`` command
-        #: once the application has been discovered and blueprints have
-        #: been registered.
+        #: Nhóm lệnh Click để đăng ký các lệnh CLI cho đối tượng
+        #: này. Các lệnh có sẵn từ lệnh ``flask``
+        #: sau khi ứng dụng đã được phát hiện và các blueprint đã
+        #: được đăng ký.
         self.cli = AppGroup()
 
-        # Set the name of the Click group in case someone wants to add
-        # the app's commands to another CLI tool.
+        # Đặt tên của nhóm Click trong trường hợp ai đó muốn thêm
+        # các lệnh của ứng dụng vào một công cụ CLI khác.
         self.cli.name = self.name
 
     def get_send_file_max_age(self, filename: str | None) -> int | None:
-        """Used by :func:`send_file` to determine the ``max_age`` cache
-        value for a given file path if it wasn't passed.
+        """Được sử dụng bởi :func:`send_file` để xác định giá trị cache ``max_age``
+        cho một đường dẫn tệp nhất định nếu nó không được truyền.
 
-        By default, this returns :data:`SEND_FILE_MAX_AGE_DEFAULT` from
-        the configuration of :data:`~flask.current_app`. This defaults
-        to ``None``, which tells the browser to use conditional requests
-        instead of a timed cache, which is usually preferable.
+        Theo mặc định, điều này trả về :data:`SEND_FILE_MAX_AGE_DEFAULT` từ
+        cấu hình của :data:`~flask.current_app`. Điều này mặc định
+        là ``None``, báo cho trình duyệt sử dụng các request có điều kiện
+        thay vì cache theo thời gian, điều này thường thích hợp hơn.
 
-        Note this is a duplicate of the same method in the Flask
-        class.
+        Lưu ý điều này là một bản sao của cùng một phương thức trong lớp
+        Flask.
 
         .. versionchanged:: 2.0
-            The default configuration is ``None`` instead of 12 hours.
+            Cấu hình mặc định là ``None`` thay vì 12 giờ.
 
         .. versionadded:: 0.9
         """
@@ -80,13 +80,13 @@ class Blueprint(SansioBlueprint):
         return value  # type: ignore[no-any-return]
 
     def send_static_file(self, filename: str) -> Response:
-        """The view function used to serve files from
-        :attr:`static_folder`. A route is automatically registered for
-        this view at :attr:`static_url_path` if :attr:`static_folder` is
-        set.
+        """Hàm view được sử dụng để phục vụ các tệp từ
+        :attr:`static_folder`. Một route được tự động đăng ký cho
+        view này tại :attr:`static_url_path` nếu :attr:`static_folder` được
+        thiết lập.
 
-        Note this is a duplicate of the same method in the Flask
-        class.
+        Lưu ý điều này là một bản sao của cùng một phương thức trong lớp
+        Flask.
 
         .. versionadded:: 0.5
 
@@ -94,8 +94,8 @@ class Blueprint(SansioBlueprint):
         if not self.has_static_folder:
             raise RuntimeError("'static_folder' must be set to serve static_files.")
 
-        # send_file only knows to call get_send_file_max_age on the app,
-        # call it here so it works for blueprints too.
+        # send_file chỉ biết gọi get_send_file_max_age trên ứng dụng,
+        # gọi nó ở đây để nó cũng hoạt động cho các blueprint.
         max_age = self.get_send_file_max_age(filename)
         return send_from_directory(
             t.cast(str, self.static_folder), filename, max_age=max_age
@@ -104,18 +104,18 @@ class Blueprint(SansioBlueprint):
     def open_resource(
         self, resource: str, mode: str = "rb", encoding: str | None = "utf-8"
     ) -> t.IO[t.AnyStr]:
-        """Open a resource file relative to :attr:`root_path` for reading. The
-        blueprint-relative equivalent of the app's :meth:`~.Flask.open_resource`
-        method.
+        """Mở một tệp tài nguyên tương đối với :attr:`root_path` để đọc.
+        Tương đương tương đối với blueprint của phương thức :meth:`~.Flask.open_resource`
+        của ứng dụng.
 
-        :param resource: Path to the resource relative to :attr:`root_path`.
-        :param mode: Open the file in this mode. Only reading is supported,
-            valid values are ``"r"`` (or ``"rt"``) and ``"rb"``.
-        :param encoding: Open the file with this encoding when opening in text
-            mode. This is ignored when opening in binary mode.
+        :param resource: Đường dẫn đến tài nguyên tương đối với :attr:`root_path`.
+        :param mode: Mở tệp trong chế độ này. Chỉ hỗ trợ đọc,
+            các giá trị hợp lệ là ``"r"`` (hoặc ``"rt"``) và ``"rb"``.
+        :param encoding: Mở tệp với mã hóa này khi mở trong chế độ
+            văn bản. Điều này bị bỏ qua khi mở trong chế độ nhị phân.
 
         .. versionchanged:: 3.1
-            Added the ``encoding`` parameter.
+            Đã thêm tham số ``encoding``.
         """
         if mode not in {"r", "rt", "rb"}:
             raise ValueError("Resources can only be opened for reading.")

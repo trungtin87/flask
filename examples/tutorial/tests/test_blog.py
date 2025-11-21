@@ -5,13 +5,13 @@ from flaskr.db import get_db
 
 def test_index(client, auth):
     response = client.get("/")
-    assert b"Log In" in response.data
-    assert b"Register" in response.data
+    assert b"\xc4\x90\xc4\x83ng nh\xe1\xba\xadp" in response.data
+    assert b"\xc4\x90\xc4\x83ng k\xc3\xbd" in response.data
 
     auth.login()
     response = client.get("/")
     assert b"test title" in response.data
-    assert b"by test on 2018-01-01" in response.data
+    assert b"b\xe1\xbb\x9fi test v\xc3\xa0o 2018-01-01" in response.data
     assert b"test\nbody" in response.data
     assert b'href="/1/update"' in response.data
 
@@ -69,7 +69,7 @@ def test_update(client, auth, app):
 def test_create_update_validate(client, auth, path):
     auth.login()
     response = client.post(path, data={"title": "", "body": ""})
-    assert b"Title is required." in response.data
+    assert b"Ti\xc3\xaau \xc4\x91\xe1\xbb\x81 l\xc3\xa0 b\xe1\xba\xaft bu\xe1\xbb\x99c." in response.data
 
 
 def test_delete(client, auth, app):

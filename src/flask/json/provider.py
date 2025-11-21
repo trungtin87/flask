@@ -17,20 +17,20 @@ if t.TYPE_CHECKING:  # pragma: no cover
 
 
 class JSONProvider:
-    """A standard set of JSON operations for an application. Subclasses
-    of this can be used to customize JSON behavior or use different
-    JSON libraries.
+    """Một tập hợp các hoạt động JSON tiêu chuẩn cho một ứng dụng. Các lớp con
+    của lớp này có thể được sử dụng để tùy chỉnh hành vi JSON hoặc sử dụng các
+    thư viện JSON khác nhau.
 
-    To implement a provider for a specific library, subclass this base
-    class and implement at least :meth:`dumps` and :meth:`loads`. All
-    other methods have default implementations.
+    Để triển khai một provider cho một thư viện cụ thể, hãy tạo lớp con của lớp cơ sở
+    này và triển khai ít nhất :meth:`dumps` và :meth:`loads`. Tất cả
+    các phương thức khác đều có triển khai mặc định.
 
-    To use a different provider, either subclass ``Flask`` and set
-    :attr:`~flask.Flask.json_provider_class` to a provider class, or set
-    :attr:`app.json <flask.Flask.json>` to an instance of the class.
+    Để sử dụng một provider khác, hoặc tạo lớp con ``Flask`` và đặt
+    :attr:`~flask.Flask.json_provider_class` thành một lớp provider, hoặc đặt
+    :attr:`app.json <flask.Flask.json>` thành một thể hiện của lớp đó.
 
-    :param app: An application instance. This will be stored as a
-        :class:`weakref.proxy` on the :attr:`_app` attribute.
+    :param app: Một thể hiện của ứng dụng. Điều này sẽ được lưu trữ dưới dạng
+        :class:`weakref.proxy` trên thuộc tính :attr:`_app`.
 
     .. versionadded:: 2.2
     """
@@ -39,36 +39,36 @@ class JSONProvider:
         self._app: App = weakref.proxy(app)
 
     def dumps(self, obj: t.Any, **kwargs: t.Any) -> str:
-        """Serialize data as JSON.
+        """Tuần tự hóa dữ liệu thành JSON.
 
-        :param obj: The data to serialize.
-        :param kwargs: May be passed to the underlying JSON library.
+        :param obj: Dữ liệu để tuần tự hóa.
+        :param kwargs: Có thể được truyền cho thư viện JSON bên dưới.
         """
         raise NotImplementedError
 
     def dump(self, obj: t.Any, fp: t.IO[str], **kwargs: t.Any) -> None:
-        """Serialize data as JSON and write to a file.
+        """Tuần tự hóa dữ liệu thành JSON và ghi vào một tệp.
 
-        :param obj: The data to serialize.
-        :param fp: A file opened for writing text. Should use the UTF-8
-            encoding to be valid JSON.
-        :param kwargs: May be passed to the underlying JSON library.
+        :param obj: Dữ liệu để tuần tự hóa.
+        :param fp: Một tệp được mở để ghi văn bản. Nên sử dụng mã hóa UTF-8
+            để là JSON hợp lệ.
+        :param kwargs: Có thể được truyền cho thư viện JSON bên dưới.
         """
         fp.write(self.dumps(obj, **kwargs))
 
     def loads(self, s: str | bytes, **kwargs: t.Any) -> t.Any:
-        """Deserialize data as JSON.
+        """Giải tuần tự hóa dữ liệu thành JSON.
 
-        :param s: Text or UTF-8 bytes.
-        :param kwargs: May be passed to the underlying JSON library.
+        :param s: Văn bản hoặc byte UTF-8.
+        :param kwargs: Có thể được truyền cho thư viện JSON bên dưới.
         """
         raise NotImplementedError
 
     def load(self, fp: t.IO[t.AnyStr], **kwargs: t.Any) -> t.Any:
-        """Deserialize data as JSON read from a file.
+        """Giải tuần tự hóa dữ liệu thành JSON đọc từ một tệp.
 
-        :param fp: A file opened for reading text or UTF-8 bytes.
-        :param kwargs: May be passed to the underlying JSON library.
+        :param fp: Một tệp được mở để đọc văn bản hoặc byte UTF-8.
+        :param kwargs: Có thể được truyền cho thư viện JSON bên dưới.
         """
         return self.loads(fp.read(), **kwargs)
 
@@ -87,19 +87,18 @@ class JSONProvider:
         return args or kwargs
 
     def response(self, *args: t.Any, **kwargs: t.Any) -> Response:
-        """Serialize the given arguments as JSON, and return a
-        :class:`~flask.Response` object with the ``application/json``
-        mimetype.
+        """Tuần tự hóa các đối số đã cho thành JSON, và trả về một
+        đối tượng :class:`~flask.Response` với mimetype ``application/json``.
 
-        The :func:`~flask.json.jsonify` function calls this method for
-        the current application.
+        Hàm :func:`~flask.json.jsonify` gọi phương thức này cho
+        ứng dụng hiện tại.
 
-        Either positional or keyword arguments can be given, not both.
-        If no arguments are given, ``None`` is serialized.
+        Hoặc đối số vị trí hoặc đối số từ khóa có thể được đưa ra, không phải cả hai.
+        Nếu không có đối số nào được đưa ra, ``None`` được tuần tự hóa.
 
-        :param args: A single value to serialize, or multiple values to
-            treat as a list to serialize.
-        :param kwargs: Treat as a dict to serialize.
+        :param args: Một giá trị duy nhất để tuần tự hóa, hoặc nhiều giá trị để
+            xử lý như một danh sách để tuần tự hóa.
+        :param kwargs: Xử lý như một dict để tuần tự hóa.
         """
         obj = self._prepare_response_obj(args, kwargs)
         return self._app.response_class(self.dumps(obj), mimetype="application/json")
@@ -122,56 +121,56 @@ def _default(o: t.Any) -> t.Any:
 
 
 class DefaultJSONProvider(JSONProvider):
-    """Provide JSON operations using Python's built-in :mod:`json`
-    library. Serializes the following additional data types:
+    """Cung cấp các hoạt động JSON sử dụng thư viện :mod:`json` tích hợp sẵn
+    của Python. Tuần tự hóa các loại dữ liệu bổ sung sau:
 
-    -   :class:`datetime.datetime` and :class:`datetime.date` are
-        serialized to :rfc:`822` strings. This is the same as the HTTP
-        date format.
-    -   :class:`uuid.UUID` is serialized to a string.
-    -   :class:`dataclasses.dataclass` is passed to
+    -   :class:`datetime.datetime` và :class:`datetime.date` được
+        tuần tự hóa thành chuỗi :rfc:`822`. Điều này giống với định dạng
+        ngày HTTP.
+    -   :class:`uuid.UUID` được tuần tự hóa thành một chuỗi.
+    -   :class:`dataclasses.dataclass` được truyền cho
         :func:`dataclasses.asdict`.
-    -   :class:`~markupsafe.Markup` (or any object with a ``__html__``
-        method) will call the ``__html__`` method to get a string.
+    -   :class:`~markupsafe.Markup` (hoặc bất kỳ đối tượng nào có phương thức ``__html__``)
+        sẽ gọi phương thức ``__html__`` để lấy một chuỗi.
     """
 
     default: t.Callable[[t.Any], t.Any] = staticmethod(_default)
-    """Apply this function to any object that :meth:`json.dumps` does
-    not know how to serialize. It should return a valid JSON type or
-    raise a ``TypeError``.
+    """Áp dụng hàm này cho bất kỳ đối tượng nào mà :meth:`json.dumps` không
+    biết cách tuần tự hóa. Nó sẽ trả về một loại JSON hợp lệ hoặc
+    nêu ra một ``TypeError``.
     """
 
     ensure_ascii = True
-    """Replace non-ASCII characters with escape sequences. This may be
-    more compatible with some clients, but can be disabled for better
-    performance and size.
+    """Thay thế các ký tự không phải ASCII bằng các chuỗi thoát. Điều này có thể
+    tương thích hơn với một số client, nhưng có thể bị vô hiệu hóa để có hiệu suất
+    và kích thước tốt hơn.
     """
 
     sort_keys = True
-    """Sort the keys in any serialized dicts. This may be useful for
-    some caching situations, but can be disabled for better performance.
-    When enabled, keys must all be strings, they are not converted
-    before sorting.
+    """Sắp xếp các khóa trong bất kỳ dict nào được tuần tự hóa. Điều này có thể hữu ích cho
+    một số tình huống lưu trữ đệm, nhưng có thể bị vô hiệu hóa để có hiệu suất tốt hơn.
+    Khi được bật, tất cả các khóa phải là chuỗi, chúng không được chuyển đổi
+    trước khi sắp xếp.
     """
 
     compact: bool | None = None
-    """If ``True``, or ``None`` out of debug mode, the :meth:`response`
-    output will not add indentation, newlines, or spaces. If ``False``,
-    or ``None`` in debug mode, it will use a non-compact representation.
+    """Nếu ``True``, hoặc ``None`` ngoài chế độ debug, đầu ra :meth:`response`
+    sẽ không thêm thụt đầu dòng, dòng mới hoặc khoảng trắng. Nếu ``False``,
+    hoặc ``None`` trong chế độ debug, nó sẽ sử dụng một biểu diễn không gọn.
     """
 
     mimetype = "application/json"
-    """The mimetype set in :meth:`response`."""
+    """Mimetype được đặt trong :meth:`response`."""
 
     def dumps(self, obj: t.Any, **kwargs: t.Any) -> str:
-        """Serialize data as JSON to a string.
+        """Tuần tự hóa dữ liệu thành JSON thành một chuỗi.
 
-        Keyword arguments are passed to :func:`json.dumps`. Sets some
-        parameter defaults from the :attr:`default`,
-        :attr:`ensure_ascii`, and :attr:`sort_keys` attributes.
+        Các đối số từ khóa được truyền cho :func:`json.dumps`. Đặt một số
+        mặc định tham số từ các thuộc tính :attr:`default`,
+        :attr:`ensure_ascii`, và :attr:`sort_keys`.
 
-        :param obj: The data to serialize.
-        :param kwargs: Passed to :func:`json.dumps`.
+        :param obj: Dữ liệu để tuần tự hóa.
+        :param kwargs: Được truyền cho :func:`json.dumps`.
         """
         kwargs.setdefault("default", self.default)
         kwargs.setdefault("ensure_ascii", self.ensure_ascii)
@@ -179,28 +178,28 @@ class DefaultJSONProvider(JSONProvider):
         return json.dumps(obj, **kwargs)
 
     def loads(self, s: str | bytes, **kwargs: t.Any) -> t.Any:
-        """Deserialize data as JSON from a string or bytes.
+        """Giải tuần tự hóa dữ liệu thành JSON từ một chuỗi hoặc byte.
 
-        :param s: Text or UTF-8 bytes.
-        :param kwargs: Passed to :func:`json.loads`.
+        :param s: Văn bản hoặc byte UTF-8.
+        :param kwargs: Được truyền cho :func:`json.loads`.
         """
         return json.loads(s, **kwargs)
 
     def response(self, *args: t.Any, **kwargs: t.Any) -> Response:
-        """Serialize the given arguments as JSON, and return a
-        :class:`~flask.Response` object with it. The response mimetype
-        will be "application/json" and can be changed with
+        """Tuần tự hóa các đối số đã cho thành JSON, và trả về một
+        đối tượng :class:`~flask.Response` với nó. Mimetype phản hồi
+        sẽ là "application/json" và có thể được thay đổi bằng
         :attr:`mimetype`.
 
-        If :attr:`compact` is ``False`` or debug mode is enabled, the
-        output will be formatted to be easier to read.
+        Nếu :attr:`compact` là ``False`` hoặc chế độ debug được bật,
+        đầu ra sẽ được định dạng để dễ đọc hơn.
 
-        Either positional or keyword arguments can be given, not both.
-        If no arguments are given, ``None`` is serialized.
+        Hoặc đối số vị trí hoặc đối số từ khóa có thể được đưa ra, không phải cả hai.
+        Nếu không có đối số nào được đưa ra, ``None`` được tuần tự hóa.
 
-        :param args: A single value to serialize, or multiple values to
-            treat as a list to serialize.
-        :param kwargs: Treat as a dict to serialize.
+        :param args: Một giá trị duy nhất để tuần tự hóa, hoặc nhiều giá trị để
+            xử lý như một danh sách để tuần tự hóa.
+        :param kwargs: Xử lý như một dict để tuần tự hóa.
         """
         obj = self._prepare_response_obj(args, kwargs)
         dump_args: dict[str, t.Any] = {}

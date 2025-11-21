@@ -35,35 +35,35 @@ if t.TYPE_CHECKING:
 
 
 class NoAppException(click.UsageError):
-    """Raised if an application cannot be found or loaded."""
+    """Được ném ra nếu không tìm thấy hoặc không thể tải ứng dụng."""
 
 
 def find_best_app(module: ModuleType) -> Flask:
-    """Given a module instance this tries to find the best possible
-    application in the module or raises an exception.
+    """Với một thể hiện module, điều này cố gắng tìm ứng dụng tốt nhất có thể
+    trong module hoặc ném ra một ngoại lệ.
     """
     from . import Flask
 
-    # Search for the most common names first.
+    # Tìm kiếm các tên phổ biến nhất trước.
     for attr_name in ("app", "application"):
         app = getattr(module, attr_name, None)
 
         if isinstance(app, Flask):
             return app
 
-    # Otherwise find the only object that is a Flask instance.
+    # Nếu không, tìm đối tượng duy nhất là một thể hiện Flask.
     matches = [v for v in module.__dict__.values() if isinstance(v, Flask)]
 
     if len(matches) == 1:
         return matches[0]
     elif len(matches) > 1:
         raise NoAppException(
-            "Detected multiple Flask applications in module"
-            f" '{module.__name__}'. Use '{module.__name__}:name'"
-            " to specify the correct one."
+            "Đã phát hiện nhiều ứng dụng Flask trong module"
+            f" '{module.__name__}'. Sử dụng '{module.__name__}:name'"
+            " để chỉ định đúng ứng dụng."
         )
 
-    # Search for app factory functions.
+    # Tìm kiếm các hàm factory ứng dụng.
     for attr_name in ("create_app", "make_app"):
         app_factory = getattr(module, attr_name, None)
 
@@ -78,58 +78,58 @@ def find_best_app(module: ModuleType) -> Flask:
                     raise
 
                 raise NoAppException(
-                    f"Detected factory '{attr_name}' in module '{module.__name__}',"
-                    " but could not call it without arguments. Use"
+                    f"Đã phát hiện factory '{attr_name}' trong module '{module.__name__}',"
+                    " nhưng không thể gọi nó mà không có đối số. Sử dụng"
                     f" '{module.__name__}:{attr_name}(args)'"
-                    " to specify arguments."
+                    " để chỉ định các đối số."
                 ) from e
 
     raise NoAppException(
-        "Failed to find Flask application or factory in module"
-        f" '{module.__name__}'. Use '{module.__name__}:name'"
-        " to specify one."
+        "Không tìm thấy ứng dụng Flask hoặc factory trong module"
+        f" '{module.__name__}'. Sử dụng '{module.__name__}:name'"
+        " để chỉ định một cái."
     )
 
 
 def _called_with_wrong_args(f: t.Callable[..., Flask]) -> bool:
-    """Check whether calling a function raised a ``TypeError`` because
-    the call failed or because something in the factory raised the
-    error.
+    """Kiểm tra xem việc gọi một hàm có ném ra ``TypeError`` hay không vì
+    cuộc gọi thất bại hoặc vì một cái gì đó trong factory đã ném ra
+    lỗi.
 
-    :param f: The function that was called.
-    :return: ``True`` if the call failed.
+    :param f: Hàm đã được gọi.
+    :return: ``True`` nếu cuộc gọi thất bại.
     """
     tb = sys.exc_info()[2]
 
     try:
         while tb is not None:
             if tb.tb_frame.f_code is f.__code__:
-                # In the function, it was called successfully.
+                # Trong hàm, nó đã được gọi thành công.
                 return False
 
             tb = tb.tb_next
 
-        # Didn't reach the function.
+        # Không đến được hàm.
         return True
     finally:
-        # Delete tb to break a circular reference.
+        # Xóa tb để phá vỡ tham chiếu vòng.
         # https://docs.python.org/2/library/sys.html#sys.exc_info
         del tb
 
 
 def find_app_by_string(module: ModuleType, app_name: str) -> Flask:
-    """Check if the given string is a variable name or a function. Call
-    a function to get the app instance, or return the variable directly.
+    """Kiểm tra xem chuỗi đã cho có phải là tên biến hoặc hàm không. Gọi
+    một hàm để lấy thể hiện ứng dụng, hoặc trả về biến trực tiếp.
     """
     from . import Flask
 
-    # Parse app_name as a single expression to determine if it's a valid
-    # attribute name or function call.
+    # Phân tích app_name như một biểu thức đơn để xác định xem nó có phải là một
+    # tên thuộc tính hoặc lời gọi hàm hợp lệ không.
     try:
         expr = ast.parse(app_name.strip(), mode="eval").body
     except SyntaxError:
         raise NoAppException(
-            f"Failed to parse {app_name!r} as an attribute name or function call."
+            f"Không thể phân tích {app_name!r} như một tên thuộc tính hoặc lời gọi hàm."
         ) from None
 
     if isinstance(expr, ast.Name):
@@ -137,15 +137,15 @@ def find_app_by_string(module: ModuleType, app_name: str) -> Flask:
         args = []
         kwargs = {}
     elif isinstance(expr, ast.Call):
-        # Ensure the function name is an attribute name only.
+        # Đảm bảo tên hàm chỉ là một tên thuộc tính.
         if not isinstance(expr.func, ast.Name):
             raise NoAppException(
-                f"Function reference must be a simple name: {app_name!r}."
+                f"Tham chiếu hàm phải là một tên đơn giản: {app_name!r}."
             )
 
         name = expr.func.id
 
-        # Parse the positional and keyword arguments as literals.
+        # Phân tích các đối số vị trí và từ khóa dưới dạng literal.
         try:
             args = [ast.literal_eval(arg) for arg in expr.args]
             kwargs = {
@@ -154,10 +154,10 @@ def find_app_by_string(module: ModuleType, app_name: str) -> Flask:
                 if kw.arg is not None
             }
         except ValueError:
-            # literal_eval gives cryptic error messages, show a generic
-            # message with the full expression instead.
+            # literal_eval đưa ra thông báo lỗi khó hiểu, hiển thị một thông báo chung
+            # với biểu thức đầy đủ thay thế.
             raise NoAppException(
-                f"Failed to parse arguments as literal values: {app_name!r}."
+                f"Không thể phân tích các đối số dưới dạng giá trị literal: {app_name!r}."
             ) from None
     else:
         raise NoAppException(
@@ -168,11 +168,11 @@ def find_app_by_string(module: ModuleType, app_name: str) -> Flask:
         attr = getattr(module, name)
     except AttributeError as e:
         raise NoAppException(
-            f"Failed to find attribute {name!r} in {module.__name__!r}."
+            f"Không thể tìm thấy thuộc tính {name!r} trong {module.__name__!r}."
         ) from e
 
-    # If the attribute is a function, call it with any args and kwargs
-    # to get the real application.
+    # Nếu thuộc tính là một hàm, gọi nó với bất kỳ args và kwargs nào
+    # để lấy ứng dụng thực sự.
     if inspect.isfunction(attr):
         try:
             app = attr(*args, **kwargs)
@@ -181,9 +181,9 @@ def find_app_by_string(module: ModuleType, app_name: str) -> Flask:
                 raise
 
             raise NoAppException(
-                f"The factory {app_name!r} in module"
-                f" {module.__name__!r} could not be called with the"
-                " specified arguments."
+                f"Factory {app_name!r} trong module"
+                f" {module.__name__!r} không thể được gọi với các"
+                " đối số đã chỉ định."
             ) from e
     else:
         app = attr
@@ -192,14 +192,14 @@ def find_app_by_string(module: ModuleType, app_name: str) -> Flask:
         return app
 
     raise NoAppException(
-        "A valid Flask application was not obtained from"
+        "Một ứng dụng Flask hợp lệ không được lấy từ"
         f" '{module.__name__}:{app_name}'."
     )
 
 
 def prepare_import(path: str) -> str:
-    """Given a filename this will try to calculate the python path, add it
-    to the search path and return the actual module name that is expected.
+    """Với một tên tệp, điều này sẽ cố gắng tính toán đường dẫn python, thêm nó
+    vào đường dẫn tìm kiếm và trả về tên module thực tế được mong đợi.
     """
     path = os.path.realpath(path)
 
@@ -212,7 +212,7 @@ def prepare_import(path: str) -> str:
 
     module_name = []
 
-    # move up until outside package structure (no __init__.py)
+    # di chuyển lên cho đến khi ra ngoài cấu trúc gói (không có __init__.py)
     while True:
         path, name = os.path.split(path)
         module_name.append(name)
@@ -244,15 +244,15 @@ def locate_app(
     try:
         __import__(module_name)
     except ImportError:
-        # Reraise the ImportError if it occurred within the imported module.
-        # Determine this by checking whether the trace has a depth > 1.
+        # Ném lại ImportError nếu nó xảy ra trong module được import.
+        # Xác định điều này bằng cách kiểm tra xem trace có độ sâu > 1 hay không.
         if sys.exc_info()[2].tb_next:  # type: ignore[union-attr]
             raise NoAppException(
-                f"While importing {module_name!r}, an ImportError was"
-                f" raised:\n\n{traceback.format_exc()}"
+                f"Trong khi import {module_name!r}, một ImportError đã"
+                f" được ném ra:\n\n{traceback.format_exc()}"
             ) from None
         elif raise_if_not_found:
-            raise NoAppException(f"Could not import {module_name!r}.") from None
+            raise NoAppException(f"Không thể import {module_name!r}.") from None
         else:
             return None
 
@@ -282,7 +282,7 @@ def get_version(ctx: click.Context, param: click.Parameter, value: t.Any) -> Non
 
 version_option = click.Option(
     ["--version"],
-    help="Show the Flask version.",
+    help="Hiển thị phiên bản Flask.",
     expose_value=False,
     callback=get_version,
     is_flag=True,
@@ -291,15 +291,15 @@ version_option = click.Option(
 
 
 class ScriptInfo:
-    """Helper object to deal with Flask applications.  This is usually not
-    necessary to interface with as it's used internally in the dispatching
-    to click.  In future versions of Flask this object will most likely play
-    a bigger role.  Typically it's created automatically by the
-    :class:`FlaskGroup` but you can also manually create it and pass it
-    onwards as click object.
+    """Đối tượng trợ giúp để xử lý các ứng dụng Flask. Điều này thường không
+    cần thiết để giao tiếp vì nó được sử dụng nội bộ trong việc điều phối
+    đến click. Trong các phiên bản tương lai của Flask, đối tượng này rất có thể sẽ đóng
+    vai trò lớn hơn. Thông thường nó được tạo tự động bởi
+    :class:`FlaskGroup` nhưng bạn cũng có thể tạo thủ công và truyền nó
+    tiếp theo như đối tượng click.
 
     .. versionchanged:: 3.1
-        Added the ``load_dotenv_defaults`` parameter and attribute.
+        Đã thêm tham số và thuộc tính ``load_dotenv_defaults``.
     """
 
     def __init__(
@@ -309,21 +309,21 @@ class ScriptInfo:
         set_debug_flag: bool = True,
         load_dotenv_defaults: bool = True,
     ) -> None:
-        #: Optionally the import path for the Flask application.
+        #: Tùy chọn đường dẫn import cho ứng dụng Flask.
         self.app_import_path = app_import_path
-        #: Optionally a function that is passed the script info to create
-        #: the instance of the application.
+        #: Tùy chọn một hàm được truyền thông tin script để tạo
+        #: thể hiện của ứng dụng.
         self.create_app = create_app
-        #: A dictionary with arbitrary data that can be associated with
-        #: this script info.
+        #: Một từ điển với dữ liệu tùy ý có thể được liên kết với
+        #: thông tin script này.
         self.data: dict[t.Any, t.Any] = {}
         self.set_debug_flag = set_debug_flag
 
         self.load_dotenv_defaults = get_load_dotenv(load_dotenv_defaults)
-        """Whether default ``.flaskenv`` and ``.env`` files should be loaded.
+        """Liệu các tệp ``.flaskenv`` và ``.env`` mặc định có nên được tải hay không.
 
-        ``ScriptInfo`` doesn't load anything, this is for reference when doing
-        the load elsewhere during processing.
+        ``ScriptInfo`` không tải bất cứ thứ gì, đây là để tham khảo khi thực hiện
+        việc tải ở nơi khác trong quá trình xử lý.
 
         .. versionadded:: 3.1
         """
@@ -331,9 +331,9 @@ class ScriptInfo:
         self._loaded_app: Flask | None = None
 
     def load_app(self) -> Flask:
-        """Loads the Flask app (if not yet loaded) and returns it.  Calling
-        this multiple times will just result in the already loaded app to
-        be returned.
+        """Tải ứng dụng Flask (nếu chưa được tải) và trả về nó. Gọi
+        điều này nhiều lần sẽ chỉ dẫn đến ứng dụng đã tải
+        được trả về.
         """
         if self._loaded_app is not None:
             return self._loaded_app
@@ -357,15 +357,15 @@ class ScriptInfo:
 
         if app is None:
             raise NoAppException(
-                "Could not locate a Flask application. Use the"
-                " 'flask --app' option, 'FLASK_APP' environment"
-                " variable, or a 'wsgi.py' or 'app.py' file in the"
-                " current directory."
+                "Không thể định vị ứng dụng Flask. Sử dụng tùy chọn"
+                " 'flask --app', biến môi trường 'FLASK_APP'"
+                ", hoặc tệp 'wsgi.py' hoặc 'app.py' trong"
+                " thư mục hiện tại."
             )
 
         if self.set_debug_flag:
-            # Update the app's debug flag through the descriptor so that
-            # other values repopulate as well.
+            # Cập nhật cờ debug của ứng dụng thông qua descriptor để
+            # các giá trị khác cũng được điền lại.
             app.debug = get_debug_flag()
 
         self._loaded_app = app
@@ -378,17 +378,17 @@ F = t.TypeVar("F", bound=t.Callable[..., t.Any])
 
 
 def with_appcontext(f: F) -> F:
-    """Wraps a callback so that it's guaranteed to be executed with the
-    script's application context.
+    """Bao bọc một callback để đảm bảo nó được thực thi với
+    ngữ cảnh ứng dụng của script.
 
-    Custom commands (and their options) registered under ``app.cli`` or
-    ``blueprint.cli`` will always have an app context available, this
-    decorator is not required in that case.
+    Các lệnh tùy chỉnh (và các tùy chọn của chúng) được đăng ký dưới ``app.cli`` hoặc
+    ``blueprint.cli`` sẽ luôn có sẵn ngữ cảnh ứng dụng, decorator này
+    không bắt buộc trong trường hợp đó.
 
     .. versionchanged:: 2.2
-        The app context is active for subcommands as well as the
-        decorated callback. The app context is always available to
-        ``app.cli`` command and parameter callbacks.
+        Ngữ cảnh ứng dụng hoạt động cho các lệnh con cũng như
+        callback được trang trí. Ngữ cảnh ứng dụng luôn có sẵn cho
+        các callback lệnh và tham số ``app.cli``.
     """
 
     @click.pass_context
@@ -403,19 +403,19 @@ def with_appcontext(f: F) -> F:
 
 
 class AppGroup(click.Group):
-    """This works similar to a regular click :class:`~click.Group` but it
-    changes the behavior of the :meth:`command` decorator so that it
-    automatically wraps the functions in :func:`with_appcontext`.
+    """Điều này hoạt động tương tự như một :class:`~click.Group` click thông thường nhưng nó
+    thay đổi hành vi của decorator :meth:`command` để nó
+    tự động bao bọc các hàm trong :func:`with_appcontext`.
 
-    Not to be confused with :class:`FlaskGroup`.
+    Không nhầm lẫn với :class:`FlaskGroup`.
     """
 
     def command(  # type: ignore[override]
         self, *args: t.Any, **kwargs: t.Any
     ) -> t.Callable[[t.Callable[..., t.Any]], click.Command]:
-        """This works exactly like the method of the same name on a regular
-        :class:`click.Group` but it wraps callbacks in :func:`with_appcontext`
-        unless it's disabled by passing ``with_appcontext=False``.
+        """Điều này hoạt động chính xác như phương thức cùng tên trên một
+        :class:`click.Group` thông thường nhưng nó bao bọc các callback trong :func:`with_appcontext`
+        trừ khi nó bị vô hiệu hóa bằng cách truyền ``with_appcontext=False``.
         """
         wrap_for_ctx = kwargs.pop("with_appcontext", True)
 
@@ -429,8 +429,8 @@ class AppGroup(click.Group):
     def group(  # type: ignore[override]
         self, *args: t.Any, **kwargs: t.Any
     ) -> t.Callable[[t.Callable[..., t.Any]], click.Group]:
-        """This works exactly like the method of the same name on a regular
-        :class:`click.Group` but it defaults the group class to
+        """Điều này hoạt động chính xác như phương thức cùng tên trên một
+        :class:`click.Group` thông thường nhưng nó mặc định lớp nhóm thành
         :class:`AppGroup`.
         """
         kwargs.setdefault("cls", AppGroup)
@@ -446,18 +446,18 @@ def _set_app(ctx: click.Context, param: click.Option, value: str | None) -> str 
     return value
 
 
-# This option is eager so the app will be available if --help is given.
-# --help is also eager, so --app must be before it in the param list.
-# no_args_is_help bypasses eager processing, so this option must be
-# processed manually in that case to ensure FLASK_APP gets picked up.
+# Tùy chọn này là eager để ứng dụng sẽ có sẵn nếu --help được đưa ra.
+# --help cũng là eager, vì vậy --app phải ở trước nó trong danh sách param.
+# no_args_is_help bỏ qua xử lý eager, vì vậy tùy chọn này phải được
+# xử lý thủ công trong trường hợp đó để đảm bảo FLASK_APP được nhận. đó để đảm bảo FLASK_APP được nhận.
 _app_option = click.Option(
     ["-A", "--app"],
     metavar="IMPORT",
     help=(
-        "The Flask application or factory function to load, in the form 'module:name'."
-        " Module can be a dotted import or file path. Name is not required if it is"
-        " 'app', 'application', 'create_app', or 'make_app', and can be 'name(args)' to"
-        " pass arguments."
+        "Ứng dụng Flask hoặc hàm factory để tải, dưới dạng 'module:name'."
+        " Module có thể là một import có dấu chấm hoặc đường dẫn tệp. Name không bắt buộc nếu nó là"
+        " 'app', 'application', 'create_app', hoặc 'make_app', và có thể là 'name(args)' để"
+        " truyền đối số."
     ),
     is_eager=True,
     expose_value=False,
@@ -466,8 +466,8 @@ _app_option = click.Option(
 
 
 def _set_debug(ctx: click.Context, param: click.Option, value: bool) -> bool | None:
-    # If the flag isn't provided, it will default to False. Don't use
-    # that, let debug be set by env in that case.
+    # Nếu cờ không được cung cấp, nó sẽ mặc định là False. Đừng sử dụng
+    # cái đó, hãy để debug được thiết lập bởi env trong trường hợp đó.
     source = ctx.get_parameter_source(param.name)  # type: ignore[arg-type]
 
     if source is not None and source in (
@@ -476,15 +476,15 @@ def _set_debug(ctx: click.Context, param: click.Option, value: bool) -> bool | N
     ):
         return None
 
-    # Set with env var instead of ScriptInfo.load so that it can be
-    # accessed early during a factory function.
+    # Thiết lập với biến môi trường thay vì ScriptInfo.load để nó có thể được
+    # truy cập sớm trong quá trình hàm factory.
     os.environ["FLASK_DEBUG"] = "1" if value else "0"
     return value
 
 
 _debug_option = click.Option(
     ["--debug/--no-debug"],
-    help="Set debug mode.",
+    help="Thiết lập chế độ debug.",
     expose_value=False,
     callback=_set_debug,
 )
@@ -496,31 +496,31 @@ def _env_file_callback(
     try:
         import dotenv  # noqa: F401
     except ImportError:
-        # Only show an error if a value was passed, otherwise we still want to
-        # call load_dotenv and show a message without exiting.
+        # Chỉ hiển thị lỗi nếu một giá trị được truyền, nếu không chúng ta vẫn muốn
+        # gọi load_dotenv và hiển thị thông báo mà không thoát.
         if value is not None:
             raise click.BadParameter(
-                "python-dotenv must be installed to load an env file.",
+                "python-dotenv phải được cài đặt để tải tệp env.",
                 ctx=ctx,
                 param=param,
             ) from None
 
-    # Load if a value was passed, or we want to load default files, or both.
+    # Tải nếu một giá trị được truyền, hoặc chúng ta muốn tải các tệp mặc định, hoặc cả hai.
     if value is not None or ctx.obj.load_dotenv_defaults:
         load_dotenv(value, load_defaults=ctx.obj.load_dotenv_defaults)
 
     return value
 
 
-# This option is eager so env vars are loaded as early as possible to be
-# used by other options.
+# Tùy chọn này là eager để các biến môi trường được tải sớm nhất có thể để
+# được sử dụng bởi các tùy chọn khác.
 _env_file_option = click.Option(
     ["-e", "--env-file"],
     type=click.Path(exists=True, dir_okay=False),
     help=(
-        "Load environment variables from this file, taking precedence over"
-        " those set by '.env' and '.flaskenv'. Variables set directly in the"
-        " environment take highest precedence. python-dotenv must be installed."
+        "Tải các biến môi trường từ tệp này, ưu tiên hơn"
+        " những cái được thiết lập bởi '.env' và '.flaskenv'. Các biến được thiết lập trực tiếp trong"
+        " môi trường có quyền ưu tiên cao nhất. python-dotenv phải được cài đặt."
     ),
     is_eager=True,
     expose_value=False,
@@ -529,35 +529,35 @@ _env_file_option = click.Option(
 
 
 class FlaskGroup(AppGroup):
-    """Special subclass of the :class:`AppGroup` group that supports
-    loading more commands from the configured Flask app.  Normally a
-    developer does not have to interface with this class but there are
-    some very advanced use cases for which it makes sense to create an
-    instance of this. see :ref:`custom-scripts`.
+    """Lớp con đặc biệt của nhóm :class:`AppGroup` hỗ trợ
+    tải thêm các lệnh từ ứng dụng Flask đã cấu hình. Thông thường một
+    nhà phát triển không phải giao tiếp với lớp này nhưng có
+    một số trường hợp sử dụng rất nâng cao mà việc tạo một
+    thể hiện của lớp này là hợp lý. xem :ref:`custom-scripts`.
 
-    :param add_default_commands: if this is True then the default run and
-        shell commands will be added.
-    :param add_version_option: adds the ``--version`` option.
-    :param create_app: an optional callback that is passed the script info and
-        returns the loaded app.
-    :param load_dotenv: Load the nearest :file:`.env` and :file:`.flaskenv`
-        files to set environment variables. Will also change the working
-        directory to the directory containing the first file found.
-    :param set_debug_flag: Set the app's debug flag.
+    :param add_default_commands: nếu là True thì các lệnh run và
+        shell mặc định sẽ được thêm vào.
+    :param add_version_option: thêm tùy chọn ``--version``.
+    :param create_app: một callback tùy chọn được truyền thông tin script và
+        trả về ứng dụng đã tải.
+    :param load_dotenv: Tải các tệp :file:`.env` và :file:`.flaskenv`
+        gần nhất để thiết lập các biến môi trường. Cũng sẽ thay đổi thư mục
+        làm việc sang thư mục chứa tệp đầu tiên được tìm thấy.
+    :param set_debug_flag: Thiết lập cờ debug của ứng dụng.
 
     .. versionchanged:: 3.1
-        ``-e path`` takes precedence over default ``.env`` and ``.flaskenv`` files.
+        ``-e path`` được ưu tiên hơn các tệp ``.env`` và ``.flaskenv`` mặc định.
 
     .. versionchanged:: 2.2
-        Added the ``-A/--app``, ``--debug/--no-debug``, ``-e/--env-file`` options.
+        Đã thêm các tùy chọn ``-A/--app``, ``--debug/--no-debug``, ``-e/--env-file``.
 
     .. versionchanged:: 2.2
-        An app context is pushed when running ``app.cli`` commands, so
-        ``@with_appcontext`` is no longer required for those commands.
+        Một ngữ cảnh ứng dụng được push khi chạy các lệnh ``app.cli``, vì vậy
+        ``@with_appcontext`` không còn bắt buộc cho các lệnh đó.
 
     .. versionchanged:: 1.0
-        If installed, python-dotenv will be used to load environment variables
-        from :file:`.env` and :file:`.flaskenv` files.
+        Nếu được cài đặt, python-dotenv sẽ được sử dụng để tải các biến môi trường
+        từ các tệp :file:`.env` và :file:`.flaskenv`.
     """
 
     def __init__(
@@ -570,10 +570,10 @@ class FlaskGroup(AppGroup):
         **extra: t.Any,
     ) -> None:
         params: list[click.Parameter] = list(extra.pop("params", None) or ())
-        # Processing is done with option callbacks instead of a group
-        # callback. This allows users to make a custom group callback
-        # without losing the behavior. --env-file must come first so
-        # that it is eagerly evaluated before --app.
+        # Việc xử lý được thực hiện với các callback tùy chọn thay vì một callback
+        # nhóm. Điều này cho phép người dùng tạo một callback nhóm tùy chỉnh
+        # mà không làm mất hành vi. --env-file phải đến trước để
+        # nó được đánh giá sớm trước --app.
         params.extend((_env_file_option, _app_option, _debug_option))
 
         if add_version_option:
@@ -608,8 +608,8 @@ class FlaskGroup(AppGroup):
 
     def get_command(self, ctx: click.Context, name: str) -> click.Command | None:
         self._load_plugin_commands()
-        # Look up built-in and plugin commands, which should be
-        # available even if the app fails to load.
+        # Tra cứu các lệnh tích hợp và plugin, những lệnh này nên
+        # có sẵn ngay cả khi ứng dụng không tải được.
         rv = super().get_command(ctx, name)
 
         if rv is not None:
@@ -617,17 +617,17 @@ class FlaskGroup(AppGroup):
 
         info = ctx.ensure_object(ScriptInfo)
 
-        # Look up commands provided by the app, showing an error and
-        # continuing if the app couldn't be loaded.
+        # Tra cứu các lệnh được cung cấp bởi ứng dụng, hiển thị lỗi và
+        # tiếp tục nếu ứng dụng không thể tải được.
         try:
             app = info.load_app()
         except NoAppException as e:
             click.secho(f"Error: {e.format_message()}\n", err=True, fg="red")
             return None
 
-        # Push an app context for the loaded app unless it is already
-        # active somehow. This makes the context available to parameter
-        # and command callbacks without needing @with_appcontext.
+        # Push một ngữ cảnh ứng dụng cho ứng dụng đã tải trừ khi nó đã
+        # hoạt động theo cách nào đó. Điều này làm cho ngữ cảnh có sẵn cho
+        # các callback tham số và lệnh mà không cần @with_appcontext.
         if not current_app or current_app._get_current_object() is not app:
             ctx.with_resource(app.app_context())
 
@@ -635,21 +635,21 @@ class FlaskGroup(AppGroup):
 
     def list_commands(self, ctx: click.Context) -> list[str]:
         self._load_plugin_commands()
-        # Start with the built-in and plugin commands.
+        # Bắt đầu với các lệnh tích hợp và plugin.
         rv = set(super().list_commands(ctx))
         info = ctx.ensure_object(ScriptInfo)
 
-        # Add commands provided by the app, showing an error and
-        # continuing if the app couldn't be loaded.
+        # Thêm các lệnh được cung cấp bởi ứng dụng, hiển thị lỗi và
+        # tiếp tục nếu ứng dụng không thể tải được.
         try:
             rv.update(info.load_app().cli.list_commands(ctx))
         except NoAppException as e:
-            # When an app couldn't be loaded, show the error message
-            # without the traceback.
+            # Khi một ứng dụng không thể tải được, hiển thị thông báo lỗi
+            # mà không có traceback.
             click.secho(f"Error: {e.format_message()}\n", err=True, fg="red")
         except Exception:
-            # When any other errors occurred during loading, show the
-            # full traceback.
+            # Khi bất kỳ lỗi nào khác xảy ra trong quá trình tải, hiển thị
+            # traceback đầy đủ.
             click.secho(f"{traceback.format_exc()}\n", err=True, fg="red")
 
         return sorted(rv)
@@ -661,9 +661,9 @@ class FlaskGroup(AppGroup):
         parent: click.Context | None = None,
         **extra: t.Any,
     ) -> click.Context:
-        # Set a flag to tell app.run to become a no-op. If app.run was
-        # not in a __name__ == __main__ guard, it would start the server
-        # when importing, blocking whatever command is being called.
+        # Thiết lập cờ để báo cho app.run trở thành no-op. Nếu app.run
+        # không nằm trong guard __name__ == __main__, nó sẽ khởi động server
+        # khi import, chặn bất kỳ lệnh nào đang được gọi.
         os.environ["FLASK_RUN_FROM_CLI"] = "true"
 
         if "obj" not in extra and "obj" not in self.context_settings:
@@ -679,9 +679,9 @@ class FlaskGroup(AppGroup):
         if (not args and self.no_args_is_help) or (
             len(args) == 1 and args[0] in self.get_help_option_names(ctx)
         ):
-            # Attempt to load --env-file and --app early in case they
-            # were given as env vars. Otherwise no_args_is_help will not
-            # see commands from app.cli.
+            # Cố gắng tải --env-file và --app sớm trong trường hợp chúng
+            # được đưa ra dưới dạng biến môi trường. Nếu không no_args_is_help sẽ không
+            # thấy các lệnh từ app.cli.
             _env_file_option.handle_parse_result(ctx, {}, [])
             _app_option.handle_parse_result(ctx, {}, [])
 
@@ -689,8 +689,8 @@ class FlaskGroup(AppGroup):
 
 
 def _path_is_ancestor(path: str, other: str) -> bool:
-    """Take ``other`` and remove the length of ``path`` from it. Then join it
-    to ``path``. If it is the original value, ``path`` is an ancestor of
+    """Lấy ``other`` và loại bỏ độ dài của ``path`` khỏi nó. Sau đó nối nó
+    với ``path``. Nếu nó là giá trị ban đầu, ``path`` là tổ tiên của
     ``other``."""
     return os.path.join(path, other[len(path) :].lstrip(os.sep)) == other
 
@@ -698,34 +698,34 @@ def _path_is_ancestor(path: str, other: str) -> bool:
 def load_dotenv(
     path: str | os.PathLike[str] | None = None, load_defaults: bool = True
 ) -> bool:
-    """Load "dotenv" files to set environment variables. A given path takes
-    precedence over ``.env``, which takes precedence over ``.flaskenv``. After
-    loading and combining these files, values are only set if the key is not
-    already set in ``os.environ``.
+    """Tải các tệp "dotenv" để thiết lập các biến môi trường. Một đường dẫn nhất định được ưu tiên
+    hơn ``.env``, cái mà được ưu tiên hơn ``.flaskenv``. Sau khi
+    tải và kết hợp các tệp này, các giá trị chỉ được thiết lập nếu khóa chưa
+    được thiết lập trong ``os.environ``.
 
-    This is a no-op if `python-dotenv`_ is not installed.
+    Đây là một no-op nếu `python-dotenv`_ không được cài đặt.
 
     .. _python-dotenv: https://github.com/theskumar/python-dotenv#readme
 
-    :param path: Load the file at this location.
-    :param load_defaults: Search for and load the default ``.flaskenv`` and
-        ``.env`` files.
-    :return: ``True`` if at least one env var was loaded.
+    :param path: Tải tệp tại vị trí này.
+    :param load_defaults: Tìm kiếm và tải các tệp ``.flaskenv`` và
+        ``.env`` mặc định.
+    :return: ``True`` nếu ít nhất một biến môi trường đã được tải.
 
     .. versionchanged:: 3.1
-        Added the ``load_defaults`` parameter. A given path takes precedence
-        over default files.
+        Đã thêm tham số ``load_defaults``. Một đường dẫn nhất định được ưu tiên
+        hơn các tệp mặc định.
 
     .. versionchanged:: 2.0
-        The current directory is not changed to the location of the
-        loaded file.
+        Thư mục hiện tại không bị thay đổi sang vị trí của
+        tệp đã tải.
 
     .. versionchanged:: 2.0
-        When loading the env files, set the default encoding to UTF-8.
+        Khi tải các tệp env, thiết lập mã hóa mặc định thành UTF-8.
 
     .. versionchanged:: 1.1.0
-        Returns ``False`` when python-dotenv is not installed, or when
-        the given path isn't a file.
+        Trả về ``False`` khi python-dotenv không được cài đặt, hoặc khi
+        đường dẫn đã cho không phải là một tệp.
 
     .. versionadded:: 1.0
     """
@@ -764,8 +764,8 @@ def load_dotenv(
 
 
 def show_server_banner(debug: bool, app_import_path: str | None) -> None:
-    """Show extra startup messages the first time the server is run,
-    ignoring the reloader.
+    """Hiển thị thêm các thông báo khởi động lần đầu tiên server được chạy,
+    bỏ qua reloader.
     """
     if is_running_from_reloader():
         return
@@ -778,9 +778,9 @@ def show_server_banner(debug: bool, app_import_path: str | None) -> None:
 
 
 class CertParamType(click.ParamType):
-    """Click option type for the ``--cert`` option. Allows either an
-    existing file, the string ``'adhoc'``, or an import for a
-    :class:`~ssl.SSLContext` object.
+    """Loại tùy chọn Click cho tùy chọn ``--cert``. Cho phép hoặc một
+    tệp hiện có, chuỗi ``'adhoc'``, hoặc một import cho một
+    đối tượng :class:`~ssl.SSLContext`.
     """
 
     name = "path"
@@ -826,8 +826,8 @@ class CertParamType(click.ParamType):
 
 
 def _validate_key(ctx: click.Context, param: click.Parameter, value: t.Any) -> t.Any:
-    """The ``--key`` option must be specified when ``--cert`` is a file.
-    Modifies the ``cert`` param to be a ``(cert, key)`` pair if needed.
+    """Tùy chọn ``--key`` phải được chỉ định khi ``--cert`` là một tệp.
+    Sửa đổi tham số ``cert`` thành một cặp ``(cert, key)`` nếu cần.
     """
     cert = ctx.params.get("cert")
     is_adhoc = cert == "adhoc"
@@ -865,9 +865,9 @@ def _validate_key(ctx: click.Context, param: click.Parameter, value: t.Any) -> t
 
 
 class SeparatedPathType(click.Path):
-    """Click option type that accepts a list of values separated by the
-    OS's path separator (``:``, ``;`` on Windows). Each value is
-    validated as a :class:`click.Path` type.
+    """Loại tùy chọn Click chấp nhận một danh sách các giá trị được phân tách bằng
+    dấu phân cách đường dẫn của OS (``:``, ``;`` trên Windows). Mỗi giá trị được
+    xác thực như một loại :class:`click.Path`.
     """
 
     def convert(
@@ -879,13 +879,13 @@ class SeparatedPathType(click.Path):
         return [super_convert(item, param, ctx) for item in items]
 
 
-@click.command("run", short_help="Run a development server.")
-@click.option("--host", "-h", default="127.0.0.1", help="The interface to bind to.")
-@click.option("--port", "-p", default=5000, help="The port to bind to.")
+@click.command("run", short_help="Chạy một server phát triển.")
+@click.option("--host", "-h", default="127.0.0.1", help="Giao diện để liên kết.")
+@click.option("--port", "-p", default=5000, help="Cổng để liên kết.")
 @click.option(
     "--cert",
     type=CertParamType(),
-    help="Specify a certificate file to use HTTPS.",
+    help="Chỉ định một tệp chứng chỉ để sử dụng HTTPS.",
     is_eager=True,
 )
 @click.option(
@@ -893,32 +893,32 @@ class SeparatedPathType(click.Path):
     type=click.Path(exists=True, dir_okay=False, resolve_path=True),
     callback=_validate_key,
     expose_value=False,
-    help="The key file to use when specifying a certificate.",
+    help="Tệp khóa để sử dụng khi chỉ định một chứng chỉ.",
 )
 @click.option(
     "--reload/--no-reload",
     default=None,
-    help="Enable or disable the reloader. By default the reloader "
-    "is active if debug is enabled.",
+    help="Bật hoặc tắt reloader. Theo mặc định reloader "
+    "hoạt động nếu debug được bật.",
 )
 @click.option(
     "--debugger/--no-debugger",
     default=None,
-    help="Enable or disable the debugger. By default the debugger "
-    "is active if debug is enabled.",
+    help="Bật hoặc tắt debugger. Theo mặc định debugger "
+    "hoạt động nếu debug được bật.",
 )
 @click.option(
     "--with-threads/--without-threads",
     default=True,
-    help="Enable or disable multithreading.",
+    help="Bật hoặc tắt đa luồng.",
 )
 @click.option(
     "--extra-files",
     default=None,
     type=SeparatedPathType(),
     help=(
-        "Extra files that trigger a reload on change. Multiple paths"
-        f" are separated by {os.path.pathsep!r}."
+        "Các tệp bổ sung kích hoạt reload khi thay đổi. Nhiều đường dẫn"
+        f" được phân tách bằng {os.path.pathsep!r}."
     ),
 )
 @click.option(
@@ -926,8 +926,8 @@ class SeparatedPathType(click.Path):
     default=None,
     type=SeparatedPathType(),
     help=(
-        "Files matching these fnmatch patterns will not trigger a reload"
-        " on change. Multiple patterns are separated by"
+        "Các tệp khớp với các mẫu fnmatch này sẽ không kích hoạt reload"
+        " khi thay đổi. Nhiều mẫu được phân tách bằng"
         f" {os.path.pathsep!r}."
     ),
 )
@@ -943,20 +943,19 @@ def run_command(
     extra_files: list[str] | None,
     exclude_patterns: list[str] | None,
 ) -> None:
-    """Run a local development server.
+    """Chạy một server phát triển cục bộ.
 
-    This server is for development purposes only. It does not provide
-    the stability, security, or performance of production WSGI servers.
+    Server này chỉ dành cho mục đích phát triển. Nó không cung cấp
+    sự ổn định, bảo mật, hoặc hiệu suất của các server WSGI sản xuất.
 
-    The reloader and debugger are enabled by default with the '--debug'
-    option.
+    Reloader và debugger được bật theo mặc định với tùy chọn '--debug'.
     """
     try:
         app: WSGIApplication = info.load_app()  # pyright: ignore
     except Exception as e:
         if is_running_from_reloader():
-            # When reloading, print out the error immediately, but raise
-            # it later so the debugger or server can handle it.
+            # Khi reload, in ra lỗi ngay lập tức, nhưng ném
+            # nó sau đó để debugger hoặc server có thể xử lý nó.
             traceback.print_exc()
             err = e
 
@@ -966,8 +965,8 @@ def run_command(
                 raise err from None
 
         else:
-            # When not reloading, raise the error immediately so the
-            # command fails.
+            # Khi không reload, ném lỗi ngay lập tức để
+            # lệnh thất bại.
             raise e from None
 
     debug = get_debug_flag()
@@ -996,15 +995,15 @@ def run_command(
 run_command.params.insert(0, _debug_option)
 
 
-@click.command("shell", short_help="Run a shell in the app context.")
+@click.command("shell", short_help="Chạy một shell trong ngữ cảnh ứng dụng.")
 @with_appcontext
 def shell_command() -> None:
-    """Run an interactive Python shell in the context of a given
-    Flask application.  The application will populate the default
-    namespace of this shell according to its configuration.
+    """Chạy một Python shell tương tác trong ngữ cảnh của một
+    ứng dụng Flask đã cho. Ứng dụng sẽ điền vào namespace mặc định
+    của shell này theo cấu hình của nó.
 
-    This is useful for executing small snippets of management code
-    without having to manually configure the application.
+    Điều này hữu ích để thực thi các đoạn mã quản lý nhỏ
+    mà không cần phải cấu hình thủ công ứng dụng.
     """
     import code
 
@@ -1015,8 +1014,8 @@ def shell_command() -> None:
     )
     ctx: dict[str, t.Any] = {}
 
-    # Support the regular Python interpreter startup script if someone
-    # is using it.
+    # Hỗ trợ script khởi động trình thông dịch Python thông thường nếu ai đó
+    # đang sử dụng nó.
     startup = os.environ.get("PYTHONSTARTUP")
     if startup and os.path.isfile(startup):
         with open(startup) as f:
@@ -1024,9 +1023,9 @@ def shell_command() -> None:
 
     ctx.update(current_app.make_shell_context())
 
-    # Site, customize, or startup script can set a hook to call when
-    # entering interactive mode. The default one sets up readline with
-    # tab and history completion.
+    # Site, customize, hoặc startup script có thể thiết lập một hook để gọi khi
+    # vào chế độ tương tác. Cái mặc định thiết lập readline với
+    # tab và hoàn thành lịch sử.
     interactive_hook = getattr(sys, "__interactivehook__", None)
 
     if interactive_hook is not None:
@@ -1036,8 +1035,8 @@ def shell_command() -> None:
         except ImportError:
             pass
         else:
-            # rlcompleter uses __main__.__dict__ by default, which is
-            # flask.__main__. Use the shell context instead.
+            # rlcompleter sử dụng __main__.__dict__ theo mặc định, cái mà là
+            # flask.__main__. Sử dụng ngữ cảnh shell thay thế.
             readline.set_completer(Completer(ctx).complete)
 
         interactive_hook()
@@ -1045,25 +1044,25 @@ def shell_command() -> None:
     code.interact(banner=banner, local=ctx)
 
 
-@click.command("routes", short_help="Show the routes for the app.")
+@click.command("routes", short_help="Hiển thị các route cho ứng dụng.")
 @click.option(
     "--sort",
     "-s",
     type=click.Choice(("endpoint", "methods", "domain", "rule", "match")),
     default="endpoint",
     help=(
-        "Method to sort routes by. 'match' is the order that Flask will match routes"
-        " when dispatching a request."
+        "Phương thức để sắp xếp các route theo. 'match' là thứ tự mà Flask sẽ khớp các route"
+        " khi điều phối một request."
     ),
 )
-@click.option("--all-methods", is_flag=True, help="Show HEAD and OPTIONS methods.")
+@click.option("--all-methods", is_flag=True, help="Hiển thị các phương thức HEAD và OPTIONS.")
 @with_appcontext
 def routes_command(sort: str, all_methods: bool) -> None:
-    """Show all registered routes with endpoints and methods."""
+    """Hiển thị tất cả các route đã đăng ký với các endpoint và phương thức."""
     rules = list(current_app.url_map.iter_rules())
 
     if not rules:
-        click.echo("No routes were registered.")
+        click.echo("Không có route nào được đăng ký.")
         return
 
     ignored_methods = set() if all_methods else {"HEAD", "OPTIONS"}
@@ -1110,11 +1109,11 @@ def routes_command(sort: str, all_methods: bool) -> None:
 cli = FlaskGroup(
     name="flask",
     help="""\
-A general utility script for Flask applications.
+Một script tiện ích chung cho các ứng dụng Flask.
 
-An application to load must be given with the '--app' option,
-'FLASK_APP' environment variable, or with a 'wsgi.py' or 'app.py' file
-in the current directory.
+Một ứng dụng để tải phải được đưa ra với tùy chọn '--app',
+biến môi trường 'FLASK_APP', hoặc với một tệp 'wsgi.py' hoặc 'app.py'
+trong thư mục hiện tại.
 """,
 )
 

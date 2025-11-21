@@ -1,27 +1,27 @@
 {% extends 'base.html' %}
 
 {% block intro %}
-  <a href="https://jquery.com/">jQuery</a> is a popular library that
-  adds cross browser APIs for common tasks. However, it requires loading
-  an extra library.
+<a href="https://jquery.com/">jQuery</a> là một thư viện phổ biến
+thêm các API đa trình duyệt cho các tác vụ phổ biến. Tuy nhiên, nó yêu cầu tải
+thêm một thư viện.
 {% endblock %}
 
 {% block script %}
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script>
-    function addSubmit(ev) {
-      ev.preventDefault();
-      $.ajax({
-        method: 'POST',
-        url: {{ url_for('add')|tojson }},
-        data: $(this).serialize()
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+  function addSubmit(ev) {
+    ev.preventDefault();
+    $.ajax({
+      method: 'POST',
+      url: {{ url_for('add')| tojson }},
+  data: $(this).serialize()
       }).done(addShow);
     }
 
-    function addShow(data) {
-      $('#result').text(data.result);
-    }
+  function addShow(data) {
+    $('#result').text(data.result);
+  }
 
-    $('#calc').on('submit', addSubmit);
-  </script>
+  $('#calc').on('submit', addSubmit);
+</script>
 {% endblock %}

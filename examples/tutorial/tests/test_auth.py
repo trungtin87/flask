@@ -24,9 +24,9 @@ def test_register(client, app):
 @pytest.mark.parametrize(
     ("username", "password", "message"),
     (
-        ("", "", b"Username is required."),
-        ("a", "", b"Password is required."),
-        ("test", "test", b"already registered"),
+        ("", "", b"T\xc3\xaan ng\xc6\xb0\xe1\xbb\x9di d\xc3\xb9ng l\xc3\xa0 b\xe1\xba\xaft bu\xe1\xbb\x99c."),
+        ("a", "", b"M\xe1\xba\xadt kh\xe1\xba\xa9u l\xc3\xa0 b\xe1\xba\xaft bu\xe1\xbb\x99c."),
+        ("test", "test", b"\xc4\x91\xc3\xa3 \xc4\x91\xc6\xb0\xe1\xbb\xa3c \xc4\x91\xc4\x83ng k\xc3\xbd"),
     ),
 )
 def test_register_validate_input(client, username, password, message):
@@ -54,7 +54,7 @@ def test_login(client, auth):
 
 @pytest.mark.parametrize(
     ("username", "password", "message"),
-    (("a", "test", b"Incorrect username."), ("test", "a", b"Incorrect password.")),
+    (("a", "test", b"T\xc3\xaan ng\xc6\xb0\xe1\xbb\x9di d\xc3\xb9ng kh\xc3\xb4ng ch\xc3\xadnh x\xc3\xa1c."), ("test", "a", b"M\xe1\xba\xadt kh\xe1\xba\xa9u kh\xc3\xb4ng ch\xc3\xadnh x\xc3\xa1c.")),
 )
 def test_login_validate_input(auth, username, password, message):
     response = auth.login(username, password)

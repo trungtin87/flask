@@ -18,7 +18,7 @@ T = t.TypeVar("T")
 
 
 class ConfigAttribute(t.Generic[T]):
-    """Makes an attribute forward to the config"""
+    """Làm cho một thuộc tính chuyển tiếp đến config"""
 
     def __init__(
         self, name: str, get_converter: t.Callable[[t.Any], T] | None = None
@@ -48,47 +48,47 @@ class ConfigAttribute(t.Generic[T]):
 
 
 class Config(dict):  # type: ignore[type-arg]
-    """Works exactly like a dict but provides ways to fill it from files
-    or special dictionaries.  There are two common patterns to populate the
+    """Hoạt động chính xác như một dict nhưng cung cấp các cách để điền nó từ các tệp
+    hoặc các từ điển đặc biệt. Có hai mẫu phổ biến để điền
     config.
 
-    Either you can fill the config from a config file::
+    Hoặc bạn có thể điền config từ một tệp config::
 
         app.config.from_pyfile('yourconfig.cfg')
 
-    Or alternatively you can define the configuration options in the
-    module that calls :meth:`from_object` or provide an import path to
-    a module that should be loaded.  It is also possible to tell it to
-    use the same module and with that provide the configuration values
-    just before the call::
+    Hoặc thay vào đó bạn có thể định nghĩa các tùy chọn cấu hình trong
+    module gọi :meth:`from_object` hoặc cung cấp một đường dẫn import đến
+    một module nên được tải. Cũng có thể bảo nó
+    sử dụng cùng một module và với điều đó cung cấp các giá trị cấu hình
+    ngay trước khi gọi::
 
         DEBUG = True
         SECRET_KEY = 'development key'
         app.config.from_object(__name__)
 
-    In both cases (loading from any Python file or loading from modules),
-    only uppercase keys are added to the config.  This makes it possible to use
-    lowercase values in the config file for temporary values that are not added
-    to the config or to define the config keys in the same file that implements
-    the application.
+    Trong cả hai trường hợp (tải từ bất kỳ tệp Python nào hoặc tải từ các module),
+    chỉ các khóa viết hoa mới được thêm vào config. Điều này làm cho việc sử dụng
+    các giá trị viết thường trong tệp config cho các giá trị tạm thời không được thêm
+    vào config hoặc để định nghĩa các khóa config trong cùng một tệp thực hiện
+    ứng dụng trở nên khả thi.
 
-    Probably the most interesting way to load configurations is from an
-    environment variable pointing to a file::
+    Có lẽ cách thú vị nhất để tải các cấu hình là từ một
+    biến môi trường trỏ đến một tệp::
 
         app.config.from_envvar('YOURAPPLICATION_SETTINGS')
 
-    In this case before launching the application you have to set this
-    environment variable to the file you want to use.  On Linux and OS X
-    use the export statement::
+    Trong trường hợp này trước khi khởi chạy ứng dụng bạn phải thiết lập biến
+    môi trường này thành tệp bạn muốn sử dụng. Trên Linux và OS X
+    sử dụng câu lệnh export::
 
         export YOURAPPLICATION_SETTINGS='/path/to/config/file'
 
-    On windows use `set` instead.
+    Trên windows sử dụng `set` thay thế.
 
-    :param root_path: path to which files are read relative from.  When the
-                      config object is created by the application, this is
-                      the application's :attr:`~flask.Flask.root_path`.
-    :param defaults: an optional dictionary of default values
+    :param root_path: đường dẫn mà các tệp được đọc tương đối từ đó. Khi
+                      đối tượng config được tạo bởi ứng dụng, đây là
+                      :attr:`~flask.Flask.root_path` của ứng dụng.
+    :param defaults: một từ điển tùy chọn của các giá trị mặc định
     """
 
     def __init__(
@@ -100,52 +100,52 @@ class Config(dict):  # type: ignore[type-arg]
         self.root_path = root_path
 
     def from_envvar(self, variable_name: str, silent: bool = False) -> bool:
-        """Loads a configuration from an environment variable pointing to
-        a configuration file.  This is basically just a shortcut with nicer
-        error messages for this line of code::
+        """Tải một cấu hình từ một biến môi trường trỏ đến
+        một tệp cấu hình. Đây về cơ bản chỉ là một lối tắt với các thông báo
+        lỗi đẹp hơn cho dòng mã này::
 
             app.config.from_pyfile(os.environ['YOURAPPLICATION_SETTINGS'])
 
-        :param variable_name: name of the environment variable
-        :param silent: set to ``True`` if you want silent failure for missing
-                       files.
-        :return: ``True`` if the file was loaded successfully.
+        :param variable_name: tên của biến môi trường
+        :param silent: đặt thành ``True`` nếu bạn muốn thất bại im lặng cho các tệp
+                       bị thiếu.
+        :return: ``True`` nếu tệp được tải thành công.
         """
         rv = os.environ.get(variable_name)
         if not rv:
             if silent:
                 return False
             raise RuntimeError(
-                f"The environment variable {variable_name!r} is not set"
-                " and as such configuration could not be loaded. Set"
-                " this variable and make it point to a configuration"
-                " file"
+                f"Biến môi trường {variable_name!r} không được thiết lập"
+                " và do đó cấu hình không thể được tải. Thiết lập"
+                " biến này và làm cho nó trỏ đến một tệp"
+                " cấu hình"
             )
         return self.from_pyfile(rv, silent=silent)
 
     def from_prefixed_env(
         self, prefix: str = "FLASK", *, loads: t.Callable[[str], t.Any] = json.loads
     ) -> bool:
-        """Load any environment variables that start with ``FLASK_``,
-        dropping the prefix from the env key for the config key. Values
-        are passed through a loading function to attempt to convert them
-        to more specific types than strings.
+        """Tải bất kỳ biến môi trường nào bắt đầu bằng ``FLASK_``,
+        bỏ tiền tố khỏi khóa env cho khóa config. Các giá trị
+        được truyền qua một hàm tải để cố gắng chuyển đổi chúng
+        thành các loại cụ thể hơn là chuỗi.
 
-        Keys are loaded in :func:`sorted` order.
+        Các khóa được tải theo thứ tự :func:`sorted`.
 
-        The default loading function attempts to parse values as any
-        valid JSON type, including dicts and lists.
+        Hàm tải mặc định cố gắng phân tích các giá trị như bất kỳ
+        loại JSON hợp lệ nào, bao gồm dict và list.
 
-        Specific items in nested dicts can be set by separating the
-        keys with double underscores (``__``). If an intermediate key
-        doesn't exist, it will be initialized to an empty dict.
+        Các mục cụ thể trong các dict lồng nhau có thể được thiết lập bằng cách phân tách các
+        khóa bằng dấu gạch dưới kép (``__``). Nếu một khóa trung gian
+        không tồn tại, nó sẽ được khởi tạo thành một dict trống.
 
-        :param prefix: Load env vars that start with this prefix,
-            separated with an underscore (``_``).
-        :param loads: Pass each string value to this function and use
-            the returned value as the config value. If any error is
-            raised it is ignored and the value remains a string. The
-            default is :func:`json.loads`.
+        :param prefix: Tải các biến môi trường bắt đầu bằng tiền tố này,
+            được phân tách bằng một dấu gạch dưới (``_``).
+        :param loads: Truyền mỗi giá trị chuỗi cho hàm này và sử dụng
+            giá trị trả về làm giá trị config. Nếu bất kỳ lỗi nào được
+            ném ra, nó sẽ bị bỏ qua và giá trị vẫn là một chuỗi. Mặc định
+            là :func:`json.loads`.
 
         .. versionadded:: 2.1
         """
@@ -161,20 +161,20 @@ class Config(dict):  # type: ignore[type-arg]
             try:
                 value = loads(value)
             except Exception:
-                # Keep the value as a string if loading failed.
+                # Giữ giá trị là một chuỗi nếu tải thất bại.
                 pass
 
             if "__" not in key:
-                # A non-nested key, set directly.
+                # Một khóa không lồng nhau, thiết lập trực tiếp.
                 self[key] = value
                 continue
 
-            # Traverse nested dictionaries with keys separated by "__".
+            # Duyệt qua các từ điển lồng nhau với các khóa được phân tách bằng "__".
             current = self
             *parts, tail = key.split("__")
 
             for part in parts:
-                # If an intermediate dict does not exist, create it.
+                # Nếu một dict trung gian không tồn tại, tạo nó.
                 if part not in current:
                     current[part] = {}
 
@@ -187,19 +187,19 @@ class Config(dict):  # type: ignore[type-arg]
     def from_pyfile(
         self, filename: str | os.PathLike[str], silent: bool = False
     ) -> bool:
-        """Updates the values in the config from a Python file.  This function
-        behaves as if the file was imported as module with the
-        :meth:`from_object` function.
+        """Cập nhật các giá trị trong config từ một tệp Python. Hàm này
+        hoạt động như thể tệp đã được import làm module với
+        hàm :meth:`from_object`.
 
-        :param filename: the filename of the config.  This can either be an
-                         absolute filename or a filename relative to the
-                         root path.
-        :param silent: set to ``True`` if you want silent failure for missing
-                       files.
-        :return: ``True`` if the file was loaded successfully.
+        :param filename: tên tệp của config. Đây có thể là một
+                         tên tệp tuyệt đối hoặc một tên tệp tương đối với
+                         đường dẫn gốc.
+        :param silent: đặt thành ``True`` nếu bạn muốn thất bại im lặng cho các tệp
+                       bị thiếu.
+        :return: ``True`` nếu tệp được tải thành công.
 
         .. versionadded:: 0.7
-           `silent` parameter.
+           tham số `silent`.
         """
         filename = os.path.join(self.root_path, filename)
         d = types.ModuleType("config")
@@ -210,42 +210,42 @@ class Config(dict):  # type: ignore[type-arg]
         except OSError as e:
             if silent and e.errno in (errno.ENOENT, errno.EISDIR, errno.ENOTDIR):
                 return False
-            e.strerror = f"Unable to load configuration file ({e.strerror})"
+            e.strerror = f"Không thể tải tệp cấu hình ({e.strerror})"
             raise
         self.from_object(d)
         return True
 
     def from_object(self, obj: object | str) -> None:
-        """Updates the values from the given object.  An object can be of one
-        of the following two types:
+        """Cập nhật các giá trị từ đối tượng đã cho. Một đối tượng có thể thuộc một
+        trong hai loại sau:
 
-        -   a string: in this case the object with that name will be imported
-        -   an actual object reference: that object is used directly
+        -   một chuỗi: trong trường hợp này đối tượng với tên đó sẽ được import
+        -   một tham chiếu đối tượng thực tế: đối tượng đó được sử dụng trực tiếp
 
-        Objects are usually either modules or classes. :meth:`from_object`
-        loads only the uppercase attributes of the module/class. A ``dict``
-        object will not work with :meth:`from_object` because the keys of a
-        ``dict`` are not attributes of the ``dict`` class.
+        Các đối tượng thường là các module hoặc lớp. :meth:`from_object`
+        chỉ tải các thuộc tính viết hoa của module/lớp. Một đối tượng ``dict``
+        sẽ không hoạt động với :meth:`from_object` vì các khóa của một
+        ``dict`` không phải là thuộc tính của lớp ``dict``.
 
-        Example of module-based configuration::
+        Ví dụ về cấu hình dựa trên module::
 
             app.config.from_object('yourapplication.default_config')
             from yourapplication import default_config
             app.config.from_object(default_config)
 
-        Nothing is done to the object before loading. If the object is a
-        class and has ``@property`` attributes, it needs to be
-        instantiated before being passed to this method.
+        Không có gì được thực hiện đối với đối tượng trước khi tải. Nếu đối tượng là một
+        lớp và có các thuộc tính ``@property``, nó cần được
+        khởi tạo trước khi được truyền cho phương thức này.
 
-        You should not use this function to load the actual configuration but
-        rather configuration defaults.  The actual config should be loaded
-        with :meth:`from_pyfile` and ideally from a location not within the
-        package because the package might be installed system wide.
+        Bạn không nên sử dụng hàm này để tải cấu hình thực tế mà
+        thay vào đó là các mặc định cấu hình. Cấu hình thực tế nên được tải
+        với :meth:`from_pyfile` và lý tưởng nhất là từ một vị trí không nằm trong
+        gói vì gói có thể được cài đặt trên toàn hệ thống.
 
-        See :ref:`config-dev-prod` for an example of class-based configuration
-        using :meth:`from_object`.
+        Xem :ref:`config-dev-prod` cho một ví dụ về cấu hình dựa trên lớp
+        sử dụng :meth:`from_object`.
 
-        :param obj: an import name or object
+        :param obj: một tên import hoặc đối tượng
         """
         if isinstance(obj, str):
             obj = import_string(obj)
@@ -260,9 +260,9 @@ class Config(dict):  # type: ignore[type-arg]
         silent: bool = False,
         text: bool = True,
     ) -> bool:
-        """Update the values in the config from a file that is loaded
-        using the ``load`` parameter. The loaded data is passed to the
-        :meth:`from_mapping` method.
+        """Cập nhật các giá trị trong config từ một tệp được tải
+        sử dụng tham số ``load``. Dữ liệu đã tải được truyền cho
+        phương thức :meth:`from_mapping`.
 
         .. code-block:: python
 
@@ -272,18 +272,18 @@ class Config(dict):  # type: ignore[type-arg]
             import tomllib
             app.config.from_file("config.toml", load=tomllib.load, text=False)
 
-        :param filename: The path to the data file. This can be an
-            absolute path or relative to the config root path.
-        :param load: A callable that takes a file handle and returns a
-            mapping of loaded data from the file.
-        :type load: ``Callable[[Reader], Mapping]`` where ``Reader``
-            implements a ``read`` method.
-        :param silent: Ignore the file if it doesn't exist.
-        :param text: Open the file in text or binary mode.
-        :return: ``True`` if the file was loaded successfully.
+        :param filename: Đường dẫn đến tệp dữ liệu. Đây có thể là một
+            đường dẫn tuyệt đối hoặc tương đối với đường dẫn gốc config.
+        :param load: Một callable nhận một file handle và trả về một
+            mapping của dữ liệu đã tải từ tệp.
+        :type load: ``Callable[[Reader], Mapping]`` nơi ``Reader``
+            thực hiện một phương thức ``read``.
+        :param silent: Bỏ qua tệp nếu nó không tồn tại.
+        :param text: Mở tệp trong chế độ văn bản hoặc nhị phân.
+        :return: ``True`` nếu tệp được tải thành công.
 
         .. versionchanged:: 2.3
-            The ``text`` parameter was added.
+            Tham số ``text`` đã được thêm vào.
 
         .. versionadded:: 2.0
         """
@@ -296,7 +296,7 @@ class Config(dict):  # type: ignore[type-arg]
             if silent and e.errno in (errno.ENOENT, errno.EISDIR):
                 return False
 
-            e.strerror = f"Unable to load configuration file ({e.strerror})"
+            e.strerror = f"Không thể tải tệp cấu hình ({e.strerror})"
             raise
 
         return self.from_mapping(obj)
@@ -304,10 +304,10 @@ class Config(dict):  # type: ignore[type-arg]
     def from_mapping(
         self, mapping: t.Mapping[str, t.Any] | None = None, **kwargs: t.Any
     ) -> bool:
-        """Updates the config like :meth:`update` ignoring items with
-        non-upper keys.
+        """Cập nhật config giống như :meth:`update` bỏ qua các mục với
+        các khóa không viết hoa.
 
-        :return: Always returns ``True``.
+        :return: Luôn trả về ``True``.
 
         .. versionadded:: 0.11
         """
@@ -323,15 +323,15 @@ class Config(dict):  # type: ignore[type-arg]
     def get_namespace(
         self, namespace: str, lowercase: bool = True, trim_namespace: bool = True
     ) -> dict[str, t.Any]:
-        """Returns a dictionary containing a subset of configuration options
-        that match the specified namespace/prefix. Example usage::
+        """Trả về một từ điển chứa một tập hợp con các tùy chọn cấu hình
+        khớp với namespace/prefix đã chỉ định. Ví dụ sử dụng::
 
             app.config['IMAGE_STORE_TYPE'] = 'fs'
             app.config['IMAGE_STORE_PATH'] = '/var/app/images'
             app.config['IMAGE_STORE_BASE_URL'] = 'http://img.website.com'
             image_store_config = app.config.get_namespace('IMAGE_STORE_')
 
-        The resulting dictionary `image_store_config` would look like::
+        Từ điển kết quả `image_store_config` sẽ trông giống như::
 
             {
                 'type': 'fs',
@@ -339,14 +339,14 @@ class Config(dict):  # type: ignore[type-arg]
                 'base_url': 'http://img.website.com'
             }
 
-        This is often useful when configuration options map directly to
-        keyword arguments in functions or class constructors.
+        Điều này thường hữu ích khi các tùy chọn cấu hình ánh xạ trực tiếp đến
+        các đối số từ khóa trong các hàm hoặc hàm tạo lớp.
 
-        :param namespace: a configuration namespace
-        :param lowercase: a flag indicating if the keys of the resulting
-                          dictionary should be lowercase
-        :param trim_namespace: a flag indicating if the keys of the resulting
-                          dictionary should not include the namespace
+        :param namespace: một namespace cấu hình
+        :param lowercase: một cờ chỉ ra nếu các khóa của từ điển kết quả
+                          nên được viết thường
+        :param trim_namespace: một cờ chỉ ra nếu các khóa của từ điển kết quả
+                          không nên bao gồm namespace
 
         .. versionadded:: 0.11
         """

@@ -20,8 +20,8 @@ if t.TYPE_CHECKING:  # pragma: no cover
 
 
 def _default_template_ctx_processor() -> dict[str, t.Any]:
-    """Default template context processor.  Injects `request`,
-    `session` and `g`.
+    """Bộ xử lý ngữ cảnh template mặc định. Inject `request`,
+    `session` và `g`.
     """
     ctx = _cv_app.get(None)
     rv: dict[str, t.Any] = {}
@@ -37,9 +37,9 @@ def _default_template_ctx_processor() -> dict[str, t.Any]:
 
 
 class Environment(BaseEnvironment):
-    """Works like a regular Jinja environment but has some additional
-    knowledge of how Flask's blueprint works so that it can prepend the
-    name of the blueprint to referenced templates if necessary.
+    """Hoạt động giống như một môi trường Jinja thông thường nhưng có thêm một số
+    kiến thức về cách blueprint của Flask hoạt động để nó có thể thêm
+    tên của blueprint vào trước các template được tham chiếu nếu cần thiết.
     """
 
     def __init__(self, app: App, **options: t.Any) -> None:
@@ -50,8 +50,8 @@ class Environment(BaseEnvironment):
 
 
 class DispatchingJinjaLoader(BaseLoader):
-    """A loader that looks for templates in the application and all
-    the blueprint folders.
+    """Một loader tìm kiếm các template trong ứng dụng và tất cả
+    các thư mục blueprint.
     """
 
     def __init__(self, app: App) -> None:
@@ -139,11 +139,11 @@ def render_template(
     template_name_or_list: str | Template | list[str | Template],
     **context: t.Any,
 ) -> str:
-    """Render a template by name with the given context.
+    """Render một template theo tên với ngữ cảnh đã cho.
 
-    :param template_name_or_list: The name of the template to render. If
-        a list is given, the first name to exist will be rendered.
-    :param context: The variables to make available in the template.
+    :param template_name_or_list: Tên của template để render. Nếu
+        một danh sách được đưa ra, tên đầu tiên tồn tại sẽ được render.
+    :param context: Các biến để làm cho có sẵn trong template.
     """
     app = current_app._get_current_object()
     template = app.jinja_env.get_or_select_template(template_name_or_list)
@@ -151,11 +151,11 @@ def render_template(
 
 
 def render_template_string(source: str, **context: t.Any) -> str:
-    """Render a template from the given source string with the given
-    context.
+    """Render một template từ chuỗi nguồn đã cho với ngữ cảnh
+    đã cho.
 
-    :param source: The source code of the template to render.
-    :param context: The variables to make available in the template.
+    :param source: Mã nguồn của template để render.
+    :param context: Các biến để làm cho có sẵn trong template.
     """
     app = current_app._get_current_object()
     template = app.jinja_env.from_string(source)
@@ -183,13 +183,13 @@ def stream_template(
     template_name_or_list: str | Template | list[str | Template],
     **context: t.Any,
 ) -> t.Iterator[str]:
-    """Render a template by name with the given context as a stream.
-    This returns an iterator of strings, which can be used as a
-    streaming response from a view.
+    """Render một template theo tên với ngữ cảnh đã cho dưới dạng một luồng.
+    Điều này trả về một iterator của các chuỗi, có thể được sử dụng như một
+    phản hồi streaming từ một view.
 
-    :param template_name_or_list: The name of the template to render. If
-        a list is given, the first name to exist will be rendered.
-    :param context: The variables to make available in the template.
+    :param template_name_or_list: Tên của template để render. Nếu
+        một danh sách được đưa ra, tên đầu tiên tồn tại sẽ được render.
+    :param context: Các biến để làm cho có sẵn trong template.
 
     .. versionadded:: 2.2
     """
@@ -199,12 +199,12 @@ def stream_template(
 
 
 def stream_template_string(source: str, **context: t.Any) -> t.Iterator[str]:
-    """Render a template from the given source string with the given
-    context as a stream. This returns an iterator of strings, which can
-    be used as a streaming response from a view.
+    """Render một template từ chuỗi nguồn đã cho với ngữ cảnh
+    đã cho dưới dạng một luồng. Điều này trả về một iterator của các chuỗi, có thể
+    được sử dụng như một phản hồi streaming từ một view.
 
-    :param source: The source code of the template to render.
-    :param context: The variables to make available in the template.
+    :param source: Mã nguồn của template để render.
+    :param context: Các biến để làm cho có sẵn trong template.
 
     .. versionadded:: 2.2
     """

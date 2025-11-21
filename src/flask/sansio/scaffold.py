@@ -21,7 +21,7 @@ from ..templating import _default_template_ctx_processor
 if t.TYPE_CHECKING:  # pragma: no cover
     from click import Group
 
-# a singleton sentinel value for parameter defaults
+# một giá trị sentinel đơn lẻ cho các giá trị mặc định của tham số
 _sentinel = object()
 
 F = t.TypeVar("F", bound=t.Callable[..., t.Any])
@@ -50,19 +50,19 @@ def setupmethod(f: F) -> F:
 
 
 class Scaffold:
-    """Common behavior shared between :class:`~flask.Flask` and
+    """Hành vi chung được chia sẻ giữa :class:`~flask.Flask` và
     :class:`~flask.blueprints.Blueprint`.
 
-    :param import_name: The import name of the module where this object
-        is defined. Usually :attr:`__name__` should be used.
-    :param static_folder: Path to a folder of static files to serve.
-        If this is set, a static route will be added.
-    :param static_url_path: URL prefix for the static route.
-    :param template_folder: Path to a folder containing template files.
-        for rendering. If this is set, a Jinja loader will be added.
-    :param root_path: The path that static, template, and resource files
-        are relative to. Typically not set, it is discovered based on
-        the ``import_name``.
+    :param import_name: Tên import của module nơi đối tượng này
+        được định nghĩa. Thường thì :attr:`__name__` nên được sử dụng.
+    :param static_folder: Đường dẫn đến một thư mục chứa các tệp tĩnh để phục vụ.
+        Nếu điều này được thiết lập, một route tĩnh sẽ được thêm vào.
+    :param static_url_path: Tiền tố URL cho route tĩnh.
+    :param template_folder: Đường dẫn đến một thư mục chứa các tệp template.
+        để render. Nếu điều này được thiết lập, một Jinja loader sẽ được thêm vào.
+    :param root_path: Đường dẫn mà các tệp tĩnh, template và tài nguyên
+        tương đối với nó. Thường không được thiết lập, nó được phát hiện dựa trên
+        ``import_name``.
 
     .. versionadded:: 2.0
     """
@@ -80,136 +80,130 @@ class Scaffold:
         template_folder: str | os.PathLike[str] | None = None,
         root_path: str | None = None,
     ):
-        #: The name of the package or module that this object belongs
-        #: to. Do not change this once it is set by the constructor.
+        #: Tên của package hoặc module mà đối tượng này thuộc về.
+        #: Đừng thay đổi điều này khi nó đã được thiết lập bởi constructor.
         self.import_name = import_name
 
         self.static_folder = static_folder
         self.static_url_path = static_url_path
 
-        #: The path to the templates folder, relative to
-        #: :attr:`root_path`, to add to the template loader. ``None`` if
-        #: templates should not be added.
+        #: Đường dẫn đến thư mục templates, tương đối với
+        #: :attr:`root_path`, để thêm vào template loader. ``None`` nếu
+        #: template không nên được thêm vào.
         self.template_folder = template_folder
 
         if root_path is None:
             root_path = get_root_path(self.import_name)
 
-        #: Absolute path to the package on the filesystem. Used to look
-        #: up resources contained in the package.
+        #: Đường dẫn tuyệt đối đến package trên hệ thống tệp. Được sử dụng để tìm
+        #: kiếm các tài nguyên chứa trong package.
         self.root_path = root_path
 
-        #: A dictionary mapping endpoint names to view functions.
+        #: Một từ điển ánh xạ tên endpoint đến các hàm view.
         #:
-        #: To register a view function, use the :meth:`route` decorator.
+        #: Để đăng ký một hàm view, sử dụng decorator :meth:`route`.
         #:
-        #: This data structure is internal. It should not be modified
-        #: directly and its format may change at any time.
+        #: Cấu trúc dữ liệu này là nội bộ. Nó không nên được sửa đổi
+        #: trực tiếp và định dạng của nó có thể thay đổi bất cứ lúc nào.
         self.view_functions: dict[str, ft.RouteCallable] = {}
 
-        #: A data structure of registered error handlers, in the format
-        #: ``{scope: {code: {class: handler}}}``. The ``scope`` key is
-        #: the name of a blueprint the handlers are active for, or
-        #: ``None`` for all requests. The ``code`` key is the HTTP
-        #: status code for ``HTTPException``, or ``None`` for
-        #: other exceptions. The innermost dictionary maps exception
-        #: classes to handler functions.
+        #: Một cấu trúc dữ liệu của các trình xử lý lỗi đã đăng ký, theo định dạng
+        #: ``{scope: {code: {class: handler}}}``. Khóa ``scope`` là
+        #: tên của một blueprint mà các trình xử lý đang hoạt động, hoặc
+        #: ``None`` cho tất cả các yêu cầu. Khóa ``code`` là mã trạng thái
+        #: HTTP cho ``HTTPException``, hoặc ``None`` cho
+        #: các ngoại lệ khác. Từ điển trong cùng ánh xạ các lớp ngoại lệ
+        #: đến các hàm xử lý.
         #:
-        #: To register an error handler, use the :meth:`errorhandler`
-        #: decorator.
+        #: Để đăng ký một trình xử lý lỗi, sử dụng decorator :meth:`errorhandler`.
         #:
-        #: This data structure is internal. It should not be modified
-        #: directly and its format may change at any time.
+        #: Cấu trúc dữ liệu này là nội bộ. Nó không nên được sửa đổi
+        #: trực tiếp và định dạng của nó có thể thay đổi bất cứ lúc nào.
         self.error_handler_spec: dict[
             ft.AppOrBlueprintKey,
             dict[int | None, dict[type[Exception], ft.ErrorHandlerCallable]],
         ] = defaultdict(lambda: defaultdict(dict))
 
-        #: A data structure of functions to call at the beginning of
-        #: each request, in the format ``{scope: [functions]}``. The
-        #: ``scope`` key is the name of a blueprint the functions are
-        #: active for, or ``None`` for all requests.
+        #: Một cấu trúc dữ liệu của các hàm để gọi khi bắt đầu
+        #: mỗi yêu cầu, theo định dạng ``{scope: [functions]}``. Khóa
+        #: ``scope`` là tên của một blueprint mà các hàm đang
+        #: hoạt động, hoặc ``None`` cho tất cả các yêu cầu.
         #:
-        #: To register a function, use the :meth:`before_request`
-        #: decorator.
+        #: Để đăng ký một hàm, sử dụng decorator :meth:`before_request`.
         #:
-        #: This data structure is internal. It should not be modified
-        #: directly and its format may change at any time.
+        #: Cấu trúc dữ liệu này là nội bộ. Nó không nên được sửa đổi
+        #: trực tiếp và định dạng của nó có thể thay đổi bất cứ lúc nào.
         self.before_request_funcs: dict[
             ft.AppOrBlueprintKey, list[ft.BeforeRequestCallable]
         ] = defaultdict(list)
 
-        #: A data structure of functions to call at the end of each
-        #: request, in the format ``{scope: [functions]}``. The
-        #: ``scope`` key is the name of a blueprint the functions are
-        #: active for, or ``None`` for all requests.
+        #: Một cấu trúc dữ liệu của các hàm để gọi khi kết thúc mỗi
+        #: yêu cầu, theo định dạng ``{scope: [functions]}``. Khóa
+        #: ``scope`` là tên của một blueprint mà các hàm đang
+        #: hoạt động, hoặc ``None`` cho tất cả các yêu cầu.
         #:
-        #: To register a function, use the :meth:`after_request`
-        #: decorator.
+        #: Để đăng ký một hàm, sử dụng decorator :meth:`after_request`.
         #:
-        #: This data structure is internal. It should not be modified
-        #: directly and its format may change at any time.
+        #: Cấu trúc dữ liệu này là nội bộ. Nó không nên được sửa đổi
+        #: trực tiếp và định dạng của nó có thể thay đổi bất cứ lúc nào.
         self.after_request_funcs: dict[
             ft.AppOrBlueprintKey, list[ft.AfterRequestCallable[t.Any]]
         ] = defaultdict(list)
 
-        #: A data structure of functions to call at the end of each
-        #: request even if an exception is raised, in the format
-        #: ``{scope: [functions]}``. The ``scope`` key is the name of a
-        #: blueprint the functions are active for, or ``None`` for all
-        #: requests.
+        #: Một cấu trúc dữ liệu của các hàm để gọi khi kết thúc mỗi
+        #: yêu cầu ngay cả khi một ngoại lệ được đưa ra, theo định dạng
+        #: ``{scope: [functions]}``. Khóa ``scope`` là tên của một
+        #: blueprint mà các hàm đang hoạt động, hoặc ``None`` cho tất cả
+        #: các yêu cầu.
         #:
-        #: To register a function, use the :meth:`teardown_request`
-        #: decorator.
+        #: Để đăng ký một hàm, sử dụng decorator :meth:`teardown_request`.
         #:
-        #: This data structure is internal. It should not be modified
-        #: directly and its format may change at any time.
+        #: Cấu trúc dữ liệu này là nội bộ. Nó không nên được sửa đổi
+        #: trực tiếp và định dạng của nó có thể thay đổi bất cứ lúc nào.
         self.teardown_request_funcs: dict[
             ft.AppOrBlueprintKey, list[ft.TeardownCallable]
         ] = defaultdict(list)
 
-        #: A data structure of functions to call to pass extra context
-        #: values when rendering templates, in the format
-        #: ``{scope: [functions]}``. The ``scope`` key is the name of a
-        #: blueprint the functions are active for, or ``None`` for all
-        #: requests.
+        #: Một cấu trúc dữ liệu của các hàm để gọi nhằm truyền thêm các giá trị
+        #: ngữ cảnh khi render template, theo định dạng
+        #: ``{scope: [functions]}``. Khóa ``scope`` là tên của một
+        #: blueprint mà các hàm đang hoạt động, hoặc ``None`` cho tất cả
+        #: các yêu cầu.
         #:
-        #: To register a function, use the :meth:`context_processor`
-        #: decorator.
+        #: Để đăng ký một hàm, sử dụng decorator :meth:`context_processor`.
         #:
-        #: This data structure is internal. It should not be modified
-        #: directly and its format may change at any time.
+        #: Cấu trúc dữ liệu này là nội bộ. Nó không nên được sửa đổi
+        #: trực tiếp và định dạng của nó có thể thay đổi bất cứ lúc nào.
         self.template_context_processors: dict[
             ft.AppOrBlueprintKey, list[ft.TemplateContextProcessorCallable]
         ] = defaultdict(list, {None: [_default_template_ctx_processor]})
 
-        #: A data structure of functions to call to modify the keyword
-        #: arguments passed to the view function, in the format
-        #: ``{scope: [functions]}``. The ``scope`` key is the name of a
-        #: blueprint the functions are active for, or ``None`` for all
-        #: requests.
+        #: Một cấu trúc dữ liệu của các hàm để gọi nhằm sửa đổi các đối số
+        #: từ khóa được truyền cho hàm view, theo định dạng
+        #: ``{scope: [functions]}``. Khóa ``scope`` là tên của một
+        #: blueprint mà các hàm đang hoạt động, hoặc ``None`` cho tất cả
+        #: các yêu cầu.
         #:
-        #: To register a function, use the
-        #: :meth:`url_value_preprocessor` decorator.
+        #: Để đăng ký một hàm, sử dụng decorator
+        #: :meth:`url_value_preprocessor`.
         #:
-        #: This data structure is internal. It should not be modified
-        #: directly and its format may change at any time.
+        #: Cấu trúc dữ liệu này là nội bộ. Nó không nên được sửa đổi
+        #: trực tiếp và định dạng của nó có thể thay đổi bất cứ lúc nào.
         self.url_value_preprocessors: dict[
             ft.AppOrBlueprintKey,
             list[ft.URLValuePreprocessorCallable],
         ] = defaultdict(list)
 
-        #: A data structure of functions to call to modify the keyword
-        #: arguments when generating URLs, in the format
-        #: ``{scope: [functions]}``. The ``scope`` key is the name of a
-        #: blueprint the functions are active for, or ``None`` for all
-        #: requests.
+        #: Một cấu trúc dữ liệu của các hàm để gọi nhằm sửa đổi các đối số
+        #: từ khóa khi tạo URL, theo định dạng
+        #: ``{scope: [functions]}``. Khóa ``scope`` là tên của một
+        #: blueprint mà các hàm đang hoạt động, hoặc ``None`` cho tất cả
+        #: các yêu cầu.
         #:
-        #: To register a function, use the :meth:`url_defaults`
-        #: decorator.
+        #: Để đăng ký một hàm, sử dụng decorator :meth:`url_defaults`.
         #:
-        #: This data structure is internal. It should not be modified
-        #: directly and its format may change at any time.
+        #: Cấu trúc dữ liệu này là nội bộ. Nó không nên được sửa đổi
+        #: trực tiếp và định dạng của nó có thể thay đổi bất cứ lúc nào.
         self.url_default_functions: dict[
             ft.AppOrBlueprintKey, list[ft.URLDefaultCallable]
         ] = defaultdict(list)
@@ -222,8 +216,8 @@ class Scaffold:
 
     @property
     def static_folder(self) -> str | None:
-        """The absolute path to the configured static folder. ``None``
-        if no static folder is set.
+        """Đường dẫn tuyệt đối đến thư mục tĩnh đã được cấu hình. ``None``
+        nếu không có thư mục tĩnh nào được thiết lập.
         """
         if self._static_folder is not None:
             return os.path.join(self.root_path, self._static_folder)
@@ -239,7 +233,7 @@ class Scaffold:
 
     @property
     def has_static_folder(self) -> bool:
-        """``True`` if :attr:`static_folder` is set.
+        """``True`` nếu :attr:`static_folder` được thiết lập.
 
         .. versionadded:: 0.5
         """
@@ -247,9 +241,9 @@ class Scaffold:
 
     @property
     def static_url_path(self) -> str | None:
-        """The URL prefix that the static route will be accessible from.
+        """Tiền tố URL mà route tĩnh sẽ có thể truy cập được từ đó.
 
-        If it was not configured during init, it is derived from
+        Nếu nó không được cấu hình trong quá trình init, nó được suy ra từ
         :attr:`static_folder`.
         """
         if self._static_url_path is not None:
@@ -270,9 +264,9 @@ class Scaffold:
 
     @cached_property
     def jinja_loader(self) -> BaseLoader | None:
-        """The Jinja loader for this object's templates. By default this
-        is a class :class:`jinja2.loaders.FileSystemLoader` to
-        :attr:`template_folder` if it is set.
+        """Jinja loader cho các template của đối tượng này. Theo mặc định, đây
+        là một lớp :class:`jinja2.loaders.FileSystemLoader` đến
+        :attr:`template_folder` nếu nó được thiết lập.
 
         .. versionadded:: 0.5
         """
@@ -294,7 +288,7 @@ class Scaffold:
 
     @setupmethod
     def get(self, rule: str, **options: t.Any) -> t.Callable[[T_route], T_route]:
-        """Shortcut for :meth:`route` with ``methods=["GET"]``.
+        """Lối tắt cho :meth:`route` với ``methods=["GET"]``.
 
         .. versionadded:: 2.0
         """
@@ -302,7 +296,7 @@ class Scaffold:
 
     @setupmethod
     def post(self, rule: str, **options: t.Any) -> t.Callable[[T_route], T_route]:
-        """Shortcut for :meth:`route` with ``methods=["POST"]``.
+        """Lối tắt cho :meth:`route` với ``methods=["POST"]``.
 
         .. versionadded:: 2.0
         """
@@ -310,7 +304,7 @@ class Scaffold:
 
     @setupmethod
     def put(self, rule: str, **options: t.Any) -> t.Callable[[T_route], T_route]:
-        """Shortcut for :meth:`route` with ``methods=["PUT"]``.
+        """Lối tắt cho :meth:`route` với ``methods=["PUT"]``.
 
         .. versionadded:: 2.0
         """
@@ -318,7 +312,7 @@ class Scaffold:
 
     @setupmethod
     def delete(self, rule: str, **options: t.Any) -> t.Callable[[T_route], T_route]:
-        """Shortcut for :meth:`route` with ``methods=["DELETE"]``.
+        """Lối tắt cho :meth:`route` với ``methods=["DELETE"]``.
 
         .. versionadded:: 2.0
         """
@@ -326,7 +320,7 @@ class Scaffold:
 
     @setupmethod
     def patch(self, rule: str, **options: t.Any) -> t.Callable[[T_route], T_route]:
-        """Shortcut for :meth:`route` with ``methods=["PATCH"]``.
+        """Lối tắt cho :meth:`route` với ``methods=["PATCH"]``.
 
         .. versionadded:: 2.0
         """
@@ -334,9 +328,9 @@ class Scaffold:
 
     @setupmethod
     def route(self, rule: str, **options: t.Any) -> t.Callable[[T_route], T_route]:
-        """Decorate a view function to register it with the given URL
-        rule and options. Calls :meth:`add_url_rule`, which has more
-        details about the implementation.
+        """Trang trí một hàm view để đăng ký nó với quy tắc URL và tùy chọn
+        đã cho. Gọi :meth:`add_url_rule`, có nhiều chi tiết hơn về việc
+        triển khai.
 
         .. code-block:: python
 
@@ -344,17 +338,17 @@ class Scaffold:
             def index():
                 return "Hello, World!"
 
-        See :ref:`url-route-registrations`.
+        Xem :ref:`url-route-registrations`.
 
-        The endpoint name for the route defaults to the name of the view
-        function if the ``endpoint`` parameter isn't passed.
+        Tên endpoint cho route mặc định là tên của hàm view nếu tham số
+        ``endpoint`` không được truyền.
 
-        The ``methods`` parameter defaults to ``["GET"]``. ``HEAD`` and
-        ``OPTIONS`` are added automatically.
+        Tham số ``methods`` mặc định là ``["GET"]``. ``HEAD`` và
+        ``OPTIONS`` được thêm tự động.
 
-        :param rule: The URL rule string.
-        :param options: Extra options passed to the
-            :class:`~werkzeug.routing.Rule` object.
+        :param rule: Chuỗi quy tắc URL.
+        :param options: Các tùy chọn bổ sung được truyền cho đối tượng
+            :class:`~werkzeug.routing.Rule`.
         """
 
         def decorator(f: T_route) -> T_route:
@@ -373,9 +367,9 @@ class Scaffold:
         provide_automatic_options: bool | None = None,
         **options: t.Any,
     ) -> None:
-        """Register a rule for routing incoming requests and building
-        URLs. The :meth:`route` decorator is a shortcut to call this
-        with the ``view_func`` argument. These are equivalent:
+        """Đăng ký một quy tắc để định tuyến các yêu cầu đến và xây dựng
+        URL. Decorator :meth:`route` là một lối tắt để gọi điều này
+        với đối số ``view_func``. Những điều này là tương đương:
 
         .. code-block:: python
 
@@ -390,21 +384,19 @@ class Scaffold:
 
             app.add_url_rule("/", view_func=index)
 
-        See :ref:`url-route-registrations`.
+        Xem :ref:`url-route-registrations`.
 
-        The endpoint name for the route defaults to the name of the view
-        function if the ``endpoint`` parameter isn't passed. An error
-        will be raised if a function has already been registered for the
-        endpoint.
+        Tên endpoint cho route mặc định là tên của hàm view nếu tham số
+        ``endpoint`` không được truyền. Một lỗi sẽ được đưa ra nếu một hàm
+        đã được đăng ký cho endpoint.
 
-        The ``methods`` parameter defaults to ``["GET"]``. ``HEAD`` is
-        always added automatically, and ``OPTIONS`` is added
-        automatically by default.
+        Tham số ``methods`` mặc định là ``["GET"]``. ``HEAD`` luôn được
+        thêm tự động, và ``OPTIONS`` được thêm tự động theo mặc định.
 
-        ``view_func`` does not necessarily need to be passed, but if the
-        rule should participate in routing an endpoint name must be
-        associated with a view function at some point with the
-        :meth:`endpoint` decorator.
+        ``view_func`` không nhất thiết phải được truyền, nhưng nếu quy tắc
+        nên tham gia vào việc định tuyến, tên endpoint phải được liên kết
+        với một hàm view tại một thời điểm nào đó với decorator
+        :meth:`endpoint`.
 
         .. code-block:: python
 
@@ -414,28 +406,27 @@ class Scaffold:
             def index():
                 ...
 
-        If ``view_func`` has a ``required_methods`` attribute, those
-        methods are added to the passed and automatic methods. If it
-        has a ``provide_automatic_methods`` attribute, it is used as the
-        default if the parameter is not passed.
+        Nếu ``view_func`` có thuộc tính ``required_methods``, những phương thức
+        đó sẽ được thêm vào các phương thức được truyền và tự động. Nếu nó
+        có thuộc tính ``provide_automatic_methods``, nó được sử dụng làm
+        mặc định nếu tham số không được truyền.
 
-        :param rule: The URL rule string.
-        :param endpoint: The endpoint name to associate with the rule
-            and view function. Used when routing and building URLs.
-            Defaults to ``view_func.__name__``.
-        :param view_func: The view function to associate with the
-            endpoint name.
-        :param provide_automatic_options: Add the ``OPTIONS`` method and
-            respond to ``OPTIONS`` requests automatically.
-        :param options: Extra options passed to the
-            :class:`~werkzeug.routing.Rule` object.
+        :param rule: Chuỗi quy tắc URL.
+        :param endpoint: Tên endpoint để liên kết với quy tắc và hàm view.
+            Được sử dụng khi định tuyến và xây dựng URL. Mặc định là
+            ``view_func.__name__``.
+        :param view_func: Hàm view để liên kết với tên endpoint.
+        :param provide_automatic_options: Thêm phương thức ``OPTIONS`` và
+            phản hồi các yêu cầu ``OPTIONS`` tự động.
+        :param options: Các tùy chọn bổ sung được truyền cho đối tượng
+            :class:`~werkzeug.routing.Rule`.
         """
         raise NotImplementedError
 
     @setupmethod
     def endpoint(self, endpoint: str) -> t.Callable[[F], F]:
-        """Decorate a view function to register it for the given
-        endpoint. Used if a rule is added without a ``view_func`` with
+        """Trang trí một hàm view để đăng ký nó cho endpoint đã cho.
+        Được sử dụng nếu một quy tắc được thêm vào mà không có ``view_func`` với
         :meth:`add_url_rule`.
 
         .. code-block:: python
@@ -446,8 +437,7 @@ class Scaffold:
             def example():
                 ...
 
-        :param endpoint: The endpoint name to associate with the view
-            function.
+        :param endpoint: Tên endpoint để liên kết với hàm view.
         """
 
         def decorator(f: F) -> F:
@@ -458,10 +448,10 @@ class Scaffold:
 
     @setupmethod
     def before_request(self, f: T_before_request) -> T_before_request:
-        """Register a function to run before each request.
+        """Đăng ký một hàm để chạy trước mỗi yêu cầu.
 
-        For example, this can be used to open a database connection, or
-        to load the logged in user from the session.
+        Ví dụ, điều này có thể được sử dụng để mở kết nối cơ sở dữ liệu, hoặc
+        để tải người dùng đã đăng nhập từ session.
 
         .. code-block:: python
 
@@ -470,70 +460,67 @@ class Scaffold:
                 if "user_id" in session:
                     g.user = db.session.get(session["user_id"])
 
-        The function will be called without any arguments. If it returns
-        a non-``None`` value, the value is handled as if it was the
-        return value from the view, and further request handling is
-        stopped.
+        Hàm sẽ được gọi mà không có bất kỳ đối số nào. Nếu nó trả về
+        một giá trị không phải là ``None``, giá trị đó được xử lý như thể nó là
+        giá trị trả về từ view, và việc xử lý yêu cầu tiếp theo bị dừng lại.
 
-        This is available on both app and blueprint objects. When used on an app, this
-        executes before every request. When used on a blueprint, this executes before
-        every request that the blueprint handles. To register with a blueprint and
-        execute before every request, use :meth:`.Blueprint.before_app_request`.
+        Điều này có sẵn trên cả đối tượng app và blueprint. Khi được sử dụng trên một app, điều này
+        thực thi trước mỗi yêu cầu. Khi được sử dụng trên một blueprint, điều này thực thi trước
+        mỗi yêu cầu mà blueprint xử lý. Để đăng ký với một blueprint và
+        thực thi trước mỗi yêu cầu, sử dụng :meth:`.Blueprint.before_app_request`.
         """
         self.before_request_funcs.setdefault(None, []).append(f)
         return f
 
     @setupmethod
     def after_request(self, f: T_after_request) -> T_after_request:
-        """Register a function to run after each request to this object.
+        """Đăng ký một hàm để chạy sau mỗi yêu cầu tới đối tượng này.
 
-        The function is called with the response object, and must return
-        a response object. This allows the functions to modify or
-        replace the response before it is sent.
+        Hàm được gọi với đối tượng phản hồi, và phải trả về
+        một đối tượng phản hồi. Điều này cho phép các hàm sửa đổi hoặc
+        thay thế phản hồi trước khi nó được gửi đi.
 
-        If a function raises an exception, any remaining
-        ``after_request`` functions will not be called. Therefore, this
-        should not be used for actions that must execute, such as to
-        close resources. Use :meth:`teardown_request` for that.
+        Nếu một hàm đưa ra một ngoại lệ, bất kỳ hàm ``after_request``
+        còn lại nào sẽ không được gọi. Do đó, điều này không nên được sử dụng
+        cho các hành động bắt buộc phải thực thi, chẳng hạn như để đóng tài nguyên.
+        Sử dụng :meth:`teardown_request` cho việc đó.
 
-        This is available on both app and blueprint objects. When used on an app, this
-        executes after every request. When used on a blueprint, this executes after
-        every request that the blueprint handles. To register with a blueprint and
-        execute after every request, use :meth:`.Blueprint.after_app_request`.
+        Điều này có sẵn trên cả đối tượng app và blueprint. Khi được sử dụng trên một app, điều này
+        thực thi sau mỗi yêu cầu. Khi được sử dụng trên một blueprint, điều này thực thi sau
+        mỗi yêu cầu mà blueprint xử lý. Để đăng ký với một blueprint và
+        thực thi sau mỗi yêu cầu, sử dụng :meth:`.Blueprint.after_app_request`.
         """
         self.after_request_funcs.setdefault(None, []).append(f)
         return f
 
     @setupmethod
     def teardown_request(self, f: T_teardown) -> T_teardown:
-        """Register a function to be called when the request context is
-        popped. Typically, this happens at the end of each request, but
-        contexts may be pushed manually during testing.
+        """Đăng ký một hàm để được gọi khi ngữ cảnh yêu cầu bị pop.
+        Thường thì, điều này xảy ra ở cuối mỗi yêu cầu, nhưng
+        các ngữ cảnh có thể được push thủ công trong quá trình kiểm thử.
 
         .. code-block:: python
 
             with app.test_request_context():
                 ...
 
-        When the ``with`` block exits (or ``ctx.pop()`` is called), the
-        teardown functions are called just before the request context is
-        made inactive.
+        Khi khối ``with`` thoát (hoặc ``ctx.pop()`` được gọi), các hàm
+        teardown được gọi ngay trước khi ngữ cảnh yêu cầu trở nên không hoạt động.
 
-        When a teardown function was called because of an unhandled
-        exception it will be passed an error object. If an
-        :meth:`errorhandler` is registered, it will handle the exception
-        and the teardown will not receive it.
+        Khi một hàm teardown được gọi vì một ngoại lệ không được xử lý,
+        nó sẽ được truyền một đối tượng lỗi. Nếu một :meth:`errorhandler`
+        được đăng ký, nó sẽ xử lý ngoại lệ và teardown sẽ không nhận được nó.
 
-        Teardown functions must avoid raising exceptions. If they
-        execute code that might fail they must surround that code with a
-        ``try``/``except`` block and log any errors.
+        Các hàm teardown phải tránh đưa ra các ngoại lệ. Nếu chúng
+        thực thi mã có thể thất bại, chúng phải bao quanh mã đó bằng một
+        khối ``try``/``except`` và ghi lại bất kỳ lỗi nào.
 
-        The return values of teardown functions are ignored.
+        Các giá trị trả về của các hàm teardown bị bỏ qua.
 
-        This is available on both app and blueprint objects. When used on an app, this
-        executes after every request. When used on a blueprint, this executes after
-        every request that the blueprint handles. To register with a blueprint and
-        execute after every request, use :meth:`.Blueprint.teardown_app_request`.
+        Điều này có sẵn trên cả đối tượng app và blueprint. Khi được sử dụng trên một app, điều này
+        thực thi sau mỗi yêu cầu. Khi được sử dụng trên một blueprint, điều này thực thi sau
+        mỗi yêu cầu mà blueprint xử lý. Để đăng ký với một blueprint và
+        thực thi sau mỗi yêu cầu, sử dụng :meth:`.Blueprint.teardown_app_request`.
         """
         self.teardown_request_funcs.setdefault(None, []).append(f)
         return f
@@ -543,14 +530,14 @@ class Scaffold:
         self,
         f: T_template_context_processor,
     ) -> T_template_context_processor:
-        """Registers a template context processor function. These functions run before
-        rendering a template. The keys of the returned dict are added as variables
-        available in the template.
+        """Đăng ký một hàm xử lý ngữ cảnh template. Các hàm này chạy trước khi
+        render một template. Các khóa của dict trả về được thêm vào như các biến
+        có sẵn trong template.
 
-        This is available on both app and blueprint objects. When used on an app, this
-        is called for every rendered template. When used on a blueprint, this is called
-        for templates rendered from the blueprint's views. To register with a blueprint
-        and affect every template, use :meth:`.Blueprint.app_context_processor`.
+        Điều này có sẵn trên cả đối tượng app và blueprint. Khi được sử dụng trên một app, điều này
+        được gọi cho mỗi template được render. Khi được sử dụng trên một blueprint, điều này được gọi
+        cho các template được render từ các view của blueprint. Để đăng ký với một blueprint
+        và ảnh hưởng đến mọi template, sử dụng :meth:`.Blueprint.app_context_processor`.
         """
         self.template_context_processors[None].append(f)
         return f
@@ -560,36 +547,36 @@ class Scaffold:
         self,
         f: T_url_value_preprocessor,
     ) -> T_url_value_preprocessor:
-        """Register a URL value preprocessor function for all view
-        functions in the application. These functions will be called before the
-        :meth:`before_request` functions.
+        """Đăng ký một hàm tiền xử lý giá trị URL cho tất cả các hàm view
+        trong ứng dụng. Các hàm này sẽ được gọi trước các hàm
+        :meth:`before_request`.
 
-        The function can modify the values captured from the matched url before
-        they are passed to the view. For example, this can be used to pop a
-        common language code value and place it in ``g`` rather than pass it to
-        every view.
+        Hàm có thể sửa đổi các giá trị được bắt từ url khớp trước khi
+        chúng được truyền cho view. Ví dụ, điều này có thể được sử dụng để pop một
+        giá trị mã ngôn ngữ chung và đặt nó vào ``g`` thay vì truyền nó cho
+        mọi view.
 
-        The function is passed the endpoint name and values dict. The return
-        value is ignored.
+        Hàm được truyền tên endpoint và dict các giá trị. Giá trị trả về
+        bị bỏ qua.
 
-        This is available on both app and blueprint objects. When used on an app, this
-        is called for every request. When used on a blueprint, this is called for
-        requests that the blueprint handles. To register with a blueprint and affect
-        every request, use :meth:`.Blueprint.app_url_value_preprocessor`.
+        Điều này có sẵn trên cả đối tượng app và blueprint. Khi được sử dụng trên một app, điều này
+        được gọi cho mỗi yêu cầu. Khi được sử dụng trên một blueprint, điều này được gọi cho
+        các yêu cầu mà blueprint xử lý. Để đăng ký với một blueprint và ảnh hưởng đến
+        mọi yêu cầu, sử dụng :meth:`.Blueprint.app_url_value_preprocessor`.
         """
         self.url_value_preprocessors[None].append(f)
         return f
 
     @setupmethod
     def url_defaults(self, f: T_url_defaults) -> T_url_defaults:
-        """Callback function for URL defaults for all view functions of the
-        application.  It's called with the endpoint and values and should
-        update the values passed in place.
+        """Hàm callback cho các giá trị mặc định URL cho tất cả các hàm view của
+        ứng dụng. Nó được gọi với endpoint và các giá trị và nên
+        cập nhật các giá trị được truyền tại chỗ.
 
-        This is available on both app and blueprint objects. When used on an app, this
-        is called for every request. When used on a blueprint, this is called for
-        requests that the blueprint handles. To register with a blueprint and affect
-        every request, use :meth:`.Blueprint.app_url_defaults`.
+        Điều này có sẵn trên cả đối tượng app và blueprint. Khi được sử dụng trên một app, điều này
+        được gọi cho mỗi yêu cầu. Khi được sử dụng trên một blueprint, điều này được gọi cho
+        các yêu cầu mà blueprint xử lý. Để đăng ký với một blueprint và ảnh hưởng đến
+        mọi yêu cầu, sử dụng :meth:`.Blueprint.app_url_defaults`.
         """
         self.url_default_functions[None].append(f)
         return f
@@ -598,38 +585,37 @@ class Scaffold:
     def errorhandler(
         self, code_or_exception: type[Exception] | int
     ) -> t.Callable[[T_error_handler], T_error_handler]:
-        """Register a function to handle errors by code or exception class.
+        """Đăng ký một hàm để xử lý lỗi theo mã hoặc lớp ngoại lệ.
 
-        A decorator that is used to register a function given an
-        error code.  Example::
+        Một decorator được sử dụng để đăng ký một hàm với một
+        mã lỗi đã cho. Ví dụ::
 
             @app.errorhandler(404)
             def page_not_found(error):
                 return 'This page does not exist', 404
 
-        You can also register handlers for arbitrary exceptions::
+        Bạn cũng có thể đăng ký các trình xử lý cho các ngoại lệ tùy ý::
 
             @app.errorhandler(DatabaseError)
             def special_exception_handler(error):
                 return 'Database connection failed', 500
 
-        This is available on both app and blueprint objects. When used on an app, this
-        can handle errors from every request. When used on a blueprint, this can handle
-        errors from requests that the blueprint handles. To register with a blueprint
-        and affect every request, use :meth:`.Blueprint.app_errorhandler`.
+        Điều này có sẵn trên cả đối tượng app và blueprint. Khi được sử dụng trên một app, điều này
+        có thể xử lý lỗi từ mọi yêu cầu. Khi được sử dụng trên một blueprint, điều này có thể xử lý
+        lỗi từ các yêu cầu mà blueprint xử lý. Để đăng ký với một blueprint
+        và ảnh hưởng đến mọi yêu cầu, sử dụng :meth:`.Blueprint.app_errorhandler`.
 
         .. versionadded:: 0.7
-            Use :meth:`register_error_handler` instead of modifying
-            :attr:`error_handler_spec` directly, for application wide error
-            handlers.
+            Sử dụng :meth:`register_error_handler` thay vì sửa đổi
+            :attr:`error_handler_spec` trực tiếp, cho các trình xử lý lỗi toàn ứng dụng.
 
         .. versionadded:: 0.7
-           One can now additionally also register custom exception types
-           that do not necessarily have to be a subclass of the
-           :class:`~werkzeug.exceptions.HTTPException` class.
+           Người ta cũng có thể đăng ký thêm các loại ngoại lệ tùy chỉnh
+           không nhất thiết phải là lớp con của lớp
+           :class:`~werkzeug.exceptions.HTTPException`.
 
-        :param code_or_exception: the code as integer for the handler, or
-                                  an arbitrary exception
+        :param code_or_exception: mã dưới dạng số nguyên cho trình xử lý, hoặc
+                                  một ngoại lệ tùy ý
         """
 
         def decorator(f: T_error_handler) -> T_error_handler:
@@ -644,9 +630,8 @@ class Scaffold:
         code_or_exception: type[Exception] | int,
         f: ft.ErrorHandlerCallable,
     ) -> None:
-        """Alternative error attach function to the :meth:`errorhandler`
-        decorator that is more straightforward to use for non decorator
-        usage.
+        """Hàm đính kèm lỗi thay thế cho decorator :meth:`errorhandler`
+        dễ sử dụng hơn cho việc sử dụng không phải decorator.
 
         .. versionadded:: 0.7
         """
@@ -657,12 +642,12 @@ class Scaffold:
     def _get_exc_class_and_code(
         exc_class_or_code: type[Exception] | int,
     ) -> tuple[type[Exception], int | None]:
-        """Get the exception class being handled. For HTTP status codes
-        or ``HTTPException`` subclasses, return both the exception and
-        status code.
+        """Lấy lớp ngoại lệ đang được xử lý. Đối với các mã trạng thái HTTP
+        hoặc các lớp con ``HTTPException``, trả về cả ngoại lệ và
+        mã trạng thái.
 
-        :param exc_class_or_code: Any exception class, or an HTTP status
-            code as an integer.
+        :param exc_class_or_code: Bất kỳ lớp ngoại lệ nào, hoặc một mã trạng thái HTTP
+            dưới dạng số nguyên.
         """
         exc_class: type[Exception]
 
@@ -699,15 +684,15 @@ class Scaffold:
 
 
 def _endpoint_from_view_func(view_func: ft.RouteCallable) -> str:
-    """Internal helper that returns the default endpoint for a given
-    function.  This always is the function name.
+    """Trình trợ giúp nội bộ trả về endpoint mặc định cho một hàm
+    đã cho. Điều này luôn là tên hàm.
     """
     assert view_func is not None, "expected view func if endpoint is not provided."
     return view_func.__name__
 
 
 def _find_package_path(import_name: str) -> str:
-    """Find the path that contains the package or module."""
+    """Tìm đường dẫn chứa package hoặc module."""
     root_mod_name, _, _ = import_name.partition(".")
 
     try:
@@ -752,17 +737,17 @@ def _find_package_path(import_name: str) -> str:
 
 
 def find_package(import_name: str) -> tuple[str | None, str]:
-    """Find the prefix that a package is installed under, and the path
-    that it would be imported from.
+    """Tìm tiền tố mà một package được cài đặt dưới đó, và đường dẫn
+    mà nó sẽ được import từ đó.
 
-    The prefix is the directory containing the standard directory
-    hierarchy (lib, bin, etc.). If the package is not installed to the
-    system (:attr:`sys.prefix`) or a virtualenv (``site-packages``),
-    ``None`` is returned.
+    Tiền tố là thư mục chứa phân cấp thư mục tiêu chuẩn
+    (lib, bin, v.v.). Nếu package không được cài đặt vào
+    hệ thống (:attr:`sys.prefix`) hoặc một virtualenv (``site-packages``),
+    ``None`` được trả về.
 
-    The path is the entry in :attr:`sys.path` that contains the package
-    for import. If the package is not installed, it's assumed that the
-    package was imported from the current working directory.
+    Đường dẫn là mục nhập trong :attr:`sys.path` chứa package
+    để import. Nếu package không được cài đặt, giả định rằng
+    package đã được import từ thư mục làm việc hiện tại.
     """
     package_path = _find_package_path(import_name)
     py_prefix = os.path.abspath(sys.prefix)

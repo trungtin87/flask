@@ -25,24 +25,24 @@ if t.TYPE_CHECKING:  # pragma: no cover
 
 
 class EnvironBuilder(werkzeug.test.EnvironBuilder):
-    """An :class:`~werkzeug.test.EnvironBuilder`, that takes defaults from the
-    application.
+    """Một :class:`~werkzeug.test.EnvironBuilder`, lấy các giá trị mặc định từ
+    ứng dụng.
 
-    :param app: The Flask application to configure the environment from.
-    :param path: URL path being requested.
-    :param base_url: Base URL where the app is being served, which
-        ``path`` is relative to. If not given, built from
+    :param app: Ứng dụng Flask để cấu hình môi trường từ đó.
+    :param path: Đường dẫn URL đang được yêu cầu.
+    :param base_url: URL cơ sở nơi ứng dụng đang được phục vụ, mà
+        ``path`` là tương đối với nó. Nếu không được đưa ra, được xây dựng từ
         :data:`PREFERRED_URL_SCHEME`, ``subdomain``,
-        :data:`SERVER_NAME`, and :data:`APPLICATION_ROOT`.
-    :param subdomain: Subdomain name to append to :data:`SERVER_NAME`.
-    :param url_scheme: Scheme to use instead of
+        :data:`SERVER_NAME`, và :data:`APPLICATION_ROOT`.
+    :param subdomain: Tên miền phụ để thêm vào :data:`SERVER_NAME`.
+    :param url_scheme: Scheme để sử dụng thay vì
         :data:`PREFERRED_URL_SCHEME`.
-    :param json: If given, this is serialized as JSON and passed as
-        ``data``. Also defaults ``content_type`` to
+    :param json: Nếu được đưa ra, cái này được tuần tự hóa thành JSON và được truyền dưới dạng
+        ``data``. Cũng mặc định ``content_type`` thành
         ``application/json``.
-    :param args: other positional arguments passed to
+    :param args: các đối số vị trí khác được truyền cho
         :class:`~werkzeug.test.EnvironBuilder`.
-    :param kwargs: other keyword arguments passed to
+    :param kwargs: các đối số từ khóa khác được truyền cho
         :class:`~werkzeug.test.EnvironBuilder`.
     """
 
@@ -86,10 +86,10 @@ class EnvironBuilder(werkzeug.test.EnvironBuilder):
         super().__init__(path, base_url, *args, **kwargs)
 
     def json_dumps(self, obj: t.Any, **kwargs: t.Any) -> str:
-        """Serialize ``obj`` to a JSON-formatted string.
+        """Tuần tự hóa ``obj`` thành một chuỗi định dạng JSON.
 
-        The serialization will be configured according to the config associated
-        with this EnvironBuilder's ``app``.
+        Việc tuần tự hóa sẽ được cấu hình theo cấu hình được liên kết
+        với ``app`` của EnvironBuilder này.
         """
         return self.app.json.dumps(obj, **kwargs)
 
@@ -107,17 +107,17 @@ def _get_werkzeug_version() -> str:
 
 
 class FlaskClient(Client):
-    """Works like a regular Werkzeug test client, with additional behavior for
-    Flask. Can defer the cleanup of the request context until the end of a
-    ``with`` block. For general information about how to use this class refer to
+    """Hoạt động giống như một test client Werkzeug thông thường, với hành vi bổ sung cho
+    Flask. Có thể hoãn việc dọn dẹp ngữ cảnh request cho đến khi kết thúc một
+    khối ``with``. Để biết thông tin chung về cách sử dụng lớp này, hãy tham khảo
     :class:`werkzeug.test.Client`.
 
     .. versionchanged:: 0.12
-       `app.test_client()` includes preset default environment, which can be
-       set after instantiation of the `app.test_client()` object in
+       `app.test_client()` bao gồm môi trường mặc định được thiết lập sẵn, có thể được
+       thiết lập sau khi khởi tạo đối tượng `app.test_client()` trong
        `client.environ_base`.
 
-    Basic usage is outlined in the :doc:`/testing` chapter.
+    Cách sử dụng cơ bản được phác thảo trong chương :doc:`/testing`.
     """
 
     application: Flask
@@ -136,21 +136,21 @@ class FlaskClient(Client):
     def session_transaction(
         self, *args: t.Any, **kwargs: t.Any
     ) -> t.Iterator[SessionMixin]:
-        """When used in combination with a ``with`` statement this opens a
-        session transaction.  This can be used to modify the session that
-        the test client uses.  Once the ``with`` block is left the session is
-        stored back.
+        """Khi được sử dụng kết hợp với một câu lệnh ``with``, điều này mở ra một
+        giao dịch session. Điều này có thể được sử dụng để sửa đổi session mà
+        test client sử dụng. Khi khối ``with`` được rời khỏi, session được
+        lưu trữ lại.
 
         ::
 
             with client.session_transaction() as session:
                 session['value'] = 42
 
-        Internally this is implemented by going through a temporary test
-        request context and since session handling could depend on
-        request variables this function accepts the same arguments as
-        :meth:`~flask.Flask.test_request_context` which are directly
-        passed through.
+        Bên trong, điều này được thực hiện bằng cách đi qua một ngữ cảnh request
+        kiểm thử tạm thời và vì việc xử lý session có thể phụ thuộc vào
+        các biến request, hàm này chấp nhận các đối số giống như
+        :meth:`~flask.Flask.test_request_context`, các đối số này được truyền trực tiếp
+        qua.
         """
         if self._cookies is None:
             raise TypeError(
@@ -227,9 +227,9 @@ class FlaskClient(Client):
             # request is None
             request = self._request_from_builder_args(args, kwargs)
 
-        # Pop any previously preserved contexts. This prevents contexts
-        # from being preserved across redirects or multiple requests
-        # within a single block.
+        # Pop bất kỳ ngữ cảnh nào đã được bảo tồn trước đó. Điều này ngăn các ngữ cảnh
+        # khỏi bị bảo tồn qua các chuyển hướng hoặc nhiều request
+        # trong một khối duy nhất.
         self._context_stack.close()
 
         response = super().open(
@@ -239,7 +239,7 @@ class FlaskClient(Client):
         )
         response.json_module = self.application.json  # type: ignore[assignment]
 
-        # Re-push contexts that were preserved during the request.
+        # Re-push các ngữ cảnh đã được bảo tồn trong suốt request.
         for cm in self._new_contexts:
             self._context_stack.enter_context(cm)
 
@@ -263,9 +263,9 @@ class FlaskClient(Client):
 
 
 class FlaskCliRunner(CliRunner):
-    """A :class:`~click.testing.CliRunner` for testing a Flask app's
-    CLI commands. Typically created using
-    :meth:`~flask.Flask.test_cli_runner`. See :ref:`testing-cli`.
+    """Một :class:`~click.testing.CliRunner` để kiểm thử các lệnh CLI của
+    ứng dụng Flask. Thường được tạo bằng cách sử dụng
+    :meth:`~flask.Flask.test_cli_runner`. Xem :ref:`testing-cli`.
     """
 
     def __init__(self, app: Flask, **kwargs: t.Any) -> None:
@@ -275,19 +275,19 @@ class FlaskCliRunner(CliRunner):
     def invoke(  # type: ignore
         self, cli: t.Any = None, args: t.Any = None, **kwargs: t.Any
     ) -> Result:
-        """Invokes a CLI command in an isolated environment. See
-        :meth:`CliRunner.invoke <click.testing.CliRunner.invoke>` for
-        full method documentation. See :ref:`testing-cli` for examples.
+        """Gọi một lệnh CLI trong một môi trường cô lập. Xem
+        :meth:`CliRunner.invoke <click.testing.CliRunner.invoke>` để biết
+        tài liệu phương thức đầy đủ. Xem :ref:`testing-cli` để biết các ví dụ.
 
-        If the ``obj`` argument is not given, passes an instance of
-        :class:`~flask.cli.ScriptInfo` that knows how to load the Flask
-        app being tested.
+        Nếu đối số ``obj`` không được đưa ra, truyền một thể hiện của
+        :class:`~flask.cli.ScriptInfo` biết cách tải ứng dụng Flask
+        đang được kiểm thử.
 
-        :param cli: Command object to invoke. Default is the app's
-            :attr:`~flask.app.Flask.cli` group.
-        :param args: List of strings to invoke the command with.
+        :param cli: Đối tượng lệnh để gọi. Mặc định là nhóm
+            :attr:`~flask.app.Flask.cli` của ứng dụng.
+        :param args: Danh sách các chuỗi để gọi lệnh với.
 
-        :return: a :class:`~click.testing.Result` object.
+        :return: một đối tượng :class:`~click.testing.Result`.
         """
         if cli is None:
             cli = self.app.cli
